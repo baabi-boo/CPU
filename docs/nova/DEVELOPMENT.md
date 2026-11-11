@@ -155,8 +155,11 @@ substitute for it. The defaults permit at most two Make jobs, a 4 GB Java heap,
 and a two-hour overall wall-time budget. These are initial limits, **not a
 validated safe memory/disk/CPU profile**; review and adjust the approved bounds
 before execution. The runner stops on failed prerequisites or stage failures,
-limits each stage log to 64 MiB, and records stage exit codes, observed target
+checks the approved free-disk floor before and during each stage, limits each
+stage log to 64 MiB, and records stage exit codes, observed target
 text, ELF64/RISC-V header checks, and SHA-256 hashes in ignored `nova-out/`.
+An active stage aborted for a low or unreadable disk floor is recorded as
+`blocked`. Periodic checks cannot guarantee a hard peak-memory or disk limit.
 The observed tool versions are recorded but **not verified** against the pinned
 Conda/CIRCT environment. Even when all stages exit successfully and the expected
 `hello` line appears, its result is only `hello_marker_observed_unqualified`:

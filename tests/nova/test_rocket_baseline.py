@@ -10,6 +10,7 @@ import importlib.util
 import io
 import json
 from pathlib import Path
+import threading
 from types import SimpleNamespace
 import tempfile
 import unittest
@@ -132,6 +133,77 @@ class RocketBaselineTests(unittest.TestCase):
             self.assertEqual(result["status"], "passed" if exit_code == 0 else "failed")
             self.assertEqual(result["log_sha256"], hashlib.sha256(b"fixture log\n").hexdigest())
 
+    def test_active_stage_stops_on_approved_disk_floor(self):
+        """Resource exhaustion during a stage is blocked, not a hardware failure."""
+        output = self.root / "logs"
+        output.mkdir()
+        terminated = threading.Event()
+
+        def wait_for_kill(timeout):
+            self.assertTrue(terminated.wait(timeout=3), "disk monitor did not stop stage")
+            return -9
+
+        def fake_popen(argv, **kwargs):
+            kwargs["stdout"].write(b"compile started\n")
+            kwargs["stdout"].flush()
+            return SimpleNamespace(pid=1234, wait=wait_for_kill)
+
+        def fake_kill(pid, sig):
+            self.assertEqual(pid, 1234)
+            terminated.set()
+
+        with patch.object(runner.subprocess, "Popen", side_effect=fake_popen), \
+             patch.object(runner.os, "killpg", side_effect=fake_kill), \
+             patch.object(runner.shutil, "disk_usage",
+                          return_value=SimpleNamespace(free=2 * 1024 ** 3)):
+            result = runner.run_stage(self.root, output, "disk-check", 30,
+                                      ["make", "-C", "sims/verilator"], min_free_gib=10)
+        self.assertTrue(terminated.is_set())
+        self.assertTrue(result["blocked"])
+        self.assertEqual(result["exit_code"], 1)
+        self.assertEqual(result["status"], "blocked")
+        self.assertIn("disk capacity fell below", result["error"])
+        self.assertEqual(result["log_sha256"], hashlib.sha256(b"compile started\n").hexdigest())
+
+    def test_disk_resource_block_does_not_mark_hardware_failure(self):
+        output = self.root / "run"
+        output.mkdir()
+        aborted = {"stage": "rocket-build", "exit_code": 1, "status": "failed",
+                   "blocked": True, "error": "disk capacity fell below approved minimum during stage"}
+        with patch.object(runner, "validate_execution", return_value=("a" * 40, None)), \
+             patch.object(runner, "make_output_dir", return_value=output), \
+             patch.object(runner.shutil, "disk_usage",
+                          return_value=SimpleNamespace(free=64 * 1024 ** 3)), \
+             patch.object(runner, "run_stage", return_value=aborted) as stage, \
+             contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(runner.execute(self.root, budget(),
+                                            runner.stages(self.root, 2, "4G", 7200, 300)), 1)
+        stage.assert_called_once()
+        self.assertEqual(stage.call_args.kwargs["min_free_gib"], 10)
+        record = json.loads((output / "record.json").read_text(encoding="utf-8"))
+        self.assertEqual(record["status"], "blocked")
+        self.assertFalse(record["g1_gate_passed"])
+
+    def test_active_stage_stops_if_disk_capacity_cannot_be_measured(self):
+        output = self.root / "logs"
+        output.mkdir()
+        terminated = threading.Event()
+
+        def fake_popen(argv, **kwargs):
+            kwargs["stdout"].write(b"stage started\n")
+            return SimpleNamespace(pid=1234,
+                                   wait=lambda timeout: -9 if terminated.wait(3) else 124)
+
+        with patch.object(runner.subprocess, "Popen", side_effect=fake_popen), \
+             patch.object(runner.os, "killpg", side_effect=lambda *_: terminated.set()), \
+             patch.object(runner.shutil, "disk_usage", side_effect=OSError("test fixture")):
+            result = runner.run_stage(self.root, output, "disk-unreadable", 30,
+                                      ["make", "-C", "sims/verilator"], min_free_gib=10)
+        self.assertTrue(terminated.is_set())
+        self.assertEqual(result["status"], "blocked")
+        self.assertEqual(result["exit_code"], 1)
+        self.assertNotIn("test fixture", result.get("error", ""))
+
     def test_execute_stops_at_first_stage_failure_and_keeps_gate_unpassed(self):
         output = self.root / "run"
         output.mkdir()
@@ -166,7 +238,7 @@ class RocketBaselineTests(unittest.TestCase):
         header[18:20] = (243).to_bytes(2, "little")  # EM_RISCV
         binary.write_bytes(header)
 
-        def fake_stage(root, directory, name, seconds, argv):
+        def fake_stage(root, directory, name, seconds, argv, min_free_gib=None):
             log = directory / f"{name}.log"
             log.write_bytes(b"Hello world from core 0, a Rocket\n"
                             if name == "hello-simulate" else b"fixture stage\n")

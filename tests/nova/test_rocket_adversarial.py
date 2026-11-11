@@ -52,7 +52,7 @@ class RocketAdversarialTests(unittest.TestCase):
         self.binary = self.root / "tests/build/hello.riscv"
 
     def fake_successful_stage(self, *, hello_output=b"Hello world from core 0, a Rocket\n"):
-        def fake(root, output, name, seconds, argv):
+        def fake(root, output, name, seconds, argv, min_free_gib=None):
             log = output / f"{name}.log"
             log.write_bytes(hello_output if name == "hello-simulate" else b"stage ended\n")
             return {"stage": name, "exit_code": 0, "status": "passed",

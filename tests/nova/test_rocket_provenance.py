@@ -62,7 +62,7 @@ class RocketProvenanceTests(unittest.TestCase):
         self.output.mkdir()
 
     def fake_stage(self, *, marker=True):
-        def stage(root, output, name, seconds, argv):
+        def stage(root, output, name, seconds, argv, min_free_gib=None):
             log = output / (name + ".log")
             payload = (b"Hello world from core 0, a Rocket\n"
                        if name == "hello-simulate" and marker else b"fixture stage\n")

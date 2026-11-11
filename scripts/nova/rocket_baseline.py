@@ -318,8 +318,14 @@ def stop_process_group(process):
             pass
 
 
-def run_stage(root, directory, name, seconds, argv):
-    """Double-bound a process group; retain exit code and raw log on failure."""
+def run_stage(root, directory, name, seconds, argv, min_free_gib=None):
+    """Double-bound a process group; monitor log and approved disk floor.
+
+    A pre-stage disk check cannot stop an active compile from filling the
+    volume.  Poll its free capacity while the process group is running; if the
+    approved minimum cannot be maintained or measured, stop the stage and
+    report a resource blocker instead of a hardware failure.
+    """
     log = directory / f"{name}.log"
     timed = ["timeout", "--kill-after=30s", f"{seconds}s", *argv]
     started = datetime.now(timezone.utc).isoformat()
@@ -327,6 +333,7 @@ def run_stage(root, directory, name, seconds, argv):
     code = None
     error = None
     log_limit_exceeded = threading.Event()
+    disk_floor_breached = threading.Event()
     stop_monitor = threading.Event()
     try:
         with log.open("xb") as stream:
@@ -335,7 +342,7 @@ def run_stage(root, directory, name, seconds, argv):
                     timed, cwd=root, stdin=subprocess.DEVNULL,
                     stdout=stream, stderr=subprocess.STDOUT, start_new_session=True)
 
-                def monitor_log_size():
+                def monitor_resources():
                     while not stop_monitor.wait(0.25):
                         try:
                             if log.stat().st_size > MAX_STAGE_LOG_BYTES:
@@ -348,7 +355,20 @@ def run_stage(root, directory, name, seconds, argv):
                         except OSError:
                             return
 
-                monitor = threading.Thread(target=monitor_log_size, daemon=True)
+                        if min_free_gib is not None:
+                            try:
+                                free = shutil.disk_usage(root).free
+                            except OSError:
+                                free = None
+                            if free is None or free < min_free_gib * 1024 ** 3:
+                                disk_floor_breached.set()
+                                try:
+                                    os.killpg(process.pid, signal.SIGKILL)
+                                except OSError:
+                                    pass
+                                return
+
+                monitor = threading.Thread(target=monitor_resources, daemon=True)
                 monitor.start()
                 try:
                     code = process.wait(timeout=seconds + 40)
@@ -370,6 +390,9 @@ def run_stage(root, directory, name, seconds, argv):
     if log_limit_exceeded.is_set():
         error = "stage log exceeded 64 MiB limit"
         code = 1
+    if disk_floor_breached.is_set():
+        error = "disk capacity fell below approved minimum during stage"
+        code = 1
     try:
         log_hash = digest(log) if log.is_file() and log.stat().st_size <= MAX_STAGE_LOG_BYTES else None
     except OSError:
@@ -377,11 +400,15 @@ def run_stage(root, directory, name, seconds, argv):
     result = {
         "stage": name, "command": timed, "started_utc": started,
         "elapsed_seconds": round(time.monotonic() - start, 3),
-        "exit_code": code, "status": "passed" if code == 0 else "failed",
+        "exit_code": code,
+        "status": ("blocked" if disk_floor_breached.is_set()
+                   else "passed" if code == 0 else "failed"),
         "log": log.name if log.exists() else None, "log_sha256": log_hash,
     }
     if error:
         result["error"] = error
+    if disk_floor_breached.is_set():
+        result["blocked"] = True
     return result
 
 
@@ -417,7 +444,7 @@ def execute(root, args, steps):
             "test_timeout_seconds": args.test_timeout,
             "total_timeout_seconds": args.total_timeout,
             "min_free_gib": args.min_free_gib,
-            "note": "time/j and disk prechecks do not cap peak RAM or disk usage",
+            "note": "time/jobs and sampled disk floor do not cap peak RAM or instantaneous disk usage",
         },
         "stages": [], "status": "in_progress",
     }
@@ -437,10 +464,11 @@ def execute(root, args, steps):
             record["blocker"] = "disk unavailable or below approved minimum before a stage"
             break
         # Leave room inside the total cap for GNU timeout's 30-second KILL grace.
-        result = run_stage(root, output, name, min(seconds, remaining - 30), argv)
+        result = run_stage(root, output, name, min(seconds, remaining - 30), argv,
+                           min_free_gib=args.min_free_gib)
         record["stages"].append(result)
         if result["exit_code"] != 0:
-            record["status"] = "failed"
+            record["status"] = "blocked" if result.get("blocked") else "failed"
             break
         if name == "hello-build":
             safe_binary = safe_hello_binary(root)

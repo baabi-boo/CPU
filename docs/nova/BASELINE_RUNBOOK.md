@@ -150,8 +150,11 @@ an activated `RISCV`/`env.sh` environment, valid prerequisites, and no stale
 ignored `tests/build` or relevant Verilator build products. It stops rather than
 deleting or reusing those artifacts. The default plan limits Make to two jobs,
 sets a 4 GB Java heap, reserves a two-hour aggregate wall-time budget, and checks
-for at least 10 GiB of free disk before execution. These settings are adjustable
-within the script's bounded options and **do not cap peak RAM or total disk use**.
+for at least 10 GiB of free disk before execution and between stages. The runner
+also samples remaining disk space during each active stage and stops the process
+group if the approved floor is crossed or becomes unreadable. These checks are
+periodic; they **do not cap peak RAM or instantaneous disk consumption**, so an
+operator still needs an independently enforced host/resource budget.
 
 If explicitly executed, the helper retains per-stage logs and a `record.json`
 under ignored `nova-out/rocket-baseline-*/`. It enforces a 64 MiB per-stage log
