@@ -13,10 +13,28 @@ import subprocess
 DEFAULT_ROOT = Path(__file__).resolve().parents[2]
 TIMEOUT_SECONDS = 5
 COMMIT_SHA = re.compile(r"^[0-9a-f]{40}$")
+# Known prerequisite gitlinks for the documented G1 path on the imported
+# default Chisel 6 configuration (RocketConfig and later BOOM/Rocket). These
+# include the unconditional build.sbt project/classpath dependencies and the
+# Verilator/HTIF inputs; they are not a complete nested-dependency or toolchain
+# compatibility closure. In particular, a green doctor is not a build pass.
 REQUIRED_SUBMODULES = frozenset({
     "generators/boom", "generators/rocket-chip", "generators/hardfloat",
     "generators/diplomacy", "generators/testchipip",
     "generators/rocket-chip-inclusive-cache", "tools/cde",
+    # build.sbt's unconditional chipyard baseProjects plus BOOM's PMU source.
+    "generators/bar-fetchers", "generators/constellation",
+    "generators/icenet", "generators/rerocc",
+    "generators/rocket-chip-blocks", "generators/shuttle",
+    "generators/pmu",
+    # With default Chisel 6, hardfloat depends on FireSim's target utilities;
+    # chipyard also depends on the FIRRTL2 bridge and DSP projects.
+    "sims/firesim", "tools/firrtl2", "tools/dsptools",
+    "tools/rocket-dsp-utils", "tools/fixedpoint",
+    # sims/verilator/Makefile unconditionally links libdramsim.a from DRAMSim2.
+    "tools/DRAMSim2",
+    # tests/htif.ld is a git-tracked symlink into libgloss for G1's hello binary.
+    "toolchains/libgloss",
 })
 TOOLS = {
     "java": ["-version"], "verilator": ["--version"],

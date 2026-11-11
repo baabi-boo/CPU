@@ -8,12 +8,40 @@ the [roadmap gates](ROADMAP.md) and [requirement register](../../nova/requiremen
 
 ## Next exact task: NOVA-001
 
-Run `make -f nova.mk check` and `make -f nova.mk doctor-strict` in a clean checkout.
-Record missing prerequisites without attempting an unapproved installation.
+Run `make -f nova.mk check`, the non-mutating
+`python3 -B scripts/nova/bootstrap_preflight.py --json`, and
+`make -f nova.mk doctor-strict` in a clean checkout. A nonzero strict diagnosis
+is a recorded blocker, not a reason to relax the checks. Record missing
+prerequisites without attempting an unapproved installation.
 Before heavyweight setup, obtain maintainer agreement on host, RAM/disk capacity,
 network access, CPU parallelism, wall-time limit, and any monetary cost. Then use
 the pinned, opt-in procedure in [DEVELOPMENT](DEVELOPMENT.md); preserve pins and
-disable the setup script's cleanup stage as documented there.
+disable the setup script's cleanup stage as documented there. Before running
+upstream setup, compare host glibc with the pinned `sysroot_linux-64` input:
+`scripts/build-setup.sh` can rewrite `conda-reqs/chipyard-base.yaml` and
+regenerate locks even without `--use-unpinned-deps`. On a host where that
+rewrite would occur, stop and select a reviewed pin-preserving procedure or
+propose a separate dependency migration; do not execute setup blindly.
+
+**Observed 2026-11-11 preflight:** NOVA-001 execution is currently **blocked**,
+as recorded in the [host preflight evidence](evidence/NOVA-001-PREFLIGHT-2026-11-11.md).
+This development checkout has 57 uninitialized gitlinks, including 21 known
+required for the default Chipyard/Chisel 6 build path, and the strict doctor
+reports 27 blockers. The host's glibc 2.41 would trigger a change from pinned
+sysroot 2.34 to setup-selected 2.39. All nine pinned Conda inputs remain
+unchanged. G0 acceptance and the heavy-setup resource approval are outstanding;
+G1 remains planned. See the [baseline runbook](BASELINE_RUNBOOK.md) for the
+precise next executable campaign. The opt-in `rocket_baseline.py` runner has
+repository-only tests, but no actual Rocket simulation was attempted.
+
+Record the superproject revision, all gitlink pins, and SHA-256 hashes of the
+nine tracked Conda definition/lock inputs before and after any approved setup.
+Confirm the selected pinned package versions and tool availability. The Rocket
+Verilator target unconditionally builds `tools/DRAMSim2/libdramsim.a`, while the
+repository's CMake `hello` target uses `tests/htif.ld` linked into
+`toolchains/libgloss`. Both dependency paths must be available at their
+recorded pins before the corresponding build/test; passing a prerequisite
+diagnostic is not itself proof that all nested build inputs are present.
 
 Stop and record `blocked` on missing authorization/access, exhausted resources,
 unexpected dependency changes, unavailable required IP, or inconsistent tool
@@ -27,15 +55,15 @@ to obtain a green result. No FPGA purchase or paid runner is authorized here.
 
 - **P0 · G1 · owner:** build maintainer, unassigned. **Depends on:** G0 acceptance and resource approval.
 - **Area:** `scripts/build-setup.sh`, `conda-reqs`, `nova/upstream-lock.json`, diagnostic tooling.
-- **Acceptance:** approved clean environment initializes the required pinned dependencies; record versions and all diagnostic gaps. No unreviewed lock/gitlink drift.
-- **Evidence:** `REQ-BUILD-001` / `T-BUILD-001`; source/lock manifest, setup command, host budget, exit status, sanitized log. Tool availability alone does not close G1.
+- **Acceptance:** an approved clean environment initializes the required pinned dependencies (including DRAMSim2 for the selected Verilator target); record host glibc/sysroot compatibility, resolved versions and all diagnostic gaps. No unreviewed lock/gitlink drift. The CMake `hello` test also requires an available, pinned `toolchains/libgloss` linker script and suitable HTIF-capable RISC-V toolchain; these are test prerequisites, not evidence of execution.
+- **Evidence:** `REQ-BUILD-001` / `T-BUILD-001`; exact source/gitlink manifest, SHA-256 of all nine tracked Conda inputs before/after setup, preflight report, setup command, host budget, exit status, sanitized log. Tool availability alone does not close G1.
 
 ### NOVA-002 — Execute the unmodified Rocket baseline
 
 - **P0 · G1 · owner:** build maintainer, unassigned. **Depends on:** NOVA-001.
 - **Area:** `sims/verilator`, `tests/CMakeLists.txt`, `tests/hello.c`, supported ISA test selection.
-- **Acceptance:** build `RocketConfig`, compile `hello` with the configured CMake cross-toolchain, execute it and a declared ISA subset; reproduce on a second clean build.
-- **Evidence:** `REQ-BUILD-001`, `REQ-CPU-001` / `T-BUILD-001`, `T-ISA-001`; RTL/map, binary hashes, commands, actual memory model, results and exclusions.
+- **Acceptance:** build `RocketConfig`, compile `hello` with the configured CMake cross-toolchain, execute it (initially via `run-binary-fast`, if appropriate) and a separately declared ISA subset; reproduce on a second clean build. A passing `hello` smoke test is not ISA, exception, or MMU qualification, and its hard-coded `core 0` text is not a hart-identity observation.
+- **Evidence:** `REQ-BUILD-001`, `REQ-CPU-001` / `T-BUILD-001`, `T-ISA-001`; generated RTL/map, simulator and binary hashes, exact commands/exit codes, actual memory model, observed hello/ISA results, negative failure diagnostics and exclusions.
 
 ### NOVA-003 — Qualify the named configuration entry points
 

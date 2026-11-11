@@ -30,6 +30,14 @@ See [STATUS](docs/nova/STATUS.md) for the authoritative evidence state and
 repository checks does **not** establish processor correctness, achieved clock
 frequency, energy efficiency, or tapeout readiness.
 
+**Next hardware task: NOVA-001 (blocked).** The first goal is a reproducible,
+pinned Rocket toolchain and then a genuine single-core simulation. The current
+bootstrap host lacks required toolchain dependencies and its upstream setup
+would regenerate pinned Conda locks. G0 still needs maintainer acceptance, and
+heavyweight setup requires an approved host/resource/network/time/cost budget.
+No Rocket/NOVA CPU execution has been demonstrated by these tooling changes;
+see the [blocked preflight record](docs/nova/evidence/NOVA-001-PREFLIGHT-2026-11-11.md).
+
 ## Architecture direction
 
 | Subsystem | Initial approach | Engineering boundary |
@@ -81,6 +89,17 @@ The lightweight check target is intended for repository metadata, documentation,
 and project-tool tests. It does not install a hardware toolchain or simulate a
 processor. Its result must be kept separate from hardware validation.
 
+Inspect the current host and the proposed bounded Rocket build without
+installing dependencies or starting a simulation:
+
+```bash
+make -f nova.mk preflight
+make -f nova.mk rocket-plan
+```
+
+These commands report setup risks and an execution plan only; a clean preflight
+is not permission to install or proof that the hardware builds.
+
 For toolchain preparation, diagnostic preflight, source configurations, and
 explicit simulation commands, follow [DEVELOPMENT](docs/nova/DEVELOPMENT.md).
 Expensive simulation, FPGA, and ASIC jobs are opt-in and resource-bounded.
@@ -98,6 +117,8 @@ that runs only on hart 0 cannot qualify a heterogeneous system.
 - [Roadmap](docs/nova/ROADMAP.md): gated deliverables and go/no-go decisions.
 - [Architecture](docs/nova/ARCHITECTURE.md): subsystem contracts and design boundaries.
 - [Development guide](docs/nova/DEVELOPMENT.md): reproducible local workflow.
+- [Rocket baseline runbook](docs/nova/BASELINE_RUNBOOK.md): NOVA-001 setup blockers,
+  explicit build/test sequence, resource approval, and G1 evidence requirements.
 - [Verification strategy](docs/nova/VERIFICATION.md): requirements, tests, and evidence.
 - [Status](docs/nova/STATUS.md): what is planned, implemented, and demonstrated.
 - [Bootstrap review](docs/nova/BOOTSTRAP_REVIEW.md): review scope, executed checks,

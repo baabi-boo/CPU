@@ -18,6 +18,44 @@ SPEC.loader.exec_module(doctor)
 
 
 class DoctorTests(unittest.TestCase):
+    def test_default_chisel6_rocket_build_gitlinks_are_required(self):
+        # build.sbt's default chipyard baseProjects include these even for a
+        # single RocketConfig target. The project graph also pulls in BOOM/PMU,
+        # HardFloat's FireSim target utilities and the Chisel 6 DSP/FIRRTL2
+        # bridge. Merely initializing the original seven gitlinks was not enough.
+        expected = {
+            "generators/bar-fetchers", "generators/boom",
+            "generators/constellation", "generators/diplomacy",
+            "generators/hardfloat", "generators/icenet", "generators/pmu",
+            "generators/rerocc", "generators/rocket-chip",
+            "generators/rocket-chip-blocks",
+            "generators/rocket-chip-inclusive-cache", "generators/shuttle",
+            "generators/testchipip", "sims/firesim", "tools/cde",
+            "tools/dsptools", "tools/firrtl2", "tools/fixedpoint",
+            "tools/rocket-dsp-utils",
+        }
+        self.assertTrue(expected.issubset(doctor.REQUIRED_SUBMODULES))
+        self.assertEqual(len(doctor.REQUIRED_SUBMODULES), 21)
+
+        root = Path(__file__).resolve().parents[2]
+        index = doctor.git(root, "ls-files", "--stage", "-z")
+        self.assertTrue(index["ok"])
+        gitlinks = {entry["path"] for entry in doctor.parse_gitlinks(index["stdout"])}
+        self.assertTrue(doctor.REQUIRED_SUBMODULES.issubset(gitlinks))
+
+    def test_g1_verilator_and_hello_submodules_are_required(self):
+        # These gitlinks are not optional for the documented G1 build and hello
+        # workload, even though some other Chipyard profiles can omit them.
+        for path in ("tools/DRAMSim2", "toolchains/libgloss"):
+            with self.subTest(path=path), tempfile.TemporaryDirectory() as folder, \
+                    patch.object(doctor, "git") as git:
+                self.assertIn(path, doctor.REQUIRED_SUBMODULES)
+                result = doctor.submodule_status(Path(folder), {
+                    "path": path, "pin": "a" * 40, "stage": "0"})
+                self.assertTrue(result["required"])
+                self.assertEqual(result["state"], "uninitialized")
+                git.assert_not_called()
+
     def test_parse_only_gitlinks_and_preserve_spaces(self):
         entries = doctor.parse_gitlinks(
             "100644 abc 0\tREADME.md\0" + "160000 " + "a" * 40 + " 0\tpath with spaces\0")

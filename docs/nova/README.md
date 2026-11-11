@@ -8,10 +8,14 @@ Start with the [project charter](CHARTER.md), [current status](STATUS.md), and
 1. Read the [project overview](../../README.md) for scope and present limitations.
 2. Follow [DEVELOPMENT](DEVELOPMENT.md) for offline checks, preflight diagnostics,
    and the separately approved hardware-toolchain workflow.
+   The non-mutating `make -f nova.mk preflight` command checks known setup
+   hazards without installing dependencies or verifying a processor.
 3. Check [CONFIGURATIONS](CONFIGURATIONS.md) before selecting a source profile;
    both NOVA profiles still require elaboration and execution evidence.
 4. Start with NOVA-001 in the [actionable backlog](BACKLOG.md). Its prerequisite
-   approvals and acceptance evidence determine what can be attempted next.
+   approvals and acceptance evidence determine what can be attempted next. Use
+   the [Rocket baseline runbook](BASELINE_RUNBOOK.md) for its bounded sequence
+   and reproducibility requirements after those approvals are recorded.
 
 ## Design and qualification
 
@@ -27,6 +31,8 @@ Start with the [project charter](CHARTER.md), [current status](STATUS.md), and
 ## Engineering workflow
 
 - [Developer setup](DEVELOPMENT.md)
+- [Rocket baseline bring-up runbook](BASELINE_RUNBOOK.md): opt-in G1 preparation,
+  execution, stop conditions, and evidence; not a completed hardware result.
 - [CI scope](CI.md)
 - [Bootstrap review and executed checks](BOOTSTRAP_REVIEW.md)
 - [Reproducibility and evidence](REPRODUCIBILITY.md)

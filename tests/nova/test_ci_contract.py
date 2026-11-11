@@ -72,8 +72,18 @@ class CIContractTests(unittest.TestCase):
         self.assertIn("timeout-minutes: 5", self.workflow)
         self.assertIn("runs-on: ubuntu-24.04", self.workflow)
         self.assertIn("run: make -f nova.mk check", self.workflow)
-        for command in ("build-setup.sh", "sims/verilator", "docker push", "pip install"):
+        for command in ("build-setup.sh", "sims/verilator", "docker push", "pip install",
+                        "rocket_baseline.py", "git submodule update", "apt-get",
+                        "conda install", "micromamba install"):
             self.assertNotIn(command, self.workflow)
+
+    def test_foundation_job_never_grants_hardware_execution(self):
+        # CI is a five-minute, read-only repository check; hardware runs remain
+        # separately approved and do not belong in push/PR foundation checks.
+        self.assertNotIn("--execute", self.workflow)
+        self.assertNotIn("--approved-budget", self.workflow)
+        self.assertNotIn("rocket-plan", self.workflow)
+        self.assertEqual(self.workflow.count("run: make -f nova.mk check"), 1)
 
     def test_upstream_entry_points_remain_guarded(self):
         guard = "github.repository == 'ucb-bar/chipyard'"
@@ -88,6 +98,18 @@ class CIContractTests(unittest.TestCase):
         makefile = (ROOT / "nova.mk").read_text(encoding="utf-8")
         self.assertIn("$(PYTHON) -B scripts/nova/check_whitespace.py", makefile)
         self.assertIn("git diff --check", makefile)
+
+    def test_make_hardware_plan_is_opt_in_and_nonexecuting(self):
+        makefile = (ROOT / "nova.mk").read_text(encoding="utf-8")
+        self.assertRegex(makefile, r"(?m)^check:\s*validate test whitespace\s*$")
+        self.assertRegex(
+            makefile,
+            r"(?m)^rocket-plan:\s*\n\t\$\(PYTHON\) -B scripts/nova/rocket_baseline\.py --plan\s*$",
+        )
+        self.assertNotIn("rocket_baseline.py --execute", makefile)
+        self.assertNotIn("--approved-budget", makefile)
+        self.assertNotIn("build-setup.sh", makefile)
+        self.assertNotIn("sims/verilator", makefile)
 
 
 if __name__ == "__main__":

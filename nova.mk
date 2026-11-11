@@ -3,7 +3,7 @@
 PYTHON ?= python3
 DOCTOR_FLAGS ?=
 
-.PHONY: help check validate test whitespace doctor doctor-strict
+.PHONY: help check validate test whitespace doctor doctor-strict preflight preflight-strict rocket-plan
 
 help:
 	@printf '%s\n' \
@@ -13,6 +13,9 @@ help:
 	  '  make -f nova.mk test           Python tooling tests; empty discovery fails' \
 	  '  make -f nova.mk doctor         Non-mutating environment diagnosis' \
 	  '  make -f nova.mk doctor-strict  Diagnose and fail on missing prerequisites' \
+	  '  make -f nova.mk preflight      Non-mutating NOVA-001 setup/lock safety report' \
+	  '  make -f nova.mk preflight-strict  Report and fail on unsafe setup prerequisites' \
+	  '  make -f nova.mk rocket-plan    Read-only plan for bounded Rocket simulation' \
 	  'These targets do not install dependencies, build RTL, or qualify hardware.'
 
 check: validate test whitespace
@@ -32,3 +35,12 @@ doctor:
 
 doctor-strict:
 	$(PYTHON) -B scripts/nova/doctor.py --strict
+
+preflight:
+	$(PYTHON) -B scripts/nova/bootstrap_preflight.py
+
+preflight-strict:
+	$(PYTHON) -B scripts/nova/bootstrap_preflight.py --strict
+
+rocket-plan:
+	$(PYTHON) -B scripts/nova/rocket_baseline.py --plan

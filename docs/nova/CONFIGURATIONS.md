@@ -35,6 +35,14 @@ environment:
 source ./env.sh
 ```
 
+The Verilator simulator rule has an unconditional dependency on
+`tools/DRAMSim2/libdramsim.a` (built from the pinned `tools/DRAMSim2` submodule).
+Prepare that submodule even for the single-core baseline; do not interpret its
+previously optional diagnostic classification as evidence that the simulator
+can build without it. The CMake `hello` target also needs the pinned RISC-V
+toolchain's HTIF headers/specs and the `toolchains/libgloss` linker-script
+target. See the prerequisite checks and exceptions in [DEVELOPMENT](DEVELOPMENT.md).
+
 Build and qualify the unchanged upstream baseline before the named derivative:
 
 ```bash
@@ -57,13 +65,28 @@ use `&&` to avoid continuing after a failed upstream build. Builds can download
 dependencies through the upstream build system; the lightweight repository checks
 do not do so.
 
-With the Chipyard toolchain active and its test binary present, an explicitly
-bounded baseline smoke invocation is:
+The inherited Make configuration defaults to `JAVA_HEAP_SIZE=8G` for the Scala
+generator. A low-memory host may require a separately approved, smaller heap
+(for example `JAVA_HEAP_SIZE=4G` passed to Make), but that setting is not a
+verified compatible profile and cannot guarantee the build will fit. Record the
+chosen heap setting, available RAM/swap, memory observations, parallelism, and
+any OOM or timeout result in the execution evidence. Do not silently retry with
+different resources and present the new attempt as the same reproduction.
+
+With the Chipyard toolchain active and its test binary present, a first bounded,
+trace-free smoke invocation on the unchanged upstream baseline is:
 
 ```bash
-timeout --kill-after=30s 300s make -C sims/verilator CONFIG=NovaM1BaselineConfig run-binary \
+timeout --kill-after=30s 300s make -C sims/verilator CONFIG=RocketConfig run-binary-fast \
   BINARY="$RISCV/riscv64-unknown-elf/share/riscv-tests/isa/rv64ui-p-simple"
 ```
+
+`run-binary-fast` avoids the separate `spike-dasm` dependency and preserves the
+simulator pipeline's failure status. Once the upstream baseline works, repeat
+the declared test with `CONFIG=NovaM1BaselineConfig`. Use `run-binary` when
+instruction-disassembly output is needed and `spike-dasm` is available; record
+which path ran. Neither invocation has been demonstrated to pass for NOVA by
+this foundation change.
 
 The timeout is an initial host-runtime limit, not a CPU performance target.
 Record a timeout as failure or blockage; do not silently increase it to hide a

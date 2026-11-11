@@ -46,6 +46,79 @@ Protection tests apply whenever a protection claim is introduced, not only at
 G7. Physical-memory tests must be adapted and requalified for the actual board or
 ASIC technology; an FPGA result does not qualify an ASIC PHY.
 
+## G1 Rocket baseline: first executable campaign
+
+The bounded first-hardware procedure is specified in the
+[baseline runbook](BASELINE_RUNBOOK.md), with toolchain details in
+[DEVELOPMENT](DEVELOPMENT.md). Until an approved host actually executes that
+campaign, `T-BUILD-001` and `T-ISA-001` remain **planned**: the repository's
+configuration aliases, existing upstream test names, and offline tooling checks
+are not implementation or execution evidence for those descriptors.
+The opt-in `rocket_baseline.py` runner covers only an initial upstream
+`RocketConfig`/`hello` attempt. Its successful status
+`hello_marker_observed_unqualified` means a valid RISC-V ELF64 and expected
+text were observed alongside successful stage exit codes; it explicitly records
+`target_completion_verified: false`. Neither this status nor the runner's exit
+code independently proves that the target program completed, qualifies the
+named NOVA configuration, or closes G1.
+
+1. **Preflight and preserve pins (`NOVA-001`, `T-BUILD-001`).** Record G0
+   acceptance and explicit approval for the host, RAM, disk, network, parallel
+   jobs, wall-time, and any cost. From a clean checkout run
+   `make -f nova.mk check`, `make -f nova.mk preflight`, and
+   `make -f nova.mk doctor-strict`. Capture the preflight report, all gitlink
+   SHAs, actual environment/tool versions, and SHA-256 hashes of the nine tracked
+   Conda inputs before *and* after approved setup. If host glibc would make the
+   inherited script regenerate a pinned sysroot/lock, stop for a separately
+   reviewed migration or qualified pin-preserving procedure. Neither a normal
+   diagnostic exit nor a present executable constitutes toolchain reproduction.
+2. **Build unmodified Rocket (`NOVA-002`, `T-BUILD-001`).** On the approved and
+   pinned environment, run a bounded `RocketConfig` Verilator build, retaining
+   generated RTL, simulator binary and hashes, generated map/device tree,
+   hart/cache/ISA parameters, actual memory model (including the linked
+   DRAMSim2), compiler/Verilator/firtool versions, complete logs and exit status.
+   Merely capturing tool version strings does not prove that installed tools
+   match the pinned Conda/CIRCT environment: verify compatibility separately,
+   and preserve mismatches as blockers rather than endorsing the configuration.
+   Build `NovaM1BaselineConfig` separately, with its own generated artifacts and
+   evidence. A Scala compile or successful elaboration alone is not processor
+   execution.
+3. **Execute and check bare-metal code (`T-BUILD-001`).** Compile the inherited
+   `tests/hello.c` with the configured CMake cross-toolchain, including the
+   correct HTIF headers/specs and `toolchains/libgloss` linker script. Execute
+   the resulting `hello.riscv` using the bounded Verilator `run-binary-fast`
+   target first, preserving expected output, actual output, target completion,
+   simulator result, timeout, and binary hash. The `run-binary-fast` path omits
+   `spike-dasm`; it is not a lower correctness standard. The test's hard-coded
+   `core 0` text is not a measured hart ID. A string appearing in combined
+   simulator/Make output is not independent target-completion evidence: obtain
+   a trustworthy simulator/target completion observation before claiming that
+   the program finished successfully. The preliminary runner limits each
+   captured stage log to 64 MiB; a truncated or over-limit log fails that
+   attempt and is not acceptable verification evidence.
+4. **Qualify a declared ISA subset (`T-ISA-001`).** Specify the exact supported
+   RISC-V ISA/privilege profile, test names, test binary hashes, expected
+   outcomes, any reference-model version and comparison scope, and exclusions
+   *before* execution. Record the per-test simulator exit status and observed
+   results. Hello-world alone does not test traps, MMU or broad ISA compliance.
+5. **Exercise negative harness cases and reproduce.** Demonstrate that nonzero
+   target/simulator exit, wrong output, missing or duplicated completion,
+   truncated logs and a deterministic timeout are detected and labeled failure.
+   Rebuild and re-execute from a separate clean checkout with the same pins and
+   declared toolchain; do not reuse stale simulator or target binaries as the
+   second reproduction. The opt-in runner blocks when known ignored build
+   artifacts are already present, but that safeguard does not replace a
+   documented clean-build provenance review. Preserve both attempts, including
+   failures.
+
+For every stage, record command, working directory, start/end time, configured
+resource caps, elapsed time, seed where applicable, complete sanitized logs,
+artifacts and hashes, exclusions, and reviewer. A missing approval, tool,
+dependency, result, or clean reproduction is `blocked`/`not_run` or `failed`
+as appropriate, never `passed`. Only after the specific test is implemented,
+executed, reproduced, and reviewed may its register entry change from
+`planned`; G1 itself requires its own separate maintainer decision.
+
 ## CPU and heterogeneous-platform traps
 
 The pinned [TestSuites.scala](../../generators/chipyard/src/main/scala/TestSuites.scala)
