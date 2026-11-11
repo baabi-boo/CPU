@@ -16,6 +16,8 @@ defaults:
 jobs:
   build-and-publish-container:
     name: build and publish container
+    # NOVA does not implicitly authorize scheduled package publication.
+    if: ${{ github.repository == 'ucb-bar/chipyard' }}
     runs-on: ubuntu-24.04
     env:
       BUILDKIT_PROGRESS: plain

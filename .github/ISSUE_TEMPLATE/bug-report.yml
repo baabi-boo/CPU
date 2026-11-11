@@ -1,51 +1,51 @@
-name: Bug Report
-description: File a bug report
+name: Framework diagnostic (NOVA-M1)
+description: Report a reproducible Chipyard-framework problem affecting NOVA-M1.
 labels: ["bug"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Report NOVA-M1 integration problems in this repository. Prefer the NOVA bug form for project-specific defects.
+        Escalate upstream only after producing an isolated reproducer against the relevant pinned dependency.
+        For suspected vulnerabilities, follow SECURITY.md; do not publish sensitive details here.
+        Never attach full environment dumps, credentials, private workloads, or restricted IP. Redact logs before posting.
   - type: checkboxes
+    id: background
     attributes:
       label: Background Work
       description: Yes, I searched the following areas for a prior solution.
       options:
-        - label: Yes, I searched the [mailing list](https://groups.google.com/forum/#!forum/chipyard)
+        - label: I searched [NOVA-M1 issues](https://github.com/baabi-boo/CPU/issues) for this problem.
           required: true
-        - label: Yes, I searched [prior issues](https://github.com/ucb-bar/chipyard/issues)
-          required: true
-        - label: Yes, I searched the [documentation](https://chipyard.readthedocs.io/)
+        - label: I checked the [NOVA development guide](https://github.com/baabi-boo/CPU/blob/main/docs/nova/DEVELOPMENT.md) and relevant upstream documentation.
           required: true
 
   - type: textarea
+    id: revision
     attributes:
-      label: Chipyard Version and Hash
-      description: Repository version for reproducibility
-      placeholder: Version + Hash
-      value: |
-        Release: 1.5.0
-        Hash: a6a6a6
+      label: Exact revision and configuration
+      description: Full NOVA Git SHA, dirty state, configuration, and relevant pinned dependency revisions. Do not substitute an example hash.
     validations:
       required: true
 
   - type: textarea
+    id: environment
     attributes:
-      label: OS Setup
-      description: OS setup for reproducibility
-      placeholder: OS information
-      value: |
-        Ex: Output of `uname -a` + `lsb_release -a` + `printenv` + `conda list`
+      label: Sanitized tool and platform versions
+      description: OS distribution/version, CPU architecture, relevant tool versions, and resource limits. Include only necessary non-sensitive values, not complete shell environment or package dumps.
     validations:
       required: true
 
   - type: textarea
+    id: reproduction
     attributes:
-      label: Other Setup
-      description: Any other setup relevant
-      placeholder: Other setup
-      value: |
-        Ex: Prior steps taken / Documentation Followed / etc...
+      label: Minimal reproduction
+      description: Exact commands, public input or hash, seed, timeout, and setup prerequisites. Remove credentials and private paths before posting.
     validations:
-      required: false
+      required: true
 
   - type: textarea
+    id: actual
     attributes:
       label: Current Behavior
       description: A concise description of what you're experiencing.
@@ -53,6 +53,7 @@ body:
       required: true
 
   - type: textarea
+    id: expected
     attributes:
       label: Expected Behavior
       description: A concise description of what you expected to happen.
@@ -60,13 +61,14 @@ body:
       required: true
 
   - type: textarea
+    id: evidence
     attributes:
-      label: Other Information
-      description: Other information needed to reproduce the issue.
+      label: Redacted evidence and scope
+      description: State exit codes, evidence level, participating harts, test IDs, and unrun checks. Repository checks are not hardware qualification.
       placeholder: |
         Detailed explanations
         Stack traces
-        Log files. Tip - You can add images / log files by clicking this area to highlight it and then dragging files in
+        Redacted relevant log excerpts and artifact hashes
         Related issues
         Suggestions on fixes
         Other links

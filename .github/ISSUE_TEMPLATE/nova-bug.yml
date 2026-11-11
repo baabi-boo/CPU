@@ -1,0 +1,58 @@
+name: NOVA bug report
+description: Report a reproducible NOVA tooling or hardware-integration defect.
+title: "[NOVA bug] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For suspected vulnerabilities, follow SECURITY.md instead of posting details here.
+        Redact secrets, personal data, private workloads, and restricted IP. Do not attach full environment dumps.
+  - type: input
+    id: revision
+    attributes:
+      label: Exact revision and dirty state
+      description: Full Git commit SHA, branch, and whether local changes are present; include a safe patch reference when relevant.
+    validations:
+      required: true
+  - type: input
+    id: configuration
+    attributes:
+      label: Configuration and target
+      description: Config class and simulator, FPGA board, or other target; use repository tooling if no hardware is involved.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Relevant environment and dependencies
+      description: OS, relevant tool versions, dependency pins, and resource limits. Include only necessary, non-sensitive values.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Exact commands, input hashes or public inputs, seed, timeout, and prerequisites.
+    validations:
+      required: true
+  - type: textarea
+    id: expected_actual
+    attributes:
+      label: Expected and actual results
+      description: Include exit status, failure markers, affected harts/devices, and whether the failure repeats.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Redacted evidence and traceability
+      description: Logs/artifact references and hashes, requirement/test IDs, related issues, and coverage exclusions. Mark unrun checks as not run.
+  - type: checkboxes
+    id: reporting_checks
+    attributes:
+      label: Reporting checks
+      options:
+        - label: I have removed secrets and restricted data from this public report.
+          required: true
+        - label: I distinguish repository checks from hardware execution and do not infer an untested capability.
+          required: true

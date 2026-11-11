@@ -1,0 +1,427 @@
+{
+  "schema_version": 1,
+  "tests": [
+    {
+      "id": "T-REPO-001",
+      "description": "Validate structured project state, requirement/test references, local documentation links, upstream provenance, and project-tool unit tests. This is repository validation only.",
+      "level": "repository",
+      "implementation": "available",
+      "command": "make -f nova.mk check"
+    },
+    {
+      "id": "T-BUILD-001",
+      "description": "From two clean checkouts, reproduce pinned Rocket and NOVA-baseline RTL elaboration and simulator builds; compare declared artifacts and preserve versions, warnings, resource limits, and exclusions.",
+      "level": "elaboration",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-ISA-001",
+      "description": "Execute declared ISA, exception, and MMU tests with a pinned reference model where supported; detect injected mismatches and record unsupported extensions and exclusions.",
+      "level": "simulation",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-HART-001",
+      "description": "Verify two distinct expected harts each execute assigned workloads and reach bounded completion; reject hart-0-only or four-hart-only test coverage.",
+      "level": "simulation",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-RESET-001",
+      "description": "Exercise simultaneous boot, repeated reset, per-hart interrupt delivery, traps, and bounded recovery under concurrent workloads.",
+      "level": "simulation",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-MAP-001",
+      "description": "Compare generated device tree and address map against configured memory regions, permissions, cacheability, alignment, and device ownership.",
+      "level": "elaboration",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-COH-001",
+      "description": "Stress dirty-line exchange, eviction, false sharing, simultaneous atomics, LR/SC, and forward progress across both harts with deterministic seeds and timeout diagnostics.",
+      "level": "simulation",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-ORDER-001",
+      "description": "Run declared memory-ordering litmus and release/acquire message-passing tests; compare allowed outcomes against the chosen architectural model.",
+      "level": "simulation",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-LINUX-001",
+      "description": "Rebuild firmware and Linux images, boot repeatedly, enumerate both harts and devices, schedule work on each hart, and test concurrent load and reboot recovery.",
+      "level": "simulation",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-CPU-PERF-001",
+      "description": "Compare baseline and one original CPU change with identical workloads, inputs, toolchains, memory models, and correctness checks; publish distributions, regressions, and relevant area/timing estimates.",
+      "level": "simulation",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-NPU-NUM-001",
+      "description": "Compare integrated accelerator kernels and an end-to-end inference workload with software-reference results using declared data types and tolerances; cover randomized shapes, overflow, and boundaries.",
+      "level": "simulation",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-NPU-MEM-001",
+      "description": "Verify accelerator command completion, dirty-buffer ownership, backpressure, invalid accesses, reset interruption, and timeout recovery in the NOVA integration.",
+      "level": "simulation",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-GPU-EXEC-001",
+      "description": "Execute submitted kernels through the integrated GPU bridge and driver, check results against references, and exercise invalid commands, faults, completion, and bounded recovery.",
+      "level": "simulation",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-DMA-001",
+      "description": "Validate CPU-to-accelerator-to-CPU transfers under dirty caches and concurrent traffic using the declared coherent or explicitly managed noncoherent contract; include partial transfers and transaction-ID pressure.",
+      "level": "simulation",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-ISOLATION-001",
+      "description": "Verify all claimed firmware, debug, memory-translation, and DMA isolation boundaries with unauthorized accesses and hostile descriptors; explicitly report absent protections.",
+      "level": "simulation",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-FPGA-001",
+      "description": "On the named physical board, record bitstream hash, FPGA part, tool versions, resources, timing closure, memory tests, boot logs, both-hart execution, and repeated fault/reset recovery.",
+      "level": "fpga",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-CDC-001",
+      "description": "Review clock/reset domains and crossings with constraints and tool reports; exercise reset sequencing and asynchronous-interface recovery for the chosen implementation.",
+      "level": "physical_design",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-POWER-001",
+      "description": "Validate declared clock/power-state transitions and state-retention rules, then evaluate power using a documented estimation or measurement method; keep FPGA, ASIC estimate, and silicon evidence separate.",
+      "level": "physical_design",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-PHY-001",
+      "description": "Validate the selected physical memory controller/PHY and I/O implementation against its approved technology or board constraints, calibration, error handling, and sustained data-integrity tests.",
+      "level": "fpga",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-ASIC-001",
+      "description": "Reproduce the selected technology-specific synthesis and physical flow with pinned PDK/library/macros, constraints, timing corners, equivalence approach, and explicit DRC/LVS/DFT/power-integrity gaps.",
+      "level": "physical_design",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-RELEASE-001",
+      "description": "Independently review the selected release profile, required gates, reproducibility artifacts, requirements coverage, unresolved issues, dependency licenses, and scoped capability claims.",
+      "level": "review",
+      "implementation": "planned",
+      "command": null
+    },
+    {
+      "id": "T-AUTH-001",
+      "description": "For a research-only release, explicitly record that fabrication is not authorized. For an actual fabrication proposal, separately review authorized IP, foundry access, signoff ownership, packaging, test, budget, and logistics; research-release approval cannot substitute for that decision.",
+      "level": "review",
+      "implementation": "planned",
+      "command": null
+    }
+  ],
+  "requirements": [
+    {
+      "id": "REQ-REPO-001",
+      "title": "Preserve upstream notices and pinned dependency provenance",
+      "gate": "G0",
+      "priority": "must",
+      "owner_role": "maintainer",
+      "status": "planned",
+      "design_doc": "docs/nova/GOVERNANCE.md",
+      "tests": [
+        "T-REPO-001"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "REQ-REPO-002",
+      "title": "Maintain traceability and offline foundation checks without hardware qualification claims",
+      "gate": "G0",
+      "priority": "must",
+      "owner_role": "verification lead",
+      "status": "planned",
+      "design_doc": "docs/nova/VERIFICATION.md",
+      "tests": [
+        "T-REPO-001"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "REQ-BUILD-001",
+      "title": "Reproduce the unmodified Rocket and named NOVA baseline builds",
+      "gate": "G1",
+      "priority": "must",
+      "owner_role": "build maintainer",
+      "status": "planned",
+      "design_doc": "docs/nova/DEVELOPMENT.md",
+      "tests": [
+        "T-BUILD-001"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "REQ-CPU-001",
+      "title": "Verify supported instruction and exception behavior against a declared reference",
+      "gate": "G1",
+      "priority": "must",
+      "owner_role": "CPU verification lead",
+      "status": "planned",
+      "design_doc": "docs/nova/CPU.md",
+      "tests": [
+        "T-ISA-001"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "REQ-CPU-002",
+      "title": "Verify every heterogeneous hart, interrupt delivery, boot, and reset recovery",
+      "gate": "G2",
+      "priority": "must",
+      "owner_role": "CPU verification lead",
+      "status": "planned",
+      "design_doc": "docs/nova/CPU.md",
+      "tests": [
+        "T-HART-001",
+        "T-ISA-001",
+        "T-RESET-001"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "REQ-MEM-001",
+      "title": "Publish and verify the elaborated address and cacheability map",
+      "gate": "G3",
+      "priority": "must",
+      "owner_role": "memory-system lead",
+      "status": "planned",
+      "design_doc": "docs/nova/MEMORY.md",
+      "tests": [
+        "T-MAP-001"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "REQ-MEM-002",
+      "title": "Verify coherence, atomic forward progress, and architectural memory ordering",
+      "gate": "G3",
+      "priority": "must",
+      "owner_role": "memory verification lead",
+      "status": "planned",
+      "design_doc": "docs/nova/MEMORY.md",
+      "tests": [
+        "T-COH-001",
+        "T-ORDER-001"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "REQ-PLAT-001",
+      "title": "Reproduce firmware and Linux boot with both harts and matching device descriptions",
+      "gate": "G3",
+      "priority": "must",
+      "owner_role": "platform software lead",
+      "status": "planned",
+      "design_doc": "docs/nova/PLATFORM.md",
+      "tests": [
+        "T-LINUX-001"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "REQ-CPU-004",
+      "title": "Evaluate original CPU performance changes with matched baselines",
+      "gate": "G4",
+      "priority": "must",
+      "owner_role": "CPU architecture lead",
+      "status": "planned",
+      "design_doc": "docs/nova/BENCHMARKS.md",
+      "tests": [
+        "T-CPU-PERF-001",
+        "T-ISA-001"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "REQ-NPU-001",
+      "title": "Verify integrated Gemmini numerical behavior and end-to-end results",
+      "gate": "G5",
+      "priority": "must",
+      "owner_role": "accelerator verification lead",
+      "status": "planned",
+      "design_doc": "docs/nova/ACCELERATORS.md",
+      "tests": [
+        "T-NPU-NUM-001"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "REQ-NPU-002",
+      "title": "Verify accelerator memory ownership, completion, faults, and recovery",
+      "gate": "G5",
+      "priority": "must",
+      "owner_role": "accelerator integration lead",
+      "status": "planned",
+      "design_doc": "docs/nova/ACCELERATORS.md",
+      "tests": [
+        "T-NPU-MEM-001",
+        "T-DMA-001"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "REQ-GPU-001",
+      "title": "Validate the integrated GPU and limit graphics claims to tested workloads and APIs",
+      "gate": "G6",
+      "priority": "must",
+      "owner_role": "GPU integration lead",
+      "status": "planned",
+      "design_doc": "docs/nova/ACCELERATORS.md",
+      "tests": [
+        "T-GPU-EXEC-001"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "REQ-DMA-001",
+      "title": "Specify and verify coherent or explicitly managed noncoherent accelerator transfers",
+      "gate": "G6",
+      "priority": "must",
+      "owner_role": "memory-system lead",
+      "status": "planned",
+      "design_doc": "docs/nova/MEMORY.md",
+      "tests": [
+        "T-DMA-001"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "REQ-SEC-001",
+      "title": "Qualify every advertised boot, debug, translation, and DMA isolation boundary",
+      "gate": "G7",
+      "priority": "must",
+      "owner_role": "security verification lead",
+      "status": "planned",
+      "design_doc": "docs/nova/PLATFORM.md",
+      "tests": [
+        "T-ISOLATION-001"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "REQ-FPGA-001",
+      "title": "Validate the physical FPGA profile, close timing, and review clock/reset crossings",
+      "gate": "G7",
+      "priority": "must",
+      "owner_role": "FPGA integration lead",
+      "status": "planned",
+      "design_doc": "docs/nova/POWER_PHYSICAL.md",
+      "tests": [
+        "T-FPGA-001",
+        "T-CDC-001"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "REQ-PHY-001",
+      "title": "Validate physical memory and I/O interfaces instead of substituting simulation models",
+      "gate": "G7",
+      "priority": "must",
+      "owner_role": "platform hardware lead",
+      "status": "planned",
+      "design_doc": "docs/nova/POWER_PHYSICAL.md",
+      "tests": [
+        "T-PHY-001"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "REQ-PWR-001",
+      "title": "Validate implemented power-state controls and separate estimation from measurement",
+      "gate": "G8",
+      "priority": "must",
+      "owner_role": "power implementation lead",
+      "status": "planned",
+      "design_doc": "docs/nova/POWER_PHYSICAL.md",
+      "tests": [
+        "T-POWER-001"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "REQ-ASIC-001",
+      "title": "Reproduce technology-specific implementation and expose all signoff gaps",
+      "gate": "G8",
+      "priority": "must",
+      "owner_role": "physical implementation lead",
+      "status": "planned",
+      "design_doc": "docs/nova/POWER_PHYSICAL.md",
+      "tests": [
+        "T-ASIC-001"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "REQ-REL-001",
+      "title": "Release only a reviewed profile with complete reproducibility and evidence records",
+      "gate": "G9",
+      "priority": "must",
+      "owner_role": "release maintainer",
+      "status": "planned",
+      "design_doc": "docs/nova/RELEASES.md",
+      "tests": [
+        "T-RELEASE-001"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "REQ-REL-002",
+      "title": "Keep fabrication authorization separate from a research release",
+      "gate": "G9",
+      "priority": "must",
+      "owner_role": "project maintainer",
+      "status": "planned",
+      "design_doc": "docs/nova/RELEASES.md",
+      "tests": [
+        "T-AUTH-001"
+      ],
+      "evidence": []
+    }
+  ]
+}

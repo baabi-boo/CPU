@@ -1,0 +1,252 @@
+{
+  "schema_version": 1,
+  "upstream": {
+    "repository": "https://github.com/ucb-bar/chipyard",
+    "commit": "a7946ede9bd625204435715dc40c750e2f8a251f"
+  },
+  "preserved_blobs": {
+    "README.chipyard.md": "84e845f14dbf18da23eb4802d0b737f5f0984fb0",
+    "docs/nova/upstream/CONTRIBUTING.chipyard.md": "4b602be7b861cc23df3e518080f9d4e554c77a45",
+    "LICENSE": "251d54f64481ee8dafed7c356f513227d15c4d5c",
+    "LICENSE.SiFive": "7e709337548a437d5ac680af73c15c1a38a28d0e",
+    "conda-reqs/chipyard-base.yaml": "b9cf66700eb4042b4a911f252286910f54c8b902",
+    "conda-reqs/chipyard-extended.yaml": "1c608edbb2f5d5e40cc84405ea533acf3f942b0e",
+    "conda-reqs/circt.json": "020fe373a3071bc848c089d9e4e764c31b632a59",
+    "conda-reqs/conda-lock-reqs/conda-requirements-riscv-tools-linux-64-lean.conda-lock.yml": "ef614ffa71068d7b73ae15ad961fd367841e8d67",
+    "conda-reqs/conda-lock-reqs/conda-requirements-riscv-tools-linux-64.conda-lock.yml": "9c964035fe7db0ea8d2d5da3e8bb5850f5793d38",
+    "conda-reqs/conda-lock-reqs/conda-requirements-riscv-tools-linux-aarch64-lean.conda-lock.yml": "1ec7ba3cb523c2392d3618fd64cc9fd5219857b1",
+    "conda-reqs/conda-lock-reqs/conda-requirements-riscv-tools-linux-aarch64.conda-lock.yml": "2c507c7f366ded5a41da772d1921de8b7366fd5e",
+    "conda-reqs/docs.yaml": "995864a6a4c7805cac0bb51f9f14cf6b7e322166",
+    "conda-reqs/riscv-tools.yaml": "6e1a95593f1bd5c91442ea2fab8d4e973ff0ccf2"
+  },
+  "submodules": [
+    {
+      "path": "fpga/fpga-shells",
+      "commit": "a4823d360d9c736173ff75e7a5c643a7258cda08"
+    },
+    {
+      "path": "generators/ara",
+      "commit": "96daf15d3c54ac4975ea2bdc869f95bccdf90a1e"
+    },
+    {
+      "path": "generators/bar-fetchers",
+      "commit": "bd02692fe6cb5197df90dc39051d31369ef61fcd"
+    },
+    {
+      "path": "generators/boom",
+      "commit": "ba03175e0a3cf5c0d5a7f14d385ac1c8998c4428"
+    },
+    {
+      "path": "generators/caliptra-aes-acc",
+      "commit": "642dbdf07b59c96059142e3e9b9d4ad89097a5a6"
+    },
+    {
+      "path": "generators/compress-acc",
+      "commit": "bf5123307d7b5bc932dc9192355d28ae30b27835"
+    },
+    {
+      "path": "generators/constellation",
+      "commit": "c1b42cd0c7c7d6e4fc1ed9bf1f86fbd3b31ac510"
+    },
+    {
+      "path": "generators/cva6",
+      "commit": "187ed3cd126c68659f446c963599525c2bf58420"
+    },
+    {
+      "path": "generators/diplomacy",
+      "commit": "fe5e131d4fc8adec14a3ce4a4935bb5c0a269871"
+    },
+    {
+      "path": "generators/fft-generator",
+      "commit": "e361f229b5574931f555b10e1b48f2769c07832c"
+    },
+    {
+      "path": "generators/gemmini",
+      "commit": "b82d49cca798a59f010488a6f6de7243f0616536"
+    },
+    {
+      "path": "generators/hardfloat",
+      "commit": "0ecaef097ce2accbd16a61613699450ed5533f29"
+    },
+    {
+      "path": "generators/ibex",
+      "commit": "5129576841529ee5581e038e0678de972baf1e76"
+    },
+    {
+      "path": "generators/icenet",
+      "commit": "61d2925b9d57df189ab8d801eb81185040251249"
+    },
+    {
+      "path": "generators/mempress",
+      "commit": "de90faa3b4e01f4ca76c592367c5c19b774ac8e8"
+    },
+    {
+      "path": "generators/nvdla",
+      "commit": "d99ffdc79bbf9b86c6cad0c278a785d5802c8209"
+    },
+    {
+      "path": "generators/pmu",
+      "commit": "079b96f7b9a0cc5fe405f9bd713741bd64430fdc"
+    },
+    {
+      "path": "generators/radiance",
+      "commit": "917c95cdb6d698c4fd267ccab2602e283d2ca6c3"
+    },
+    {
+      "path": "generators/rerocc",
+      "commit": "8b672f4e836c111d09e135e8981b611d120692de"
+    },
+    {
+      "path": "generators/riscv-sodor",
+      "commit": "910a2e83ce206e86372927ec3e0b8056953f7d95"
+    },
+    {
+      "path": "generators/rocc-acc-utils",
+      "commit": "33ea77110ca9c28c5c7eb3c6b67ae74096ea8b37"
+    },
+    {
+      "path": "generators/rocket-chip",
+      "commit": "ece7b9ad544b07df39cd13b6fd7236562a26355d"
+    },
+    {
+      "path": "generators/rocket-chip-blocks",
+      "commit": "f8c7fddbd7639b15fefc968af59fcc4a8f7df73b"
+    },
+    {
+      "path": "generators/rocket-chip-inclusive-cache",
+      "commit": "27df9284e60136a6f7f1b19224dfbe99d112ea77"
+    },
+    {
+      "path": "generators/saturn",
+      "commit": "8c5115c1900432433c6f68f1039fc482b24413d6"
+    },
+    {
+      "path": "generators/shuttle",
+      "commit": "622f08b9fd3697e3fd75e7799885ecdf9e2f13f2"
+    },
+    {
+      "path": "generators/tacit",
+      "commit": "fe61365292ef1fa60410a2a91c48a3e3d22b1a75"
+    },
+    {
+      "path": "generators/testchipip",
+      "commit": "555ff3fbc12f81a8feff7a4801930fb384ddd2ae"
+    },
+    {
+      "path": "generators/vexiiriscv",
+      "commit": "c82fcfcd5cad4a416987ed12aef75b45a7892b5c"
+    },
+    {
+      "path": "sims/firesim",
+      "commit": "e1bdea8bb042b900995436ecc3d7c44100eb9da0"
+    },
+    {
+      "path": "software/baremetal-ide",
+      "commit": "0eb41e63fb48f7c8f8c217a6730340e2f9cc1541"
+    },
+    {
+      "path": "software/coremark",
+      "commit": "4aa835c74a8cccea2ca09456c47768c84038469a"
+    },
+    {
+      "path": "software/embench/embench-iot",
+      "commit": "d9b30cdf805133bef9db5f7ecf84ae1ce8124291"
+    },
+    {
+      "path": "software/firemarshal",
+      "commit": "61fae80f49b97366254720f3b07ee8f8da762799"
+    },
+    {
+      "path": "software/firesim-paper-workloads",
+      "commit": "172265a3c74fc6dcd492cb3753ee21a319cffdcc"
+    },
+    {
+      "path": "software/nvdla-workload",
+      "commit": "30290c3ed8014577fa2ad234fa1b731a082299fb"
+    },
+    {
+      "path": "software/spec2017",
+      "commit": "83e33110472c47aaa762257ed7c053ff1278834c"
+    },
+    {
+      "path": "software/spec2026",
+      "commit": "5f910f0fddadade8d37a0628d475c129aff096e3"
+    },
+    {
+      "path": "software/tacit_decoder",
+      "commit": "acbbd2e2e5344548a464460bff9ee9b9ff437209"
+    },
+    {
+      "path": "software/zephyrproject/zephyr",
+      "commit": "cd45a528d3bf81f9c7aa2a63f9fe512eee0881b0"
+    },
+    {
+      "path": "toolchains/libgloss",
+      "commit": "177ce07db657bd674286d4aa06443166d33135e5"
+    },
+    {
+      "path": "toolchains/riscv-tools/riscv-isa-sim",
+      "commit": "9c190a07c6838f6392bafa4ad83acea462c7f759"
+    },
+    {
+      "path": "toolchains/riscv-tools/riscv-openocd",
+      "commit": "8f59570468edcf53854d2fd6dabf57b8db7d23c9"
+    },
+    {
+      "path": "toolchains/riscv-tools/riscv-pk",
+      "commit": "9c61d29846d8521d9487a57739330f9682d5b542"
+    },
+    {
+      "path": "toolchains/riscv-tools/riscv-spike-devices",
+      "commit": "887b868db313805c7163f7cc519a7b9e74d92c98"
+    },
+    {
+      "path": "toolchains/riscv-tools/riscv-tests",
+      "commit": "0494f954a3d8d2ca9e4972da7a01e94b6a909bce"
+    },
+    {
+      "path": "toolchains/riscv-tools/riscv-tools-feedstock",
+      "commit": "56c29e01ba3e705c563edd1271a387119bddb5a5"
+    },
+    {
+      "path": "tools/DRAMSim2",
+      "commit": "44322e2f935d7dac83b7adf8dd270b41a54c6acb"
+    },
+    {
+      "path": "tools/axe",
+      "commit": "4a7cf86960425fbf0b6224865b745ff511dc5742"
+    },
+    {
+      "path": "tools/cde",
+      "commit": "2bcaeae2b9914bd25497ce3c6fa62dc5ca80e09f"
+    },
+    {
+      "path": "tools/circt",
+      "commit": "481cb60add7358934414a3c6b396f5d29ad934fe"
+    },
+    {
+      "path": "tools/dsptools",
+      "commit": "a310a157cab6e569d30741eae4ca5592069cab7c"
+    },
+    {
+      "path": "tools/firrtl2",
+      "commit": "09156cae09cb37c530322c6005649d2380c3eb0e"
+    },
+    {
+      "path": "tools/fixedpoint",
+      "commit": "ef164009e40ce5a5abe61ebcc11c12ff82e34014"
+    },
+    {
+      "path": "tools/install-circt",
+      "commit": "3f8dda6e1c1965537b5801a43c81c287bac4eae4"
+    },
+    {
+      "path": "tools/rocket-dsp-utils",
+      "commit": "6ee2309f80a54b404795f227793d2a54e1dfadf8"
+    },
+    {
+      "path": "tools/torture",
+      "commit": "b2b66a66d51b360e0ae95017774d03377c78c574"
+    }
+  ]
+}

@@ -23,7 +23,8 @@ concurrency:
 jobs:
   check-ci-disable:
     name: check-ci-disable
-    if: ${{ github.event.pull_request.user.login != 'dependabot[bot]' }}
+    # Preserve upstream CI without launching its heavy jobs in downstream projects.
+    if: ${{ github.repository == 'ucb-bar/chipyard' && github.event.pull_request.user.login != 'dependabot[bot]' }}
     uses: ./.github/workflows/check-ci-disable.yml
     with:
       pr_number: ${{ github.event.pull_request.number }}

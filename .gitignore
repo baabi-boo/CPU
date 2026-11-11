@@ -31,3 +31,8 @@ project/project/
 .vscode/
 tests/build/
 conda-reqs/chipyard-base.yaml.bak
+
+# NOVA local tooling outputs; evidence committed for review must be curated.
+/nova-out/
+/scripts/nova/__pycache__/
+/tests/nova/__pycache__/

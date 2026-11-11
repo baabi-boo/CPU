@@ -1,103 +1,137 @@
-![CHIPYARD](https://github.com/ucb-bar/chipyard/raw/main/docs/_static/images/chipyard-logo-full.png)
+# NOVA-M1
 
-# Chipyard framework
-<!-- [![Test](https://github.com/ucb-bar/chipyard/actions/workflows/chipyard-run-tests.yml/badge.svg)](https://github.com/ucb-bar/chipyard/actions) -->
+**An open RISC-V system-on-chip research project, built on Chipyard.**
 
-## Quick Links
+NOVA-M1 explores heterogeneous CPU clusters, shared memory, graphics, and AI
+acceleration as an integrated computing platform. Its inspiration is the
+system-level integration of Apple's M-series—not Apple's instruction set,
+proprietary designs, software compatibility, or performance claims.
 
-* **Latest Documentation**: https://chipyard.readthedocs.io/
-* **User Question Forum**: https://groups.google.com/forum/#!forum/chipyard
-* **Bugs and Feature Requests**: https://github.com/ucb-bar/chipyard/issues
+The long-term goal is a verifiable SoC architecture with reproducible simulation,
+measured design trade-offs, an FPGA prototype, and a separately reviewed path
+toward physical implementation.
 
-## Using Chipyard
+## Current status: engineering foundation
 
-To get started using Chipyard, see the documentation on the Chipyard documentation site: https://chipyard.readthedocs.io/
+This repository contains the engineering foundation for long-term development.
+**No NOVA-specific hardware qualification has been completed by this setup.**
 
-## What is Chipyard
+| Area | Current evidence |
+| --- | --- |
+| Chipyard foundation | Inherited source and pinned dependency references |
+| NOVA documentation and tooling | Implemented foundation with repository-only tests; see the status record |
+| NOVA configuration classes | Source scaffolds; HDL elaboration and execution unverified |
+| Mixed-core correctness and Linux boot | Not yet demonstrated for NOVA |
+| GPU/NPU integration and coherent accelerator memory | Planned, not validated integrations |
+| FPGA, ASIC, power, and performance results | No NOVA measurements or qualification |
 
-Chipyard is an open source framework for agile development of Chisel-based systems-on-chip.
-It will allow you to leverage the Chisel HDL, Rocket Chip SoC generator, and other [Berkeley][berkeley] projects to produce a [RISC-V][riscv] SoC with everything from MMIO-mapped peripherals to custom accelerators.
-Chipyard contains processor cores ([Rocket][rocket-chip], [BOOM][boom], [CVA6 (Ariane)][cva6]), vector units ([Saturn][saturn], [Ara][ara]), accelerators ([Gemmini][gemmini], [NVDLA][nvdla]), memory systems, and additional peripherals and tooling to help create a full featured SoC.
-Chipyard supports multiple concurrent flows of agile hardware development, including software RTL simulation, FPGA-accelerated simulation ([FireSim][firesim]), automated VLSI flows ([Hammer][hammer]), and software workload generation for bare-metal and Linux-based systems ([FireMarshal][firemarshal]).
-Chipyard is actively developed in the [Berkeley Architecture Research Group][ucb-bar] in the [Electrical Engineering and Computer Sciences Department][eecs] at the [University of California, Berkeley][berkeley].
+See [STATUS](docs/nova/STATUS.md) for the authoritative evidence state and
+[ROADMAP](docs/nova/ROADMAP.md) for milestone acceptance criteria. Passing
+repository checks does **not** establish processor correctness, achieved clock
+frequency, energy efficiency, or tapeout readiness.
 
-## Resources
+## Architecture direction
 
-* Chipyard Documentation: https://chipyard.readthedocs.io/
-* Chipyard (x FireSim) Tutorial: https://fires.im/tutorial-recent/
-* Chipyard Basics slides: https://fires.im/asplos23-slides-pdf/02_chipyard_basics.pdf
+| Subsystem | Initial approach | Engineering boundary |
+| --- | --- | --- |
+| CPU complex | Rocket baseline, then a BOOM v3 + Rocket configuration | Reuse upstream cores first; validate every hart |
+| Memory system | Chipyard coherent CPU interconnect and shared-cache infrastructure | Record the generated map and actual simulation model |
+| AI acceleration | Investigate Gemmini integration | Require numerical correctness and a defined memory contract |
+| GPU | Evaluate an open GPU, including Vortex | Selection, integration, drivers, and coherence remain research work |
+| Platform | Boot firmware, interrupts, debug, and basic I/O | Establish reproducible bare-metal execution before system expansion |
+| Power and physical design | Later FPGA and technology-specific ASIC studies | FPGA operation and estimated power are not measured ASIC performance |
 
-## Need help?
+BOOM and Rocket are candidate roles for heterogeneous computing. They are not
+a demonstrated Apple-like performance/efficiency pair. In particular, the
+inherited mixed-core configuration uses a large Rocket configuration; calling it
+an “efficiency core” requires area, power, and workload evidence.
 
-* Join the Chipyard Mailing List: https://groups.google.com/forum/#!forum/chipyard
-* If you find a bug or would like propose a feature, post an issue on this repo: https://github.com/ucb-bar/chipyard/issues
+Shared physical DRAM is only one part of a unified-memory design. CPU–GPU
+coherence, DMA ownership, address translation, isolation, and driver behavior
+must each be specified and tested.
 
-## Contributing
+Read the [architecture specification](docs/nova/ARCHITECTURE.md) and
+[project charter](docs/nova/CHARTER.md) before changing the design.
 
-* See [CONTRIBUTING.md](/CONTRIBUTING.md)
+## Initial configuration scaffolds
 
-## Attribution and Chipyard-related Publications
+These names establish stable NOVA entry points while minimizing upstream
+divergence. They do not represent original CPU microarchitectures.
 
-If used for research, please cite Chipyard by the following publication:
+| Configuration | Upstream basis | Intended use |
+| --- | --- | --- |
+| `NovaM1BaselineConfig` | `RocketConfig` | Single-core build and execution baseline |
+| `NovaM1MinimalConfig` | `LargeBoomAndRocketConfig` | One BOOM v3 + one Rocket heterogeneous experiment |
 
+**Both NOVA configurations are unverified until their elaboration and execution
+evidence is recorded.** A successful Scala compilation would not, by itself,
+qualify either configuration.
+
+## Getting started
+
+Clone the project without initializing every optional hardware dependency:
+
+```bash
+git clone https://github.com/baabi-boo/CPU.git nova-m1 &&
+cd nova-m1 &&
+make -f nova.mk check
 ```
-@article{chipyard,
-  author={Amid, Alon and Biancolin, David and Gonzalez, Abraham and Grubb, Daniel and Karandikar, Sagar and Liew, Harrison and Magyar,   Albert and Mao, Howard and Ou, Albert and Pemberton, Nathan and Rigge, Paul and Schmidt, Colin and Wright, John and Zhao, Jerry and Shao, Yakun Sophia and Asanovi\'{c}, Krste and Nikoli\'{c}, Borivoje},
-  journal={IEEE Micro},
-  title={Chipyard: Integrated Design, Simulation, and Implementation Framework for Custom SoCs},
-  year={2020},
-  volume={40},
-  number={4},
-  pages={10-21},
-  doi={10.1109/MM.2020.2996616},
-  ISSN={1937-4143},
-}
-```
 
-* **Chipyard**
-    * A. Amid, et al. *IEEE Micro'20* [PDF](https://ieeexplore.ieee.org/document/9099108).
-    * A. Amid, et al. *DAC'20* [PDF](https://ieeexplore.ieee.org/document/9218756).
-    * A. Amid, et al. *ISCAS'21* [PDF](https://ieeexplore.ieee.org/abstract/document/9401515).
+The lightweight check target is intended for repository metadata, documentation,
+and project-tool tests. It does not install a hardware toolchain or simulate a
+processor. Its result must be kept separate from hardware validation.
 
-These additional publications cover many of the internal components used in Chipyard. However, for the most up-to-date details, users should refer to the Chipyard docs.
+For toolchain preparation, diagnostic preflight, source configurations, and
+explicit simulation commands, follow [DEVELOPMENT](docs/nova/DEVELOPMENT.md).
+Expensive simulation, FPGA, and ASIC jobs are opt-in and resource-bounded.
 
-* **Generators**
-    * **Rocket Chip**: K. Asanovic, et al., *UCB EECS TR*. [PDF](http://www2.eecs.berkeley.edu/Pubs/TechRpts/2016/EECS-2016-17.pdf).
-    * **BOOM**: C. Celio, et al., *Hot Chips 30*. [PDF](https://old.hotchips.org/hc30/1conf/1.03_Berkeley_BROOM_HC30.Berkeley.Celio.v02.pdf).
-      * **SonicBOOM (BOOMv3)**: J. Zhao, et al., *CARRV'20*. [PDF](https://carrv.github.io/2020/papers/CARRV2020_paper_15_Zhao.pdf).
-      * **COBRA (BOOM Branch Prediction)**: J. Zhao, et al., *ISPASS'21*. [PDF](https://ieeexplore.ieee.org/document/9408173).
-    * **Gemmini**: H. Genc, et al., *DAC'21*. [PDF](https://arxiv.org/pdf/1911.09925).
-* **Sims**
-    * **FireSim**: S. Karandikar, et al., *ISCA'18*. [PDF](https://sagark.org/assets/pubs/firesim-isca2018.pdf).
-        * **FireSim Micro Top Picks**: S. Karandikar, et al., *IEEE Micro, Top Picks 2018*. [PDF](https://sagark.org/assets/pubs/firesim-micro-top-picks2018.pdf).
-        * **FASED**: D. Biancolin, et al., *FPGA'19*. [PDF](https://people.eecs.berkeley.edu/~biancolin/papers/fased-fpga19.pdf).
-        * **Golden Gate**: A. Magyar, et al., *ICCAD'19*. [PDF](https://davidbiancolin.github.io/papers/goldengate-iccad19.pdf).
-        * **FirePerf**: S. Karandikar, et al., *ASPLOS'20*. [PDF](https://sagark.org/assets/pubs/fireperf-asplos2020.pdf).
-        * **FireSim ISCA@50 Retrospective**: S. Karandikar, et al., *ISCA@50 Retrospective: 1996-2020*. [PDF](https://sites.coecis.cornell.edu/isca50retrospective/files/2023/06/Karandikar_2018_FireSim.pdf)
-* **Tools**
-    * **Chisel**: J. Bachrach, et al., *DAC'12*. [PDF](https://people.eecs.berkeley.edu/~krste/papers/chisel-dac2012.pdf).
-    * **FIRRTL**: A. Izraelevitz, et al., *ICCAD'17*. [PDF](https://ieeexplore.ieee.org/document/8203780).
-    * **Chisel DSP**: A. Wang, et al., *DAC'18*. [PDF](https://ieeexplore.ieee.org/document/8465790).
-    * **FireMarshal**: N. Pemberton, et al., *ISPASS'21*. [PDF](https://ieeexplore.ieee.org/document/9408192).
-* **VLSI**
-    * **Hammer**: E. Wang, et al., *ISQED'20*. [PDF](https://www.isqed.org/English/Archives/2020/Technical_Sessions/113.html).
-    * **Hammer**: H. Liew, et al., *DAC'22*. [PDF](https://dl.acm.org/doi/abs/10.1145/3489517.3530672).
+The first hardware milestone is a reproducible Rocket baseline. The next is
+the mixed-core configuration with verified hart IDs, per-hart execution,
+interrupts, reset behavior, atomic operations, and memory coherence. A test
+that runs only on hart 0 cannot qualify a heterogeneous system.
 
-## Acknowledgements
+## Engineering documentation
 
-This work is supported by the NSF CCRI ENS Chipyard Award #2016662.
+- [Complete documentation index](docs/nova/README.md): subsystem specifications,
+  development workflow, evidence templates, and the first-contribution route.
+- [Charter and scope](docs/nova/CHARTER.md): goals, non-goals, and success criteria.
+- [Roadmap](docs/nova/ROADMAP.md): gated deliverables and go/no-go decisions.
+- [Architecture](docs/nova/ARCHITECTURE.md): subsystem contracts and design boundaries.
+- [Development guide](docs/nova/DEVELOPMENT.md): reproducible local workflow.
+- [Verification strategy](docs/nova/VERIFICATION.md): requirements, tests, and evidence.
+- [Status](docs/nova/STATUS.md): what is planned, implemented, and demonstrated.
+- [Bootstrap review](docs/nova/BOOTSTRAP_REVIEW.md): review scope, executed checks,
+  findings, and remaining qualification limits.
+- [Contributing](CONTRIBUTING.md): review, change control, and attribution rules.
 
-[hammer]:https://github.com/ucb-bar/hammer
-[firesim]:https://fires.im
-[ucb-bar]: http://bar.eecs.berkeley.edu
-[eecs]: https://eecs.berkeley.edu
-[berkeley]: https://berkeley.edu
-[riscv]: https://riscv.org/
-[rocket-chip]: https://github.com/freechipsproject/rocket-chip
-[boom]: https://github.com/riscv-boom/riscv-boom
-[firemarshal]: https://github.com/firesim/FireMarshal/
-[cva6]: https://github.com/openhwgroup/cva6/
-[gemmini]: https://github.com/ucb-bar/gemmini
-[nvdla]: http://nvdla.org/
-[saturn]: https://github.com/ucb-bar/saturn-vectors
-[ara]: https://github.com/pulp-platform/ara
+A capability claim must identify its revision, configuration, dependencies,
+commands, result, and reviewable artifacts. Simulation, FPGA validation, and
+silicon measurements are separate evidence levels.
+
+## Contributing and reporting problems
+
+Use small topic branches and pull requests, preserve dependency pins, and include
+test evidence and known limitations. Read [CONTRIBUTING](CONTRIBUTING.md) and
+[AGENTS](AGENTS.md) before working in the repository.
+
+Report NOVA-specific problems in [this repository's issue tracker](https://github.com/baabi-boo/CPU/issues).
+Do not send unisolated NOVA integration problems to upstream projects.
+
+## Chipyard provenance and licensing
+
+NOVA-M1 starts from [UC Berkeley Chipyard](https://github.com/ucb-bar/chipyard)
+at commit `a7946ede9bd625204435715dc40c750e2f8a251f`.
+The original [Chipyard README](README.chipyard.md), including its acknowledgements
+and research bibliography, is preserved. The existing [LICENSE](LICENSE),
+[LICENSE.SiFive](LICENSE.SiFive), and dependency notices remain applicable to
+their respective materials; the root license is not a blanket license for all
+submodules.
+
+See [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES.md) for attribution and dependency
+provenance. The [Chipyard documentation](https://chipyard.readthedocs.io/) is a
+reference for the underlying framework; pinned source and NOVA evidence govern
+this project's claims.
+
+NOVA-M1 is independent of Apple. “M-series-inspired” describes a research
+direction, not affiliation, endorsement, Arm/macOS compatibility, or a promise
+of comparable performance.

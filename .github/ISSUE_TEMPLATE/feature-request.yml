@@ -1,27 +1,36 @@
-name: Feature Request
-description: File a feature request
+name: Framework feature proposal (NOVA-M1)
+description: Propose a bounded framework change supporting NOVA-M1.
 labels: ["enhancement"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Propose NOVA-M1 work in this repository; use the NOVA engineering proposal form for detailed architectural changes.
+        Upstream escalation requires an isolated reproducer or clearly isolated framework requirement and maintainer review.
+        Do not attach secrets, full environment dumps, private workloads, or restricted third-party IP.
   - type: checkboxes
+    id: background
     attributes:
       label: Background Work
       description: Yes, I searched the following areas for a prior feature/solution to this problem.
       options:
-        - label: Yes, I searched the [mailing list](https://groups.google.com/forum/#!forum/chipyard)
+        - label: I searched [NOVA-M1 issues](https://github.com/baabi-boo/CPU/issues) for related proposals.
           required: true
-        - label: Yes, I searched the [documentation](https://chipyard.readthedocs.io/)
+        - label: I checked the [NOVA roadmap](https://github.com/baabi-boo/CPU/blob/main/docs/nova/ROADMAP.md) and relevant framework documentation.
           required: true
 
   - type: textarea
+    id: feature
     attributes:
       label: Feature Description
-      description: Description of desired feature.
+      description: Desired change, affected files/interfaces, alternatives, scope exclusions, and relevant requirement or gate IDs. A proposal is not an implemented capability.
     validations:
       required: true
 
   - type: textarea
+    id: acceptance
     attributes:
-      label: Motivating Example
-      description: A concise example demonstrating the feature.
+      label: Motivating example and acceptance criteria
+      description: A public example, measurable objective, positive/negative tests, expected evidence, and bounded resource needs. Any new paid service or hardware access needs maintainer authorization.
     validations:
       required: true

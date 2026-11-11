@@ -1,0 +1,78 @@
+name: NOVA verification evidence
+description: Record a scoped test result or qualification blocker for review.
+title: "[NOVA verification] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A report does not automatically close a roadmap gate. Preserve failures, exclusions, and unrun tests.
+        Do not publish secrets, private memory images, restricted PDK/IP, or exploitable security details.
+  - type: input
+    id: traceability
+    attributes:
+      label: Requirement IDs, test IDs, and gate
+      description: Identify the exact acceptance scope and relevant change or issue.
+    validations:
+      required: true
+  - type: dropdown
+    id: evidence_level
+    attributes:
+      label: Evidence level
+      options:
+        - Repository tooling
+        - Elaborated RTL
+        - Architectural or system simulation
+        - Physical FPGA
+        - ASIC physical implementation
+        - Measured silicon
+        - Review only
+    validations:
+      required: true
+  - type: dropdown
+    id: result
+    attributes:
+      label: Scoped test result
+      options:
+        - not_run
+        - blocked
+        - failed
+        - passed
+    validations:
+      required: true
+  - type: textarea
+    id: configuration
+    attributes:
+      label: Exact reproduction identity
+      description: Git SHA/dirty state, configuration, dependency/tool versions, target, memory model, workload/input hashes, and relevant resource limits.
+    validations:
+      required: true
+  - type: textarea
+    id: execution
+    attributes:
+      label: Commands and observations
+      description: Exact procedure, seed, timeout, expected/observed results, exit status, participating harts, and negative-test result. Explain if not run.
+    validations:
+      required: true
+  - type: textarea
+    id: artifacts
+    attributes:
+      label: Evidence artifacts
+      description: Reviewable redacted logs, traces, reports, hashes, and storage references; include the baseline comparison when applicable.
+    validations:
+      required: true
+  - type: textarea
+    id: limitations
+    attributes:
+      label: Coverage, exclusions, and remaining blockers
+      description: Untested cases, waived items, unsupported features, and the requested reviewer decision. No silent skips.
+    validations:
+      required: true
+  - type: checkboxes
+    id: evidence_checks
+    attributes:
+      label: Evidence checks
+      options:
+        - label: The result is limited to the stated target and scope; repository CI is not HDL, FPGA, or silicon qualification.
+          required: true
+        - label: Public artifacts are redacted and contain no secrets or restricted material.
+          required: true

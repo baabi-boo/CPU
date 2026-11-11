@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "name": "NOVA-M1",
+  "baseline_commit": "a7946ede9bd625204435715dc40c750e2f8a251f",
+  "configurations": [
+    {
+      "name": "NovaM1BaselineConfig",
+      "upstream": "RocketConfig",
+      "status": "implemented_unverified"
+    },
+    {
+      "name": "NovaM1MinimalConfig",
+      "upstream": "LargeBoomAndRocketConfig",
+      "status": "implemented_unverified"
+    }
+  ],
+  "dependency_policy": "depends_on lists unconditional minimum gates. ROADMAP.md defines additional workload-, subsystem-, release-profile-, and claim-dependent acceptance prerequisites and tests; these must be recorded in the gate decision. Any power or energy-efficiency claim requires REQ-PWR-001/T-POWER-001 evidence at the time of the claim, not only at G8.",
+  "milestones": [
+    {
+      "id": "G0",
+      "title": "Engineering foundation",
+      "status": "in_progress",
+      "depends_on": [],
+      "evidence": []
+    },
+    {
+      "id": "G1",
+      "title": "Reproducible Rocket baseline",
+      "status": "planned",
+      "depends_on": [
+        "G0"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "G2",
+      "title": "Verified heterogeneous CPU platform",
+      "status": "planned",
+      "depends_on": [
+        "G1"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "G3",
+      "title": "Coherent memory and Linux platform",
+      "status": "planned",
+      "depends_on": [
+        "G2"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "G4",
+      "title": "Measured original CPU improvement",
+      "status": "planned",
+      "depends_on": [
+        "G2"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "G5",
+      "title": "AI subsystem integration",
+      "status": "planned",
+      "depends_on": [
+        "G3"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "G6",
+      "title": "GPU and shared-memory research",
+      "status": "planned",
+      "depends_on": [
+        "G3"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "G7",
+      "title": "Real FPGA prototype",
+      "status": "planned",
+      "depends_on": [
+        "G2",
+        "G3"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "G8",
+      "title": "ASIC feasibility study",
+      "status": "planned",
+      "depends_on": [
+        "G2"
+      ],
+      "evidence": []
+    },
+    {
+      "id": "G9",
+      "title": "Research release and separate fabrication decision",
+      "status": "planned",
+      "depends_on": [
+        "G0"
+      ],
+      "evidence": []
+    }
+  ]
+}

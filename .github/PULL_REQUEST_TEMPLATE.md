@@ -1,53 +1,37 @@
-<!--
-First, please ensure that the title of your PR is sufficient to include in the next changelog.
-Refer to https://github.com/ucb-bar/chipyard/releases for examples and feel free to ask reviewers for help.
+## Change and scope
 
-Then, make sure to label your PR with one of the changelog:<section> labels to indicate which section
-of the changelog should contain this PR's title:
-  changelog:added
-  changelog:changed
-  changelog:fixed
-  changelog:removed
+<!-- Explain the problem, bounded change, affected configuration/interfaces, and exclusions. -->
 
-If you feel that this PR should not be included in the changelog, you must still label it with
-changelog:omit
+## Traceability and design
 
-Provide a brief description of the PR immediately below this comment, if the title is insufficient -->
+<!-- Requirement/test IDs, roadmap gate, related issues, ADR when needed, and upstream reuse versus original work. -->
 
-**Related PRs / Issues**:
-<!-- List any related PRs/issues here, if applicable -->
+## Validation evidence
 
-<!-- choose one -->
-**Type of change**:
-- [ ] Bug fix
-- [ ] New feature
-- [ ] Other enhancement
+<!-- Exact revision/configuration, commands, results, logs/artifact hashes, and failure-detection tests.
+     Mark blocked/not-run checks explicitly. Separate repository, RTL, simulation, FPGA, and silicon evidence. -->
 
-<!-- choose one -->
-**Impact**:
-- [ ] RTL change
-- [ ] Software change (RISC-V software)
-- [ ] Build system change
-- [ ] Other
+| Check | Result and evidence |
+| --- | --- |
+| `make -f nova.mk check` | |
+| Relevant HDL / target-software tests | |
+| Known limitations / unrun tests | |
 
-<!-- must be filled out completely to be considered for merging -->
-**Contributor Checklist**:
-- [ ] Did you set `main` as the base branch?
-- [ ] Is this PR's title suitable for inclusion in the changelog and have you added a `changelog:<topic>` label?
-- [ ] Did you state the type-of-change/impact?
-- [ ] Did you delete any extraneous prints/debugging code?
-- [ ] Did you mark the PR with a `changelog:` label?
-- [ ] (If applicable) Did you update the conda `.conda-lock.yml` file if you updated the conda requirements file?
-- [ ] (If applicable) Did you add documentation for the feature?
-- [ ] (If applicable) Did you add a test demonstrating the PR?
-<!-- Do this if this PR is a bugfix that should be applied to the latest release -->
-- [ ] (If applicable) Did you mark the PR as `Please Backport`?
+## Risk, resources, and rollback
 
+<!-- Compatibility, dependency changes, runtime/memory/disk budget, external approvals, and rollback plan. -->
 
-**CI Help**:
-Add the following labels to modify the CI for a set of features.
-Generally, a label added only affect subsequent changes to the PR (i.e. new commits, force pushing, closing/reopening).
-See `ci:*` for full list of labels:
-- `ci:fpga-deploy` - Run FPGA-based E2E testing
-- `ci:local-fpga-buildbitstream-deploy` - Build local FPGA bitstreams for platforms that are released
-- `ci:disable` - Disable CI
+## Contributor checklist
+
+- [ ] This change targets `main` through a bounded, reviewable topic branch.
+- [ ] Requirements, design documents, tests, and status records agree with the actual evidence.
+- [ ] Repository checks passed, or their failures/blockers are explicitly recorded above.
+- [ ] Relevant hardware/software tests and negative cases are included; unrun tests are not presented as passes.
+- [ ] Dependency pins and license/notices are preserved, or a reviewed migration and provenance update is supplied.
+- [ ] No secrets, private workloads, restricted PDK/IP, or unredacted sensitive logs are included.
+- [ ] No unverified Apple compatibility/parity, energy-efficiency, coherent-memory, or tapeout claim is introduced.
+- [ ] Any paid service, new runner, device access, or expensive experiment has explicit authorization.
+
+See [CONTRIBUTING.md](../CONTRIBUTING.md), [SECURITY.md](../SECURITY.md), and
+the [verification plan](../docs/nova/VERIFICATION.md). Written policy does not
+itself enable repository protections or approve a hardware gate.

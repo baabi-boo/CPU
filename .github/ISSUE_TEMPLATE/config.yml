@@ -1,14 +1,20 @@
 blank_issues_enabled: false
 contact_links:
+  - name: NOVA-M1 development guide
+    url: https://github.com/baabi-boo/CPU/blob/main/docs/nova/DEVELOPMENT.md
+    about: Start here for NOVA setup and diagnostics; report NOVA problems with this repository's issue forms.
+  - name: NOVA-M1 security reporting
+    url: https://github.com/baabi-boo/CPU/blob/main/SECURITY.md
+    about: Follow this policy before sharing vulnerability details; private reporting availability is not assumed.
   - name: Chipyard Mailing List
     url: https://groups.google.com/forum/#!forum/chipyard
-    about: Please ask and answer questions here.
+    about: For isolated upstream framework questions only; investigate NOVA integration problems here first.
   - name: FireSim Mailing List
     url: https://groups.google.com/forum/#!forum/firesim
-    about: Please ask and answer questions here.
+    about: For an isolated FireSim reproducer after NOVA triage; not a NOVA support destination.
   - name: Rocket Chip Support
     url: https://github.com/chipsalliance/rocket-chip/issues
-    about: Please ask and answer questions here.
+    about: For an isolated Rocket Chip reproducer after NOVA triage; respect its security reporting policy.
   - name: Chisel Support
     url: https://www.chisel-lang.org/community.html
-    about: Please ask and answer questions here.
+    about: For isolated Chisel language questions after checking the NOVA-specific configuration.

@@ -1,0 +1,58 @@
+name: NOVA engineering proposal
+description: Propose a bounded architectural, verification, or tooling change.
+title: "[NOVA proposal] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Proposals are not implemented or qualified capabilities. Link the relevant NOVA roadmap gate and requirements.
+        Keep public evidence free of secrets and restricted third-party material.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and measurable objective
+      description: What limitation is addressed, for which configuration/workload, and how will improvement be evaluated?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Proposed scope and exclusions
+      description: Hardware/software interfaces, alternatives, upstream reuse, original work, and explicit non-goals.
+    validations:
+      required: true
+  - type: textarea
+    id: traceability
+    attributes:
+      label: Requirements, gate, and design decisions
+      description: Existing or proposed requirement/test IDs, affected roadmap gates, dependency decisions, and ADR needs.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria and failure detection
+      description: Reproducible positive/negative tests, expected results, comparison baseline, and required evidence level.
+    validations:
+      required: true
+  - type: textarea
+    id: resources
+    attributes:
+      label: Dependencies, risks, and resource budget
+      description: Tools, licenses/IP, memory/disk/runtime, hardware/services, authorization needs, and a bounded initial experiment.
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Primary sources and unresolved questions
+      description: Pinned code/specifications or measurements that support the proposal; separate facts from hypotheses.
+  - type: checkboxes
+    id: proposal_checks
+    attributes:
+      label: Proposal checks
+      options:
+        - label: This proposal does not claim Apple compatibility, performance parity, measured efficiency, or completed hardware validation without evidence.
+          required: true
+        - label: Any paid service, new runner, device access, or fabrication step needs explicit maintainer authorization.
+          required: true
