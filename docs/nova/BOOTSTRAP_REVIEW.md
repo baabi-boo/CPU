@@ -11,7 +11,7 @@ remain in [STATUS](STATUS.md) and the [structured register](../../nova/project.j
 
 The requested review uses ten sequential waves of six distinct automated worker
 assignments, with an integrating agent handling cross-file changes and commits.
-Waves 1–9 are complete (54 workers); wave 10 is the final acceptance review.
+All ten waves are complete (60 workers), including the final acceptance review.
 The available concurrency limit requires each wave to run in groups of at most
 three workers. Read-only audits count as completed assignments when their scope
 and findings are returned; an audit need not invent changes to be useful.
@@ -31,7 +31,7 @@ and later hardware qualification remain separate decisions.
 | 7 | 37–42 | Adversarial metadata; real-Git diagnosis; workflow review; filesystem checks; runbook review; configuration contracts | Added negative tests, isolated Git fixtures, safe-path checks, bounded commands, and pinned-source assertions |
 | 8 | 43–48 | Claim audit; toolchain provenance; CLI integration; documentation navigation; nonempty test runner; physical-scope audit | Protected nine toolchain inputs, exercised command-line behavior, rejected empty test discovery, and aligned release boundaries |
 | 9 | 49–54 | Final validator adversarial review; diagnostic audit; clean shallow checkout; root-error repair; traceability; release/CI readiness | Fixed documentation-root containment and diagnostic root errors; reproduced the candidate from a one-commit checkout and reconciled acceptance tables |
-| 10 | 55–60 | Handoff/status; dependency/source boundary; final clean checkout; publication readiness; security regression; integrated acceptance | Pending final review |
+| 10 | 55–60 | Handoff/status; dependency/source boundary; final clean checkout; publication readiness; security regression; integrated acceptance | No blocking foundation issues found; final candidate passed 131 tests in a fresh shallow checkout; publication and hardware acceptance remain separate |
 
 ## Concrete findings incorporated
 
@@ -60,7 +60,8 @@ and later hardware qualification remain separate decisions.
 | --- | --- | --- |
 | Clean shallow checkout | `b711347e327b4ac8feba43e48af066e48c8e7da6` | `make -f nova.mk check` exited 0; 120 tests passed, plus metadata/provenance, managed whitespace, and Git diff checks |
 | Shallow-history independence | Same candidate, one-commit local clone | Imported baseline object absent; checks still passed; index/worktree clean before and after |
-| Post-review working tree | Candidate above plus the wave-9 fixes | `make -f nova.mk check` exited 0; 131 tests passed, plus the same repository checks |
+| Final reviewed clean shallow checkout | `c3635cd14d82c0a0a582b72e697e62ba7f2a2002` | `make -f nova.mk check` exited 0; 131 tests passed, plus the same repository checks; one-commit history and absent baseline object again verified |
+| Final candidate non-mutation | Same final candidate | Help-only default target and normal/strict diagnosis left worktree and index clean; index SHA-256 unchanged |
 | Normal diagnostic | Bootstrap checkout and clean candidate | Exited 0, reported thirteen prerequisite blockers and `hardware_qualified: false` |
 | Strict diagnostic | Bootstrap checkout and clean candidate | Exited 1 for the missing prerequisites, as intended |
 | Workflow/form syntax review | Changed and inherited relevant YAML | Sixteen files parsed with an already available YAML parser; structural checks passed, not complete GitHub workflow validation |
@@ -69,6 +70,19 @@ The clean candidate contains 57 indexed gitlinks, all uninitialized. Tests use
 the Python standard library and disposable local fixtures; no hardware toolchain
 installation, external dependency download, paid service, or device operation was
 performed. Temporary test fixtures do not constitute processor simulations.
+
+The final six workers returned a go recommendation for publishing the foundation
+only. The integrating agent finalized this review ledger afterward; that does not
+substitute for maintainer acceptance, administrator configuration, or hardware
+evidence. No reviewer was represented as a human signoff authority.
+
+The commit IDs in the table identify the local review history. Authenticated
+publication through the connected GitHub integration creates different commit
+IDs. The final reviewed candidate's complete Git tree is
+`727018fa015a88d8b8dc3b73c02d0d8fe35f23f3`, verified identical to its
+[GitHub-created equivalent](https://github.com/baabi-boo/CPU/commit/613e4afc145577c14a8a43a07439633200fbd02e).
+The final publication adds this completed review ledger to that candidate; it
+does not change the tested tooling, requirements, configuration code, or pins.
 
 Remote CI execution is separate from this local record. Consult the
 [NOVA foundation workflow](https://github.com/baabi-boo/CPU/actions/workflows/nova-foundation.yml)
