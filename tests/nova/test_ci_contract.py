@@ -56,7 +56,7 @@ class CIContractTests(unittest.TestCase):
 
     def test_checkout_is_pinned_and_credentials_are_not_persisted(self):
         uses = re.findall(r"^\s*uses:\s*(\S+)", self.workflow, re.MULTILINE)
-        self.assertEqual(uses, ["actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683"])
+        self.assertEqual(uses, ["actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1"])
         self.assertRegex(self.workflow, r"persist-credentials:\s*false")
         self.assertRegex(self.workflow, r"submodules:\s*false")
 
