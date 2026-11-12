@@ -321,6 +321,20 @@ def stop_process_group(process):
         except subprocess.TimeoutExpired:
             # The timeout is still a failure; do not hang the evidence writer.
             pass
+    else:
+        # Reaping the wrapper does not prove its process group is empty. A
+        # surviving child must not retain execution after cancellation.
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except OSError:
+            pass
+
+
+def _actual_process_exit(process):
+    """Return the observed wrapper status, never a normalized diagnostic code."""
+    poll = getattr(process, "poll", None)
+    value = poll() if callable(poll) else getattr(process, "returncode", None)
+    return value if type(value) is int else None
 
 
 def stage_log_integrity(path):
@@ -366,6 +380,44 @@ def stage_log_integrity(path):
 
 
 def run_stage(root, directory, name, seconds, argv, min_free_gib=None):
+    """Run a legacy stage with scoped main-thread cooperative cancellation.
+
+    Handlers only latch SIGINT/SIGTERM; the bounded monitor/cleanup path acts on
+    them without raising inside Popen or interrupting cleanup. Previous signal
+    handlers are restored on return. SIGKILL and signals outside this call are
+    not handled here; the preferred G1 campaign has its own enclosing scope.
+    """
+    cancellation = {"signal": None, "unavailable": False}
+    previous = {}
+
+    def request_cancellation(signum, _frame):
+        if cancellation["signal"] is None:
+            cancellation["signal"] = signum
+
+    try:
+        if threading.current_thread() is not threading.main_thread():
+            cancellation["unavailable"] = True
+        else:
+            try:
+                for signum in (signal.SIGINT, signal.SIGTERM):
+                    previous[signum] = signal.getsignal(signum)
+                    signal.signal(signum, request_cancellation)
+            except (OSError, RuntimeError, ValueError):
+                cancellation["unavailable"] = True
+        result = _run_stage(root, directory, name, seconds, argv, min_free_gib,
+                            cancellation)
+        if cancellation["signal"] is not None:
+            result.update(status="blocked", blocked=True, interrupted=True,
+                          interruption_signal=cancellation["signal"],
+                          exit_code=128 + cancellation["signal"],
+                          error="operator interrupted stage")
+        return result
+    finally:
+        for signum, handler in previous.items():
+            signal.signal(signum, handler)
+
+
+def _run_stage(root, directory, name, seconds, argv, min_free_gib, cancellation):
     """Double-bound a process group; monitor log and approved disk floor.
 
     A pre-stage disk check cannot stop an active compile from filling the
@@ -378,11 +430,22 @@ def run_stage(root, directory, name, seconds, argv, min_free_gib=None):
     started = datetime.now(timezone.utc).isoformat()
     start = time.monotonic()
     code = None
+    process_exit_code = None
+    process = None
     error = None
     log_limit_exceeded = threading.Event()
     log_unreadable = threading.Event()
     disk_floor_breached = threading.Event()
     stop_monitor = threading.Event()
+    cancellation_cleanup = threading.Event()
+    if cancellation["unavailable"] or cancellation["signal"] is not None:
+        return {
+            "stage": name, "command": timed, "started_utc": started,
+            "elapsed_seconds": round(time.monotonic() - start, 3),
+            "exit_code": None, "process_exit_code": None, "status": "blocked",
+            "blocked": True, "log": None, "log_sha256": None,
+            "error": "main-thread signal cancellation is unavailable or already requested",
+        }
     try:
         with log.open("xb") as stream:
             try:
@@ -392,6 +455,10 @@ def run_stage(root, directory, name, seconds, argv, min_free_gib=None):
 
                 def monitor_resources():
                     while not stop_monitor.wait(0.25):
+                        if cancellation["signal"] is not None:
+                            cancellation_cleanup.set()
+                            stop_process_group(process)
+                            return
                         try:
                             if log.stat().st_size > MAX_STAGE_LOG_BYTES:
                                 log_limit_exceeded.set()
@@ -425,22 +492,26 @@ def run_stage(root, directory, name, seconds, argv, min_free_gib=None):
                 monitor.start()
                 try:
                     code = process.wait(timeout=seconds + 40)
+                    process_exit_code = code
                 except subprocess.TimeoutExpired:
                     stop_process_group(process)
+                    process_exit_code = _actual_process_exit(process)
                     code = 124
                     error = "outer stage timeout exceeded"
                 except KeyboardInterrupt:
                     stop_process_group(process)
+                    process_exit_code = _actual_process_exit(process)
                     code = 130
                     error = "operator interrupted stage"
                 finally:
                     stop_monitor.set()
-                    monitor.join(timeout=2)
+                    # Cancellation cleanup can take two bounded five-second
+                    # waits. Do not publish while that cleanup is still active.
+                    monitor.join(timeout=12)
             except OSError:
                 error = "runner command unavailable"
     except OSError:
         error = "stage log could not be created"
-    process_exit_code = code
     # A fast process may finish before either periodic resource check runs.
     # Recheck the final disk floor and complete log unconditionally.
     if min_free_gib is not None:
@@ -461,6 +532,12 @@ def run_stage(root, directory, name, seconds, argv, min_free_gib=None):
     if disk_floor_breached.is_set():
         error = "disk capacity fell below approved minimum during stage"
         code = 1
+    if cancellation["signal"] is not None and process is not None:
+        if not cancellation_cleanup.is_set():
+            stop_process_group(process)
+        observed = _actual_process_exit(process)
+        if observed is not None:
+            process_exit_code = observed
     result = {
         "stage": name, "command": timed, "started_utc": started,
         "elapsed_seconds": round(time.monotonic() - start, 3),

@@ -26,11 +26,13 @@
     {
       "id": "G1",
       "title": "Reproducible Rocket baseline",
-      "status": "planned",
+      "status": "blocked",
       "depends_on": [
         "G0"
       ],
-      "evidence": []
+      "evidence": [
+        "docs/nova/evidence/G1-PREPARATION-2026-11-12.md"
+      ]
     },
     {
       "id": "G2",

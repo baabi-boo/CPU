@@ -33,6 +33,9 @@ make -f nova.mk test
 make -f nova.mk doctor
 python3 -B scripts/nova/doctor.py --json
 python3 -B scripts/nova/bootstrap_preflight.py --json
+make -f nova.mk g1-profile
+make -f nova.mk conda-plan
+make -f nova.mk g1-campaign-plan
 ```
 
 `doctor` is a non-mutating diagnostic: it does not install tools, initialize
@@ -55,6 +58,16 @@ inspects the host, pinned source inputs, and known setup risks without creating 
 Conda environment, downloading dependencies, initializing gitlinks, or building
 hardware. Run it before proposing a toolchain installation. Its findings are
 diagnostics, **not** approval to run setup or evidence of a working processor.
+
+The preferred campaign preflight is `g1_profile.py`. Use
+`make -f nova.mk g1-profile-strict` for a nonzero exit on blockers. It checks the fixed Linux
+x86-64/Chisel 6 profile's enumerated source/tool/runtime prerequisites, including
+the installed HTIF linker script. A `ready` result does not establish complete
+nested/Maven dependency closure, trustworthy installed binaries, or successful
+linking. `conda-plan` reads the unchanged 165-package lean inventory without
+creating an environment; matching installed `conda-meta` records later is only
+metadata agreement. The [current preparation record](evidence/G1-PREPARATION-2026-11-12.md)
+documents the observed blocked host, not a successful hardware run.
 
 ## 2. Prepare an explicitly approved hardware environment
 
@@ -103,7 +116,9 @@ logic selects **2.39**, changes the tracked YAML and regenerates locks. That
 is **not** a reproduction of the untouched pin. Review this path before
 execution, record pre/post lock hashes and source diffs, and treat any change
 as a proposed dependency migration. Do not continue qualification with an
-unreviewed regenerated lock.
+unreviewed regenerated lock. The automatic selector's rewrite is the observed
+integrity problem; glibc 2.41 by itself does not establish incompatibility with
+the older pinned 2.34 sysroot.
 
 For a pin-preserving NOVA-001 experiment, prefer an approved host for which
 the setup script keeps the selected sysroot unchanged. Another possible
@@ -115,59 +130,91 @@ compatibility, generated `env.sh`/`RISCV` settings and missing tools before use.
 In particular, the lean lock does not itself establish the availability of
 `cmake`; the first `hello` test uses HTIF headers, linker inputs, and toolchain
 collateral. Mark any missing prerequisite `blocked` instead of silently
-substituting the host toolchain.
+substituting the host toolchain. Account for supplementary tools separately in
+the reviewed environment; adding packages to the frozen Conda prefix changes
+the exact inventory and cannot silently be treated as the original lock.
 
 The build needs the selected Java, Verilator, FIRRTL/CIRCT `firtool`, C/C++ build
 tools, and RISC-V toolchain. The default sbt invocation uses Java and
 `scripts/sbt-launch.jar`; a standalone `sbt` executable is not required. A generic
 RISC-V compiler alone may lack Chipyard's HTIF headers, specs, and libraries.
+The campaign never provisions this environment or initializes source gitlinks.
+Its explicit Make/sbt builds can nevertheless resolve JVM dependencies, so
+approved network access or a separately verified offline dependency cache is
+still required. The runner does not establish an offline build closure.
 
 ## 3. Establish the single-hart baseline
 
-### Bounded Rocket smoke-test runner
+### Preferred two-configuration G1 campaign
 
 After the maintainer has approved a specific host and resource budget, prepared
 the pinned toolchain without unreviewed lockfile or submodule changes, and
-activated `env.sh`/`RISCV`, inspect the proposed first run **without executing
-it**:
+activated `env.sh`/`RISCV` and `CONDA_PREFIX`, inspect the proposed run
+**without executing it**:
 
 ```bash
-python3 -B scripts/nova/rocket_baseline.py --plan
+make -f nova.mk g1-campaign-plan
 ```
 
-This default, read-only mode lists the unchanged `RocketConfig` Verilator build,
-CMake `hello` configuration/compilation, and `run-binary-fast` smoke execution.
-The script **does not install Conda, initialize submodules, or prepare the
-toolchain**. Its execution mode additionally requires a clean repository and
-submodules, `env.sh`, an existing `RISCV` directory, GNU `timeout`, successful
-`doctor-strict`, source/provenance validation, and available disk space. It
-also refuses to reuse known ignored `tests/build` or Verilator-generated
-artifacts; start with a fresh checkout and inspect any other generated inputs
-instead of assuming `git status` detects them. Only after those conditions and
-actual maintainer resource approval may the operator invoke:
+This read-only mode lists separate `RocketConfig` and `NovaM1BaselineConfig`
+builds and the same 15 declared workloads per configuration: inherited hello,
+the NOVA eight-check target, its deliberate code-7 failure control, and 12 fixed
+ISA binaries. These commands have not been demonstrated on the current host.
+The implementation is tooling, not a new CPU architecture or a completed
+`T-BUILD-001`/`T-ISA-001` campaign.
+
+Execution requires the checkout containing the runner and helpers to be clean,
+with no hidden-index flags or known stale build products, a prepared `env.sh`,
+valid `RISCV`/`CONDA_PREFIX`, a ready fixed profile, and matching Conda metadata.
+It rejects enumerated inherited build overrides instead of silently changing the
+profile. It never deletes stale products; use a separate clean checkout and
+review remaining ignored caches. After actual maintainer resource approval and
+successful preflight, the explicit entry point is:
 
 ```bash
-python3 -B scripts/nova/rocket_baseline.py --execute --approved-budget
+python3 -B scripts/nova/g1_profile.py --strict --json
+python3 -B scripts/nova/conda_inventory.py --prefix "$CONDA_PREFIX" --json
+python3 -B scripts/nova/g1_campaign.py --execute --approved-budget
 ```
 
 `--approved-budget` is an acknowledgement of approval already obtained, not a
 substitute for it. The defaults permit at most two Make jobs, a 4 GB Java heap,
-and a two-hour overall wall-time budget. These are initial limits, **not a
+and a two-hour aggregate acceptance budget. These are initial limits, **not a
 validated safe memory/disk/CPU profile**; review and adjust the approved bounds
-before execution. The runner stops on failed prerequisites or stage failures,
-checks the approved free-disk floor before and during each stage, limits each
-stage log to 64 MiB, and records stage exit codes, observed target
-text, ELF64/RISC-V header checks, and SHA-256 hashes in ignored `nova-out/`.
-An active stage aborted for a low or unreadable disk floor is recorded as
-`blocked`. Periodic checks cannot guarantee a hard peak-memory or disk limit.
-The observed tool versions are recorded but **not verified** against the pinned
-Conda/CIRCT environment. Even when all stages exit successfully and the expected
-`hello` line appears, its result is only `hello_marker_observed_unqualified`:
-the record explicitly sets `target_completion_verified` to `false`, since this
-trace-free path provides no independent attestation of target completion. It
-never marks G1 as accepted. Review raw logs for sensitive data before publication.
-Read the [runbook](BASELINE_RUNBOOK.md) for the separate ISA campaign, NOVA
-alias run, second clean-build reproduction, and required gate evidence.
+before execution. The default free-disk floor is 10 GiB, and each stdout/stderr
+log is limited to 64 MiB for evidence acceptance. Disk/log limits are sampled;
+final evidence/provenance checks can extend elapsed time and invalidate an
+over-budget result. These are not kernel quotas or an instantaneous whole-process
+deadline. SIGINT/SIGTERM cancellation performs bounded child-group cleanup and
+retains an interrupted result; it does not promise cleanup after SIGKILL.
+
+The runner retains separate logs and pre/post source, profile, inventory, binary,
+and simulator identities under ignored `nova-out/g1-campaign-*/`. It also binds
+recorded executed commands to the declared plan.
+`workloads_observed` means the declared log protocols were observed, **not** that
+target-originated completion, processor correctness, or G1 is qualified. The
+pinned HTIF path can signal success after a signal-induced shutdown; see the
+[source-level finding](evidence/G1-COMPLETION-PROTOCOL-2026-11-12.md).
+`target_completion_verified`, `hardware_qualified`, and `g1_gate_passed` remain
+false. The reference-model comparison is not run, and the declared ISA subset
+does not qualify excluded extensions or every conditional branch inside upstream
+tests.
+
+Repeat the approved campaign from a second clean checkout without sharing
+generated build products. `compare_campaigns.py` compares the two retained
+records, but `consistent` means agreement between unauthenticated metadata—not
+proof of execution, independent caches, or hardware reproduction. Follow the
+[runbook](BASELINE_RUNBOOK.md) for the exact comparison command, unresolved
+target-exit observability, evidence review, and separate gate acceptance. Curate
+raw logs before publication; execution records can contain local paths.
+
+### Legacy single-profile smoke helper
+
+`python3 -B scripts/nova/rocket_baseline.py --plan` remains available for the
+earlier Rocket-only hello sequence. Its opt-in execution can at most report
+`hello_marker_observed_unqualified`, with target completion and G1 unverified.
+It is not the two-configuration campaign, declared ISA test set, or second clean
+build. Prefer the G1 campaign above for the next baseline work.
 
 ### Manual commands
 

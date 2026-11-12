@@ -1,7 +1,8 @@
 # Reproducibility and evidence contract
 
-This document defines records required for future engineering work. It does not
-report a successful build, simulation, FPGA test, or silicon measurement.
+This document defines required engineering records and the scope of the
+implemented G1 capture/comparison tools. It does not report a successful CPU
+build, simulation, FPGA test, or silicon measurement.
 See [STATUS](STATUS.md), [VERIFICATION](VERIFICATION.md), and
 [ROADMAP](ROADMAP.md) for the qualification boundaries.
 
@@ -23,6 +24,15 @@ clean. Recursive submodule status identifies commits, not complete local file
 contents. Inspect tracked modifications, untracked files, and relevant ignored
 build inputs in every selected dependency, including nested dependencies;
 superproject status alone does not identify all their contents.
+
+The G1 [source collector](../../scripts/nova/campaign_artifacts.py) records the
+root revision/tree, all root gitlink pins and recursively initialized gitlinks,
+nine Conda input hashes, and selected source/manifest hashes. It rejects
+`assume-unchanged` and `skip-worktree` index flags at the root and in initialized
+nested modules, because those flags can conceal edits from ordinary Git status.
+Its `clean` field is Git cleanliness, not dependency readiness. Ignored build
+outputs do not enter the source digest; neither that digest nor a distinct
+checkout-path hash proves that generated products or external caches were fresh.
 
 [.gitmodules](../../.gitmodules) supplies dependency locations. Git tree gitlinks
 pin exact dependency revisions. The [upstream lock](../../nova/upstream-lock.json)
@@ -82,6 +92,11 @@ tracked Conda inputs and regenerate lockfiles **without**
 successful reproduction of the original pins; stop before the rewrite unless a
 reviewed migration explicitly authorizes it.
 
+This setup-selection hazard does not itself prove that a newer host glibc is
+incompatible with the pinned 2.34 sysroot. A pin-preserving preparation procedure
+still needs separate review and actual build/runtime evidence; silently choosing
+newer locks is not that evidence.
+
 For each attempt, calculate and retain SHA-256 digests of **all nine** tracked
 Conda definitions and locks named under `preserved_blobs` in
 `nova/upstream-lock.json`, both immediately before and after setup. Preserve the
@@ -104,6 +119,18 @@ Use a minimal allowlist of relevant environment information. Never attach a full
 or unrelated user data. Sanitize logs before sharing and document any redaction
 that affects reproducibility. Do not expose secrets merely to hash or identify
 an environment. See [SECURITY](../../SECURITY.md) for sensitive reports.
+
+The fixed [G1 profile](../../nova/g1-profile.json) and
+[profile inspector](../../scripts/nova/g1_profile.py) cover known Chisel-6 source,
+tool/version, optional-generator, and installed runtime-collateral prerequisites.
+The compiler-resolved installed `htif.ld` must match the pinned libgloss source.
+The [Conda inventory inspector](../../scripts/nova/conda_inventory.py) compares
+existing `conda-meta` records with the unchanged Linux x86-64 lean lock; it does
+not create or activate an environment. `ready` and `matched` mean those declared
+checks succeeded. They do not authenticate package contents, qualify every
+supplementary tool, establish nested/Maven closure, or demonstrate linking and
+execution. The [current preparation record](evidence/G1-PREPARATION-2026-11-12.md)
+retains the observed host blockers rather than treating tool availability as G1.
 
 ## Run record
 
@@ -129,7 +156,102 @@ inputs, record the blocked setup step, offending prerequisites, and the exact
 unexecuted commands; do not claim those commands ran. A passing test closes only
 its stated scope.
 
-### Bounded Rocket smoke runner: partial evidence only
+### Fixed G1 campaign: unqualified observation records
+
+The [G1 runner](../../scripts/nova/g1_campaign.py) defaults to a read-only plan:
+
+```bash
+make -f nova.mk g1-campaign-plan
+```
+
+Its separate `--execute --approved-budget` mode acknowledges a previously
+approved host/resource/network/cost envelope; the flag does not grant approval.
+Execution must use the runner and helpers from the recorded checkout, not code
+from another checkout passed a foreign `--root`. The runner requires prepared
+`RISCV` and `CONDA_PREFIX` locations, the fixed profile, matching installed Conda
+metadata, a clean source snapshot, and no known stale build products. It never
+provisions the toolchain or initializes submodules. Explicit builds can still
+resolve JVM dependencies; an offline dependency closure is not established.
+
+An attempt retains `nova-out/g1-campaign-*/record.json` and separate stage logs.
+The fixed [manifest](../../nova/g1-workloads.json) requires both configurations
+and all 15 workload rows per configuration: 14 positive expectations and one
+deliberate code-7 failure. `workloads_observed` is not a qualification status.
+The following fields bind observations within the record; they are not an
+external attestation of execution:
+
+| Record fields | Retained relationship and limit |
+| --- | --- |
+| `declared_plan`, `plan_sha256`, `profile_sha256`, `workloads_sha256` | Canonical checkout-normalized plan identity and source-bound manifest hashes |
+| `execution_paths`, each stage's `command` | Recorded argv and repository/RISC-V/Python aliases bind commands across relocated checkouts; simulation cwd is declared in the plan, and other stages use the recorded repository root |
+| `source_before`, `source_after` | Clean revision/tree, selected source inputs, nine Conda hashes, and recursive initialized gitlink state must remain unchanged |
+| `preflight.profile`, `profile_after` | Enumerated prerequisite, version, and runtime-collateral observations must remain unchanged; no full dependency or executable authenticity claim |
+| `inventory`, `inventory_after` | Matching pinned Conda metadata before and after execution; installed binary contents are not verified |
+| `provenance_before`, `provenance_after` | Supplemental host, selected tool-version, lock, and submodule observations must remain unchanged |
+| Profile artifacts and workload `binary`/`binary_after`, simulator hashes | Configuration-specific captured files and before/after workload/simulator identity; both configurations use the same workload binary hashes |
+| Stage streams and workload assessment | Separate bounded log names, hashes and byte counts; assessment must describe the same retained logs and actual process exit |
+| `resource_limits`, `elapsed_seconds`, UTC timestamps | Declared bounds and monotonic aggregate duration, with UTC times retained for diagnosis rather than used as elapsed-time proof |
+| `status`, `reasons`, `limitations` | `workloads_observed`, `blocked`, or `failed`; incomplete rows stay unaccepted, and limitations remain explicit |
+
+The collector hashes simulator/RTL/DTS/JSON artifacts and checks bounded file
+and ELF structure. It does not certify the generated address map, parameter
+inventory, ISA, hart topology, or actual memory behavior. Those properties still
+need semantic review and the applicable execution tests. Keep simulator cycles
+separate from host durations.
+
+Positive workload assessment can set `completion_protocol_observed: true`; it
+always retains `target_completion_verified: false`. The pinned HTIF path can
+signal success on `signal_exit` without a target-originated exit value, as
+documented in the [source audit](evidence/G1-COMPLETION-PROTOCOL-2026-11-12.md).
+The target's printed line plus a TestDriver PASS is therefore insufficient for
+target-exit attestation. The negative assessment's
+`expected_target_failure_verified` flag means that its exact expected marker and
+code-7 assertion protocol matched the supplied logs with an allowed nonzero host
+termination. It is not an authentication of the logs or a general crash-to-pass
+conversion. Actual pinned-simulator diagnostic formats remain unobserved here.
+
+The campaign always records `hardware_qualified: false`, `g1_gate_passed: false`,
+and `reference_comparison: "not_run"`. Missing binaries, incomplete logs,
+contradictory terminal records, timeouts, interruption, identity drift, and
+incomplete post-run capture cannot yield an accepted observation campaign.
+No unrun row counts as a pass; requiring every listed binary does not prove that
+all conditional subcases inside an upstream test executed.
+
+Resource and cancellation checks are bounded but not a kernel sandbox. Disk and
+log limits are sampled and checked again after exit; they are not instantaneous
+storage quotas or RAM limits. SIGINT/SIGTERM handling cleans up the launched
+command's process group and preserves actual exit information. Cooperative checks between
+bounded preflight/finalization operations do not create a hard whole-process
+deadline or a SIGKILL guarantee. Aggregate budget overruns invalidate acceptance.
+Review raw paths, commands, and logs before publishing a curated record.
+
+### Comparing two G1 records is not proving reproduction
+
+The [comparator](../../scripts/nova/compare_campaigns.py) reads two retained JSON
+records without running tools or reading their underlying simulator artifacts:
+
+```bash
+python3 -B scripts/nova/compare_campaigns.py first/record.json second/record.json
+```
+
+The paths above stand for the two actual retained records. The comparator binds
+raw commands to the hash-bound declared plan through canonical path aliases,
+checks complete workload/configuration membership, pre/post identities,
+assessment-to-log hashes, resource metadata, monotonic timing, and unsupported
+qualification claims. It rejects reused checkout identity or identical records.
+Build-log differences are reported separately; diagnostics need not be
+byte-identical, while workload-result identity differences require review.
+
+`consistent` (exit 0) means recorded input/artifact identities agree;
+`different` (exit 1) means comparable records differ; `blocked` (exit 2) means
+the records cannot participate in that comparison. None proves that a command
+ran, that hashes are truthful, that records/logs are authentic, or that two
+independent clean builds occurred. Distinct checkout hashes do not prove absence
+of shared caches. Retain and review the actual two-build evidence separately;
+keep hardware/G1/reference qualification false until their own requirements are
+met and a scoped decision is recorded.
+
+### Legacy Rocket smoke runner: partial evidence only
 
 The opt-in [Rocket baseline runner](../../scripts/nova/rocket_baseline.py) is a
 convenience for the first `RocketConfig` smoke campaign. Review its intended
@@ -151,7 +273,7 @@ An executed attempt writes a local `nova-out/rocket-baseline-*/record.json`
 and separate stage logs. The record retains stage commands, time budgets,
 exit codes, timestamps, log hashes, and a smoke-only outcome. A zero exit is
 not sufficient: the `hello` binary must be an ELF64 little-endian RISC-V
-executable, and the simulator log must contain the actual target's expected
+executable, and the simulator log must contain the inherited test's expected
 `Hello world from core 0` output. That text is hard-coded by the inherited
 single-core test and **does not identify a hart**. An output marker is still
 only smoke evidence, not proof of architectural correctness. Preserve actual

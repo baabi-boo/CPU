@@ -1,8 +1,10 @@
 # Verification and evidence plan
 
-This is the qualification plan, not a hardware test report. At bootstrap, only
-the repository check is available in the [test register](../../nova/requirements.json);
-hardware test descriptors are planned and their commands are not implemented.
+This is the qualification plan, not a hardware test report. Only the repository
+check is available as a complete registered campaign in the
+[test register](../../nova/requirements.json). G1 preparation, execution, and
+record-comparison tooling is implemented, but the hardware descriptors remain
+planned: their complete qualification campaigns have not been demonstrated.
 Current claims must agree with [STATUS](STATUS.md) and the [roadmap](ROADMAP.md).
 
 ## Evidence ladder
@@ -46,78 +48,100 @@ Protection tests apply whenever a protection claim is introduced, not only at
 G7. Physical-memory tests must be adapted and requalified for the actual board or
 ASIC technology; an FPGA result does not qualify an ASIC PHY.
 
-## G1 Rocket baseline: first executable campaign
+## G1 Rocket baseline: implemented preparation, unrun qualification
 
-The bounded first-hardware procedure is specified in the
-[baseline runbook](BASELINE_RUNBOOK.md), with toolchain details in
-[DEVELOPMENT](DEVELOPMENT.md). Until an approved host actually executes that
-campaign, `T-BUILD-001` and `T-ISA-001` remain **planned**: the repository's
-configuration aliases, existing upstream test names, and offline tooling checks
-are not implementation or execution evidence for those descriptors.
-The opt-in `rocket_baseline.py` runner covers only an initial upstream
-`RocketConfig`/`hello` attempt. Its successful status
-`hello_marker_observed_unqualified` means a valid RISC-V ELF64 and expected
-text were observed alongside successful stage exit codes; it explicitly records
-`target_completion_verified: false`. Neither this status nor the runner's exit
-code independently proves that the target program completed, qualifies the
-named NOVA configuration, or closes G1.
+The [baseline runbook](BASELINE_RUNBOOK.md) defines the approved-host procedure;
+the [preparation record](evidence/G1-PREPARATION-2026-11-12.md) records the current
+blockers. The opt-in [G1 campaign runner](../../scripts/nova/g1_campaign.py)
+implements a fixed two-configuration observation campaign. Its offline tests
+are not a completed `T-BUILD-001` or `T-ISA-001` campaign. Both descriptors remain
+**planned**, and no result from this tooling automatically accepts G1.
+
+The [workload manifest](../../nova/g1-workloads.json) requires 15 workloads for
+each of `RocketConfig` and `NovaM1BaselineConfig`: 14 positive expectations
+(`hello`, the eight-check NOVA target, and 12 named ISA tests), plus the deliberate
+code-7 failure target. Each simulator is built separately; both configurations
+must use identical workload binary hashes. A missing workload blocks completion;
+it cannot become an empty wildcard, a silent skip, or accepted coverage.
 
 1. **Preflight and preserve pins (`NOVA-001`, `T-BUILD-001`).** Record G0
-   acceptance and explicit approval for the host, RAM, disk, network, parallel
-   jobs, wall-time, and any cost. From a clean checkout run
-   `make -f nova.mk check`, `make -f nova.mk preflight`, and
-   `make -f nova.mk doctor-strict`. Capture the preflight report, all gitlink
-   SHAs, actual environment/tool versions, and SHA-256 hashes of the nine tracked
-   Conda inputs before *and* after approved setup. If host glibc would make the
-   inherited script regenerate a pinned sysroot/lock, stop for a separately
-   reviewed migration or qualified pin-preserving procedure. Neither a normal
-   diagnostic exit nor a present executable constitutes toolchain reproduction.
-2. **Build unmodified Rocket (`NOVA-002`, `T-BUILD-001`).** On the approved and
-   pinned environment, run a bounded `RocketConfig` Verilator build, retaining
-   generated RTL, simulator binary and hashes, generated map/device tree,
-   hart/cache/ISA parameters, actual memory model (including the linked
-   DRAMSim2), compiler/Verilator/firtool versions, complete logs and exit status.
-   Merely capturing tool version strings does not prove that installed tools
-   match the pinned Conda/CIRCT environment: verify compatibility separately,
-   and preserve mismatches as blockers rather than endorsing the configuration.
-   Build `NovaM1BaselineConfig` separately, with its own generated artifacts and
-   evidence. A Scala compile or successful elaboration alone is not processor
-   execution.
-3. **Execute and check bare-metal code (`T-BUILD-001`).** Compile the inherited
-   `tests/hello.c` with the configured CMake cross-toolchain, including the
-   correct HTIF headers/specs and `toolchains/libgloss` linker script. Execute
-   the resulting `hello.riscv` using the bounded Verilator `run-binary-fast`
-   target first, preserving expected output, actual output, target completion,
-   simulator result, timeout, and binary hash. The `run-binary-fast` path omits
-   `spike-dasm`; it is not a lower correctness standard. The test's hard-coded
-   `core 0` text is not a measured hart ID. A string appearing in combined
-   simulator/Make output is not independent target-completion evidence: obtain
-   a trustworthy simulator/target completion observation before claiming that
-   the program finished successfully. The preliminary runner limits each
-   captured stage log to 64 MiB; a truncated or over-limit log fails that
-   attempt and is not acceptable verification evidence.
-4. **Qualify a declared ISA subset (`T-ISA-001`).** Specify the exact supported
-   RISC-V ISA/privilege profile, test names, test binary hashes, expected
-   outcomes, any reference-model version and comparison scope, and exclusions
-   *before* execution. Record the per-test simulator exit status and observed
-   results. Hello-world alone does not test traps, MMU or broad ISA compliance.
-5. **Exercise negative harness cases and reproduce.** Demonstrate that nonzero
-   target/simulator exit, wrong output, missing or duplicated completion,
-   truncated logs and a deterministic timeout are detected and labeled failure.
-   Rebuild and re-execute from a separate clean checkout with the same pins and
-   declared toolchain; do not reuse stale simulator or target binaries as the
-   second reproduction. The opt-in runner blocks when known ignored build
-   artifacts are already present, but that safeguard does not replace a
-   documented clean-build provenance review. Preserve both attempts, including
-   failures.
+   acceptance and approval for the host, RAM, disk, network, parallel jobs,
+   time, and cost. Inspect `make -f nova.mk check`, `make -f nova.mk preflight`,
+   `make -f nova.mk g1-profile-strict`, and `make -f nova.mk g1-campaign-plan`
+   before execution. Require the declared Chisel-6 profile, expected source
+   graph, tool/version observations, HTIF/FESVR runtime collateral, and matching
+   pinned Conda metadata. The installed `htif.ld` must match the pinned libgloss
+   source. `ready` and `matched` establish only their enumerated checks, not
+   trustworthy installed binary contents, nested/Maven dependency closure, or
+   actual build compatibility. Retain all nine Conda input hashes before and
+   after setup. Stop before any unreviewed sysroot/lock rewrite; automatic
+   setup selection is not proof that the original sysroot is incompatible.
+2. **Build both configurations (`NOVA-002`, baseline part of `NOVA-003`).**
+   Execute only the runner from its own prepared clean checkout, using the
+   separately approved budget. It does not provision a toolchain or initialize
+   submodules; invoked build tools may still resolve JVM dependencies under the
+   approved network policy. Retain configuration-specific simulator, generated
+   RTL, DTS, and metadata hashes. Structural ELF checks and readable DTS/JSON
+   are not semantic validation of the address map, hart inventory, ISA/cache
+   parameters, or memory model. Review those generated properties separately,
+   including the actual DRAMSim2 configuration. Elaboration is not execution.
+3. **Observe positive workloads without overstating completion.** The runner
+   invokes each simulator directly, retaining its actual exit status and
+   separate, bounded stdout/stderr. Positive assessment requires a zero host
+   exit, one valid TestDriver completion record within the cycle bound, the
+   exact target record where required, and no conflicting terminal/failure
+   records. The inherited hello line is hard-coded; it does not measure a hart
+   ID. A matching result sets `completion_protocol_observed: true` but keeps
+   `target_completion_verified: false`. The pinned HTIF path can produce its
+   success signal after `signal_exit` without a target-originated exit value.
+   This is a [source-level finding](evidence/G1-COMPLETION-PROTOCOL-2026-11-12.md),
+   not a reproduced CPU run. Independent observation of a real target terminal
+   event remains required before claiming successful target completion.
+4. **Exercise the deliberate failure and harness rejection cases.** The NOVA
+   negative target reaches code 7 only after its eight checks. Its observation
+   contract requires the exact negative marker, exactly one matching SimTSI
+   code-7 assertion, and an ordinary supported nonzero simulator result. Host
+   exit status is not assumed to equal target exit code 7. A generic crash,
+   timeout, interruption, log-integrity fault, conflicting output, or surviving
+   child is not the expected negative outcome. The parser's supported diagnostic
+   formats have synthetic-fixture coverage; their actual pinned-simulator
+   output still needs observation. This control does not qualify a differential
+   reference adapter or prove that injected architectural mismatches are detected.
+5. **Qualify the declared architectural scope (`T-ISA-001`).** Preserve the
+   exact 12 ISA binary identities, expected outcomes, tested privilege profile,
+   reference-model version and comparison scope, exclusions, and per-test
+   results. Requiring every listed binary is not proof that each internal
+   conditional test path ran. F/D/A/C, MMU, full ISA certification,
+   per-instruction differential checking, and heterogeneous execution are not
+   qualified by this manifest; incidental runtime instructions do not change
+   those exclusions. Spike comparison remains `not_run` with unresolved scope.
+   Complete and review the applicable reference/negative comparisons before
+   closing the registered descriptor.
+6. **Reproduce and review.** Repeat the complete build and workload campaign in
+   a second clean checkout with the same declared inputs. Do not reuse generated
+   simulators or targets. The runner rejects known stale products and checks
+   pre/post source, profile, inventory, binary, simulator, and log identities;
+   it does not prove that every ignored or external cache was isolated. The
+   [record comparator](../../scripts/nova/compare_campaigns.py) checks metadata
+   agreement and contradictions. `consistent` means recorded identities agree,
+   not authenticated execution, independent builds, or reproduced hardware.
+   Distinct checkout identifiers alone do not establish cache independence.
 
-For every stage, record command, working directory, start/end time, configured
-resource caps, elapsed time, seed where applicable, complete sanitized logs,
-artifacts and hashes, exclusions, and reviewer. A missing approval, tool,
-dependency, result, or clean reproduction is `blocked`/`not_run` or `failed`
-as appropriate, never `passed`. Only after the specific test is implemented,
-executed, reproduced, and reviewed may its register entry change from
-`planned`; G1 itself requires its own separate maintainer decision.
+The campaign's strongest automatic outcome is `workloads_observed`, with
+`hardware_qualified: false`, `g1_gate_passed: false`, and reference comparison
+`not_run`. `blocked`/`failed` attempts retain unrun rows when the plan was
+available; no unrun row is accepted. `hello_marker_observed_unqualified` from
+the older [Rocket helper](../../scripts/nova/rocket_baseline.py) remains a still
+narrower, single-configuration observation, not an alternative G1 pass.
+
+Use the [record contract](REPRODUCIBILITY.md) to preserve actual commands,
+declared working directories, monotonic durations, UTC timestamps, resource
+limits, seed, raw and sanitized logs, hashes, failures, and reviewer decisions.
+Sampled disk/log checks and process-group cleanup are not hard RAM/disk quotas
+or an instantaneous whole-process deadline. Evidence capture can overrun the
+aggregate acceptance budget, in which case the campaign is not accepted.
+Only complete, executed, reproduced, and reviewed test scope can change the
+registered state; maintainer gate acceptance remains separate.
 
 ## CPU and heterogeneous-platform traps
 

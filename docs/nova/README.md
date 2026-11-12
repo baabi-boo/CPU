@@ -8,14 +8,34 @@ Start with the [project charter](CHARTER.md), [current status](STATUS.md), and
 1. Read the [project overview](../../README.md) for scope and present limitations.
 2. Follow [DEVELOPMENT](DEVELOPMENT.md) for offline checks, preflight diagnostics,
    and the separately approved hardware-toolchain workflow.
-   The non-mutating `make -f nova.mk preflight` command checks known setup
-   hazards without installing dependencies or verifying a processor.
+   Use the non-mutating `make -f nova.mk preflight`, `g1-profile`, `conda-plan`,
+   and `g1-campaign-plan` targets to inspect setup risks, known prerequisites,
+   the preserved inventory, and the proposed campaign. They do not install
+   dependencies or verify a processor.
 3. Check [CONFIGURATIONS](CONFIGURATIONS.md) before selecting a source profile;
    both NOVA profiles still require elaboration and execution evidence.
 4. Start with NOVA-001 in the [actionable backlog](BACKLOG.md). Its prerequisite
    approvals and acceptance evidence determine what can be attempted next. Use
-   the [Rocket baseline runbook](BASELINE_RUNBOOK.md) for its bounded sequence
+   the [G1 baseline campaign runbook](BASELINE_RUNBOOK.md) for its bounded sequence
    and reproducibility requirements after those approvals are recorded.
+
+## Current G1 preparation checkpoint
+
+The profile/inventory inspectors, RV64 target sources, two-configuration campaign
+runner, and record comparator are implemented and covered by offline tooling
+tests. Their 15 workloads per configuration have not run on NOVA hardware or its
+simulator. G1 is blocked, and both named NOVA configurations remain unverified.
+
+Read the [current preparation evidence](evidence/G1-PREPARATION-2026-11-12.md)
+for observed host blockers and preserved pins. The
+[completion-protocol investigation](evidence/G1-COMPLETION-PROTOCOL-2026-11-12.md)
+explains why an observed simulator success signal is not independent proof of
+target-originated completion. Matching campaign JSON is likewise not proof of
+execution or independent build reproduction.
+
+The [automated review ledger](evidence/G1-60-AGENT-REVIEW-2026-11-12.md)
+records the ten-wave development/review sequence and clean-checkout tooling
+checks. Automated review is not human gate acceptance or processor validation.
 
 ## Design and qualification
 
@@ -31,8 +51,9 @@ Start with the [project charter](CHARTER.md), [current status](STATUS.md), and
 ## Engineering workflow
 
 - [Developer setup](DEVELOPMENT.md)
-- [Rocket baseline bring-up runbook](BASELINE_RUNBOOK.md): opt-in G1 preparation,
-  execution, stop conditions, and evidence; not a completed hardware result.
+- [G1 baseline campaign runbook](BASELINE_RUNBOOK.md): opt-in preparation,
+  two-profile execution, stop conditions, and evidence; not a completed hardware
+  result.
 - [CI scope](CI.md)
 - [Bootstrap review and executed checks](BOOTSTRAP_REVIEW.md)
 - [Reproducibility and evidence](REPRODUCIBILITY.md)

@@ -115,18 +115,24 @@ class CampaignExecutionTests(unittest.TestCase):
             + "print(os.getpid(),flush=True); time.sleep(20)"
         )
         driver = "\n".join((
-            "import importlib.util,json,sys,types",
+            "import importlib.util,json,pathlib,sys,types",
             "spec=importlib.util.spec_from_file_location('fixture_engine',sys.argv[1])",
             "engine=importlib.util.module_from_spec(spec)",
             "spec.loader.exec_module(engine)",
             "engine.shutil.disk_usage=lambda _:types.SimpleNamespace(free=20*1024**3)",
+            "original_stop=engine._stop_group",
+            "def observed_stop(process):",
+            "    pathlib.Path(sys.argv[5]).write_text('cancellation observed')",
+            "    return original_stop(process)",
+            "engine._stop_group=observed_stop",
             "record=engine.run_command(sys.argv[2],sys.argv[3],'cancel-fixture',",
             "    [sys.executable,'-c',sys.argv[4]],10,min_free_gib=1)",
             "print(json.dumps(record),flush=True)",
         ))
         runner = subprocess.Popen(
-            [sys.executable, "-c", driver, str(ROOT / "scripts/nova/campaign_exec.py"),
-             str(self.root), str(self.output), child_code],
+            [sys.executable, "-B", "-c", driver, str(ROOT / "scripts/nova/campaign_exec.py"),
+             str(self.root), str(self.output), child_code,
+             str(self.output / "cleanup-observed")],
             stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
             text=True, start_new_session=True,
         )
@@ -145,7 +151,14 @@ class CampaignExecutionTests(unittest.TestCase):
             cancelled_at = time.monotonic()
             runner.send_signal(signal.SIGTERM)
             if repeated:
-                time.sleep(0.05)
+                # Sender order alone does not establish Python handler order
+                # when several signals are pending. Wait for actual cleanup
+                # entry, rather than assuming a fixed sleep acknowledged TERM.
+                acknowledged = self.output / "cleanup-observed"
+                while (not acknowledged.exists() and runner.poll() is None
+                       and time.monotonic() - cancelled_at < 2):
+                    time.sleep(0.01)
+                self.assertTrue(acknowledged.exists(), "first cancellation was not acknowledged")
                 runner.send_signal(signal.SIGTERM)
                 runner.send_signal(signal.SIGINT)
             stdout, stderr = runner.communicate(timeout=5)
