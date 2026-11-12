@@ -13,6 +13,8 @@ ROOT_FILES = (
 )
 PATTERNS = (
     "nova/*.json", "scripts/nova/*.py", "tests/nova/*.py",
+    "software/nova/baseline/*.c", "software/nova/baseline/*.md",
+    "software/nova/baseline/CMakeLists.txt",
     ".github/ISSUE_TEMPLATE/*.yml",
 )
 

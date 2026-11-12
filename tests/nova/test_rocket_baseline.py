@@ -16,6 +16,8 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+from test_rocket_provenance import expected_provenance
+
 
 SPEC = importlib.util.spec_from_file_location(
     "nova_rocket_baseline",
@@ -171,6 +173,8 @@ class RocketBaselineTests(unittest.TestCase):
         aborted = {"stage": "rocket-build", "exit_code": 1, "status": "failed",
                    "blocked": True, "error": "disk capacity fell below approved minimum during stage"}
         with patch.object(runner, "validate_execution", return_value=("a" * 40, None)), \
+             patch.object(runner, "clean_source", return_value="a" * 40), \
+             patch.object(runner, "collect_provenance", return_value=expected_provenance()), \
              patch.object(runner, "make_output_dir", return_value=output), \
              patch.object(runner.shutil, "disk_usage",
                           return_value=SimpleNamespace(free=64 * 1024 ** 3)), \
@@ -209,6 +213,8 @@ class RocketBaselineTests(unittest.TestCase):
         output.mkdir()
         first = {"stage": "rocket-build", "exit_code": 124, "status": "failed"}
         with patch.object(runner, "validate_execution", return_value=("a" * 40, None)), \
+             patch.object(runner, "clean_source", return_value="a" * 40), \
+             patch.object(runner, "collect_provenance", return_value=expected_provenance()), \
              patch.object(runner, "make_output_dir", return_value=output), \
              patch.object(runner.shutil, "disk_usage", return_value=SimpleNamespace(free=64 * 1024 ** 3)), \
              patch.object(runner, "run_stage", return_value=first) as stage, \
@@ -246,6 +252,8 @@ class RocketBaselineTests(unittest.TestCase):
                     "log": log.name, "log_sha256": hashlib.sha256(log.read_bytes()).hexdigest()}
 
         with patch.object(runner, "validate_execution", return_value=("a" * 40, None)), \
+             patch.object(runner, "clean_source", return_value="a" * 40), \
+             patch.object(runner, "collect_provenance", return_value=expected_provenance()), \
              patch.object(runner, "make_output_dir", return_value=output), \
              patch.object(runner.shutil, "disk_usage", return_value=SimpleNamespace(free=64 * 1024 ** 3)), \
              patch.object(runner, "run_stage", side_effect=fake_stage) as stage, \

@@ -16,6 +16,7 @@ import platform
 import re
 import shutil
 import signal
+import stat
 import subprocess
 import sys
 import threading
@@ -114,6 +115,10 @@ def safe_hello_binary(root):
 
 def validate_execution(root, min_free_gib):
     """Stop before creating output unless the approved environment is prepared."""
+    # build.sbt selects Chisel 7 by presence, even for an empty value or "0".
+    # This runner describes the pinned default Chisel 6 baseline only.
+    if "USE_CHISEL7" in os.environ:
+        return None, "USE_CHISEL7 must be unset for the pinned Chisel 6 baseline"
     revision = clean_source(root)
     if revision is None:
         return None, "source checkout or submodules are not clean"
@@ -302,20 +307,62 @@ def stop_process_group(process):
     """Stop a timed-out simulator wrapper and its child processes."""
     try:
         os.killpg(process.pid, signal.SIGTERM)
-    except ProcessLookupError:
+    except OSError:
         pass
     try:
         process.wait(timeout=5)
     except subprocess.TimeoutExpired:
         try:
             os.killpg(process.pid, signal.SIGKILL)
-        except ProcessLookupError:
+        except OSError:
             pass
         try:
             process.wait(timeout=5)
         except subprocess.TimeoutExpired:
             # The timeout is still a failure; do not hang the evidence writer.
             pass
+
+
+def stage_log_integrity(path):
+    """Hash a stable regular log with a strict read bound, or return an error.
+
+    The resource-monitor thread can miss a stage that exits before its first
+    poll. This check is therefore mandatory after the writer is closed. It
+    also rejects missing/replaced logs rather than treating a zero exit as
+    adequate execution evidence.
+    """
+    try:
+        first = path.lstat()
+        if not stat.S_ISREG(first.st_mode):
+            return None, "stage log is not a regular file"
+        if first.st_size > MAX_STAGE_LOG_BYTES:
+            return None, "stage log exceeded configured byte limit"
+        flags = (os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0)
+                 | getattr(os, "O_NONBLOCK", 0))
+        with os.fdopen(os.open(path, flags), "rb") as stream:
+            opened = os.fstat(stream.fileno())
+            if (not stat.S_ISREG(opened.st_mode)
+                    or (opened.st_dev, opened.st_ino) != (first.st_dev, first.st_ino)):
+                return None, "stage log changed before integrity capture"
+            hasher = hashlib.sha256()
+            size = 0
+            while True:
+                block = stream.read(min(65536, MAX_STAGE_LOG_BYTES + 1 - size))
+                if not block:
+                    break
+                size += len(block)
+                if size > MAX_STAGE_LOG_BYTES:
+                    return None, "stage log exceeded configured byte limit"
+                hasher.update(block)
+            final = os.fstat(stream.fileno())
+        current = path.lstat()
+        identity = lambda info: (info.st_dev, info.st_ino, info.st_size, info.st_mtime_ns)
+        if (identity(opened) != identity(final) or identity(final) != identity(current)
+                or size != final.st_size):
+            return None, "stage log changed during integrity capture"
+        return hasher.hexdigest(), None
+    except (OSError, ValueError):
+        return None, "stage log is unavailable or unreadable"
 
 
 def run_stage(root, directory, name, seconds, argv, min_free_gib=None):
@@ -333,6 +380,7 @@ def run_stage(root, directory, name, seconds, argv, min_free_gib=None):
     code = None
     error = None
     log_limit_exceeded = threading.Event()
+    log_unreadable = threading.Event()
     disk_floor_breached = threading.Event()
     stop_monitor = threading.Event()
     try:
@@ -353,6 +401,11 @@ def run_stage(root, directory, name, seconds, argv, min_free_gib=None):
                                     pass
                                 return
                         except OSError:
+                            log_unreadable.set()
+                            try:
+                                os.killpg(process.pid, signal.SIGKILL)
+                            except OSError:
+                                pass
                             return
 
                         if min_free_gib is not None:
@@ -387,22 +440,35 @@ def run_stage(root, directory, name, seconds, argv, min_free_gib=None):
                 error = "runner command unavailable"
     except OSError:
         error = "stage log could not be created"
+    process_exit_code = code
+    # A fast process may finish before either periodic resource check runs.
+    # Recheck the final disk floor and complete log unconditionally.
+    if min_free_gib is not None:
+        try:
+            final_free = shutil.disk_usage(root).free
+        except OSError:
+            final_free = None
+        if final_free is None or final_free < min_free_gib * 1024 ** 3:
+            disk_floor_breached.set()
+    log_hash, log_error = stage_log_integrity(log)
+    if log_error or log_unreadable.is_set():
+        error = error or log_error or "stage log became unreadable during execution"
+        if code == 0:
+            code = 1
     if log_limit_exceeded.is_set():
         error = "stage log exceeded 64 MiB limit"
         code = 1
     if disk_floor_breached.is_set():
         error = "disk capacity fell below approved minimum during stage"
         code = 1
-    try:
-        log_hash = digest(log) if log.is_file() and log.stat().st_size <= MAX_STAGE_LOG_BYTES else None
-    except OSError:
-        log_hash = None
     result = {
         "stage": name, "command": timed, "started_utc": started,
         "elapsed_seconds": round(time.monotonic() - start, 3),
         "exit_code": code,
+        "process_exit_code": process_exit_code,
         "status": ("blocked" if disk_floor_breached.is_set()
-                   else "passed" if code == 0 else "failed"),
+                   else "passed" if code == 0 and log_hash is not None and not error
+                   else "failed"),
         "log": log.name if log.exists() else None, "log_sha256": log_hash,
     }
     if error:
@@ -448,8 +514,18 @@ def execute(root, args, steps):
         },
         "stages": [], "status": "in_progress",
     }
+    if not isinstance(provenance, dict) or provenance.get("capture_complete") is not True:
+        record["status"] = "blocked"
+        record["blocker"] = "pre-run source/toolchain provenance is incomplete"
+        pending_steps = ()
+    elif not steps:
+        record["status"] = "blocked"
+        record["blocker"] = "no smoke stages were declared"
+        pending_steps = ()
+    else:
+        pending_steps = steps
     run_started = time.monotonic()
-    for name, seconds, argv in steps:
+    for name, seconds, argv in pending_steps:
         remaining = args.total_timeout - int(time.monotonic() - run_started)
         if remaining < 60:
             record["status"] = "blocked"
@@ -463,12 +539,22 @@ def execute(root, args, steps):
             record["status"] = "blocked"
             record["blocker"] = "disk unavailable or below approved minimum before a stage"
             break
-        # Leave room inside the total cap for GNU timeout's 30-second KILL grace.
-        result = run_stage(root, output, name, min(seconds, remaining - 30), argv,
+        # Reserve GNU timeout's grace, the outer wait and bounded cleanup.
+        result = run_stage(root, output, name, min(seconds, remaining - 55), argv,
                            min_free_gib=args.min_free_gib)
         record["stages"].append(result)
-        if result["exit_code"] != 0:
+        if result.get("exit_code") != 0 or result.get("status") != "passed":
             record["status"] = "blocked" if result.get("blocked") else "failed"
+            break
+        reported_hash = result.get("log_sha256")
+        expected_log = f"{name}.log"
+        log_hash, log_error = stage_log_integrity(output / expected_log)
+        if (result.get("log") != expected_log or not isinstance(reported_hash, str)
+                or not SHA256.fullmatch(reported_hash) or log_error
+                or reported_hash != log_hash):
+            result["status"] = "failed"
+            result["error"] = "stage log integrity was not verified"
+            record["status"] = "failed"
             break
         if name == "hello-build":
             safe_binary = safe_hello_binary(root)
@@ -477,6 +563,13 @@ def execute(root, args, steps):
             if not valid_elf:
                 result["status"] = "failed"
                 result["error"] = "hello binary was not a contained RISC-V ELF64 executable"
+                record["status"] = "failed"
+                break
+            try:
+                record["hello_binary_sha256_before_simulation"] = digest(safe_binary)
+            except OSError:
+                result["status"] = "failed"
+                result["error"] = "hello binary could not be hashed before simulation"
                 record["status"] = "failed"
                 break
         if name == "hello-simulate":
@@ -490,13 +583,39 @@ def execute(root, args, steps):
     else:
         # The inherited trace-free Make path has no independent target
         # completion attestation.  This only establishes the observed marker.
-        record["status"] = "hello_marker_observed_unqualified"
+        if record["status"] == "in_progress":
+            record["status"] = "hello_marker_observed_unqualified"
     binary = safe_hello_binary(root)
     if binary:
         try:
             record["hello_binary_sha256"] = digest(binary)
         except OSError:
             record["warnings"] = ["hello binary disappeared before hash capture"]
+    # No successful smoke result survives missing or changed source/pin/tool
+    # metadata. A valid output marker never excuses incomplete provenance.
+    record["revision_after"] = clean_source(root)
+    record["provenance_after"] = collect_provenance(root)
+    integrity_errors = []
+    after = record["provenance_after"]
+    if not isinstance(provenance, dict) or provenance.get("capture_complete") is not True:
+        integrity_errors.append("pre-run source/toolchain provenance is incomplete")
+    if record["revision_after"] != revision:
+        integrity_errors.append("source revision or checkout cleanliness changed during execution")
+    if not isinstance(after, dict) or after.get("capture_complete") is not True:
+        integrity_errors.append("post-run source/toolchain provenance is incomplete")
+    if isinstance(provenance, dict) and isinstance(after, dict):
+        for field in ("host", "tool_versions", "lock_hashes", "submodules"):
+            if provenance.get(field) != after.get(field):
+                integrity_errors.append(f"{field} changed during execution")
+    if record["status"] == "hello_marker_observed_unqualified":
+        before_hash = record.get("hello_binary_sha256_before_simulation")
+        if not before_hash or before_hash != record.get("hello_binary_sha256"):
+            integrity_errors.append("hello binary changed or became unavailable after compilation")
+    record["provenance_unchanged"] = not integrity_errors
+    record["integrity_errors"] = integrity_errors
+    if integrity_errors and record["status"] == "hello_marker_observed_unqualified":
+        record["status"] = "blocked"
+        record["blocker"] = "source, binary, or provenance integrity was not retained"
     record["finished_utc"] = datetime.now(timezone.utc).isoformat()
     try:
         with (output / "record.json").open("x", encoding="utf-8") as stream:

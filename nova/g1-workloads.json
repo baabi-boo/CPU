@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "campaign": "g1-single-core",
+  "configurations": ["RocketConfig", "NovaM1BaselineConfig"],
+  "source_provenance": {
+    "chipyard_commit": "a7946ede9bd625204435715dc40c750e2f8a251f",
+    "gitlinks": {
+      "generators/rocket-chip": "ece7b9ad544b07df39cd13b6fd7236562a26355d",
+      "generators/testchipip": "555ff3fbc12f81a8feff7a4801930fb384ddd2ae",
+      "toolchains/riscv-tools/riscv-tests": "0494f954a3d8d2ca9e4972da7a01e94b6a909bce",
+      "toolchains/riscv-tools/riscv-isa-sim": "9c190a07c6838f6392bafa4ad83acea462c7f759"
+    }
+  },
+  "smoke_workloads": [
+    {
+      "id": "hello",
+      "binary": "tests/build/hello.riscv",
+      "expected_target_exit": 0,
+      "expected_marker": null,
+      "output_contract": "inherited-hello-line-and-completion-protocol"
+    },
+    {
+      "id": "nova-baseline",
+      "binary": "software/nova/baseline/build/nova-baseline.riscv",
+      "expected_target_exit": 0,
+      "expected_marker": "NOVA_BASELINE_V1 PASS hart=0 checks=8",
+      "output_contract": "exact-line-and-completion-protocol"
+    },
+    {
+      "id": "nova-baseline-fail",
+      "binary": "software/nova/baseline/build/nova-baseline-fail.riscv",
+      "expected_target_exit": 7,
+      "expected_marker": "NOVA_BASELINE_V1 EXPECTED_FAIL hart=0 code=7",
+      "output_contract": "exact-line-and-expected-target-failure"
+    }
+  ],
+  "isa_tests": [
+    "rv64ui-p-simple",
+    "rv64ui-p-add",
+    "rv64ui-p-sub",
+    "rv64ui-p-beq",
+    "rv64ui-p-jalr",
+    "rv64ui-p-ld",
+    "rv64ui-p-sd",
+    "rv64um-p-mul",
+    "rv64um-p-div",
+    "rv64mi-p-csr",
+    "rv64mi-p-illegal",
+    "rv64mi-p-scall"
+  ],
+  "isa_binary_directory": "riscv64-unknown-elf/share/riscv-tests/isa",
+  "reference": {
+    "model": "Spike",
+    "source_gitlink": "toolchains/riscv-tools/riscv-isa-sim",
+    "comparison_scope": "unresolved",
+    "qualified": false
+  },
+  "exclusions": [
+    "F", "D", "A", "C", "MMU", "full-ISA-certification",
+    "per-instruction-differential-checking", "heterogeneous-execution"
+  ],
+  "full_isa_certification": false,
+  "missing_workload_policy": "block-no-skips",
+  "reproduction": {
+    "required_clean_builds": 2,
+    "shared_generated_artifacts_allowed": false,
+    "automatic_gate_acceptance": false
+  }
+}

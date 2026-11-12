@@ -42,13 +42,18 @@ def minimal_riscv64_elf(path):
 
 def expected_provenance():
     return {
-        "host": {"architecture": "x86_64", "glibc": "2.41"},
-        "tool_versions": {"verilator": "Verilator 5.022", "cmake": "cmake 3.30"},
-        "lock_hashes": {"conda-reqs/chipyard-base.yaml": {
-            "sha256": "a" * 64, "matches_imported_blob": True}},
+        "host": {"os": "Linux", "architecture": "x86_64", "glibc": "2.34",
+                 "pinned_sysroot": "2.34", "setup_selected_sysroot": "2.34",
+                 "unsafe_upstream_setup": False},
+        "tool_versions": {"verilator": "Verilator 5.022", "cmake": "cmake 3.30",
+                          "java": "openjdk 20.0.2", "firtool": "firtool 1.75.0",
+                          "make": "GNU Make 4.4", "riscv64-unknown-elf-gcc": "gcc 16"},
+        "lock_hashes": {f"conda-reqs/fixture-{index}.yaml": "a" * 64
+                        for index in range(9)},
         "submodules": [{"path": "generators/rocket-chip", "pin": "b" * 40,
                         "state": "at_pin", "required": True}],
         "capture_complete": True,
+        "toolchain_versions_verified": False,
         "limitations": ["Mock values are for test fixtures only."],
     }
 
@@ -74,6 +79,7 @@ class RocketProvenanceTests(unittest.TestCase):
     def execute_fixture(self, *, marker=True):
         minimal_riscv64_elf(self.root / "tests/build/hello.riscv")
         with patch.object(runner, "validate_execution", return_value=("c" * 40, None)), \
+             patch.object(runner, "clean_source", return_value="c" * 40), \
              patch.object(runner, "make_output_dir", return_value=self.output), \
              patch.object(runner, "collect_provenance", return_value=expected_provenance()), \
              patch.object(runner.shutil, "disk_usage",

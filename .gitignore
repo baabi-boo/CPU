@@ -36,3 +36,4 @@ conda-reqs/chipyard-base.yaml.bak
 /nova-out/
 /scripts/nova/__pycache__/
 /tests/nova/__pycache__/
+/software/nova/baseline/build/

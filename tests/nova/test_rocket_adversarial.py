@@ -60,7 +60,11 @@ class RocketAdversarialTests(unittest.TestCase):
         return fake
 
     def mocked_execute(self, side_effect):
+        from test_rocket_provenance import expected_provenance
+
         with patch.object(runner, "validate_execution", return_value=("a" * 40, None)), \
+             patch.object(runner, "clean_source", return_value="a" * 40), \
+             patch.object(runner, "collect_provenance", return_value=expected_provenance()), \
              patch.object(runner, "make_output_dir", return_value=self.output), \
              patch.object(runner.shutil, "disk_usage",
                           return_value=SimpleNamespace(free=64 * 1024 ** 3)), \

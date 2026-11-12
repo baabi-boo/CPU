@@ -3,7 +3,7 @@
 PYTHON ?= python3
 DOCTOR_FLAGS ?=
 
-.PHONY: help check validate test whitespace doctor doctor-strict preflight preflight-strict rocket-plan
+.PHONY: help check validate test whitespace doctor doctor-strict preflight preflight-strict rocket-plan g1-plan g1-campaign-plan g1-profile g1-profile-strict conda-plan
 
 help:
 	@printf '%s\n' \
@@ -16,6 +16,11 @@ help:
 	  '  make -f nova.mk preflight      Non-mutating NOVA-001 setup/lock safety report' \
 	  '  make -f nova.mk preflight-strict  Report and fail on unsafe setup prerequisites' \
 	  '  make -f nova.mk rocket-plan    Read-only plan for bounded Rocket simulation' \
+	  '  make -f nova.mk g1-plan        Read-only two-profile workload campaign plan' \
+	  '  make -f nova.mk g1-campaign-plan  Read-only bounded runner plan and limitations' \
+	  '  make -f nova.mk g1-profile     Diagnose the fixed Chisel-6 baseline profile' \
+	  '  make -f nova.mk g1-profile-strict  Fail on missing known profile prerequisites' \
+	  '  make -f nova.mk conda-plan     Inspect the unchanged pinned package inventory' \
 	  'These targets do not install dependencies, build RTL, or qualify hardware.'
 
 check: validate test whitespace
@@ -44,3 +49,18 @@ preflight-strict:
 
 rocket-plan:
 	$(PYTHON) -B scripts/nova/rocket_baseline.py --plan
+
+g1-plan:
+	$(PYTHON) -B scripts/nova/campaign_plan.py
+
+g1-campaign-plan:
+	$(PYTHON) -B scripts/nova/g1_campaign.py --plan
+
+g1-profile:
+	$(PYTHON) -B scripts/nova/g1_profile.py
+
+g1-profile-strict:
+	$(PYTHON) -B scripts/nova/g1_profile.py --strict
+
+conda-plan:
+	$(PYTHON) -B scripts/nova/conda_inventory.py

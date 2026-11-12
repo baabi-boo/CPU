@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "profile": "g1-chisel6-rocket",
+  "configurations": ["RocketConfig", "NovaM1BaselineConfig"],
+  "chisel_mode": "default-6",
+  "pin_source": "nova/upstream-lock.json",
+  "required_source_gitlinks": [
+    "generators/bar-fetchers",
+    "generators/boom",
+    "generators/constellation",
+    "generators/diplomacy",
+    "generators/hardfloat",
+    "generators/icenet",
+    "generators/pmu",
+    "generators/rerocc",
+    "generators/rocket-chip",
+    "generators/rocket-chip-blocks",
+    "generators/rocket-chip-inclusive-cache",
+    "generators/shuttle",
+    "generators/testchipip",
+    "sims/firesim",
+    "toolchains/libgloss",
+    "tools/DRAMSim2",
+    "tools/cde",
+    "tools/dsptools",
+    "tools/firrtl2",
+    "tools/fixedpoint",
+    "tools/rocket-dsp-utils"
+  ],
+  "provisioning_source_gitlinks": [
+    "toolchains/riscv-tools/riscv-isa-sim",
+    "toolchains/riscv-tools/riscv-tests",
+    "tools/install-circt"
+  ],
+  "optional_generators": [
+    "ara", "caliptra-aes-acc", "compress-acc", "cva6", "fft-generator",
+    "gemmini", "ibex", "mempress", "nvdla", "radiance", "riscv-sodor",
+    "saturn", "tacit", "vexiiriscv"
+  ],
+  "expected_initialized_optional_generators": [],
+  "source_inputs_sha256": {
+    "build.sbt": "420bbfbf5135f885c74b9867288c9a2aabdec516902a01e3b17a5353d3ec3f89",
+    "project/build.properties": "366965f03aa4216cd35a6ddfc2ad2e3079b8e8bbbed04ae817fb7835bbad1eb7",
+    "project/plugins.sbt": "dc6ce57fae25e1c2cca86ce775a0d75028ee2abcb3179e9b610d4da787169aa9",
+    "variables.mk": "216887bd2e0a3a930db01231f846a9e8187979bccf982573d3f7dc0b4c1b2128",
+    "common.mk": "231d304d4cdd153bee39187fe03f42de21710c624e3d34d5652797050019f08d",
+    "sims/verilator/Makefile": "0ac6837f587a4a9c5ebcefdf74254aa75403382e5ef934b855df04af2665cf6a",
+    "sims/common-sim-flags.mk": "d489786f193bc7269b0f953a680a8195ece8dec11f3249ea4edf07757fa8bb8a",
+    "generators/chipyard/src/main/scala/config/NovaM1Configs.scala": "1cc36e832d24a327c629b08df04e78b02c5f13c0caa334f7125150a4dee439e1"
+  },
+  "conda_lock": "conda-reqs/conda-lock-reqs/conda-requirements-riscv-tools-linux-64-lean.conda-lock.yml",
+  "circt_input": "conda-reqs/circt.json",
+  "expected_tool_versions": {"verilator": "5.022", "firtool": "1.75.0"},
+  "closure_qualified": false,
+  "limitations": [
+    "This declares known source and installed-collateral requirements, not a proven transitive closure.",
+    "Provisioning source roles do not prescribe running the broad upstream setup script.",
+    "Installed Conda package identity and supplementary CMake provenance need separate verification.",
+    "Nested gitlinks and resolved Maven/Coursier artifacts require retained build evidence."
+  ]
+}
