@@ -60,6 +60,7 @@ class CampaignIntegrationTests(unittest.TestCase):
         source = copy.deepcopy(template["source_before"])
         for relative in ("nova/g1-workloads.json", "nova/g1-profile.json", "nova/upstream-lock.json"):
             source["source_inputs"][relative] = hashlib.sha256((root / relative).read_bytes()).hexdigest()
+        fixtures.refresh_source_digest(source)
         profile = copy.deepcopy(template["preflight"]["profile"])
         inventory = copy.deepcopy(template["inventory"])
         inventory.update(hardware_qualified=False, g1_gate_passed=False)
@@ -72,16 +73,20 @@ class CampaignIntegrationTests(unittest.TestCase):
                 return capture_regular(base, path, kind=kind, max_bytes=max_bytes)
             relative = str(Path(path).relative_to(base))
             invented = ("SYNTHETIC UNEXECUTED " + kind + ":" + relative).encode()
+            # Structurally possible ELF size; these padded text bytes are still
+            # test doubles, never a captured ELF or an execution observation.
+            invented = invented.ljust(256, b"!")
             return {"path": relative, "kind": kind, "size_bytes": len(invented),
                     "sha256": hashlib.sha256(invented).hexdigest()}
 
         def fake_artifacts(base, config):
             simulator = fake_capture(base, base / "sims/verilator" /
                                      ("simulator-chipyard.harness-" + config), kind="simulator")
-            collateral = [{"path": "synthetic-not-generated/" + config + "/" + kind,
+            generated = "sims/verilator/generated-src/chipyard.harness.TestHarness." + config + "/"
+            collateral = [{"path": generated + "SYNTHETIC-NOT-GENERATED" + suffix,
                            "kind": kind, "size_bytes": 100,
                            "sha256": fixtures.digest(config + " invented " + kind)}
-                          for kind in ("rtl", "device_tree", "metadata")]
+                          for kind, suffix in (("rtl", ".sv"), ("device_tree", ".dts"), ("metadata", ".json"))]
             return {"status": "captured", "reasons": [], "artifacts": [simulator, *collateral]}
 
         def fake_run(cwd, output_dir, name, argv, timeout_seconds, **limits):
@@ -125,7 +130,7 @@ class CampaignIntegrationTests(unittest.TestCase):
 
         profile_after, inventory_after = copy.deepcopy(profile), copy.deepcopy(inventory)
         if post_drift == "profile":
-            profile_after["collateral"]["synthetic"]["sha256"] = fixtures.digest("changed collateral")
+            profile_after["collateral"]["fesvr_library"]["sha256"] = fixtures.digest("changed collateral")
         elif post_drift == "inventory":
             inventory_after["matching_package_count"] -= 1
         args = argparse.Namespace(approved_budget=True, jobs=2, java_heap="4G",
@@ -192,7 +197,7 @@ class CampaignIntegrationTests(unittest.TestCase):
         right, _ = self.produce("right")
         for key in ("source_before", "source_after"):
             right[key]["revision"] = "9" * 40
-            right[key]["state_digest"] = fixtures.digest("different source")
+            fixtures.refresh_source_digest(right[key])
         self.assertEqual(compare.compare_records(left, right)["status"], "different")
 
     def test_produced_commands_and_post_binary_fields_are_checked(self):

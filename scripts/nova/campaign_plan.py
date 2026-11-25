@@ -15,6 +15,7 @@ from pathlib import Path, PurePosixPath
 import re
 import stat
 import sys
+from types import MappingProxyType
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -62,6 +63,19 @@ MANIFEST_KEYS = {
 }
 MAX_JSON_BYTES = 128 * 1024
 SHA1 = re.compile(r"[0-9a-f]{40}\Z")
+TARGET_EXIT_OBSERVER_POLICY = MappingProxyType({
+    "schema_version": 1,
+    "kind": "nova-htif-exit",
+    "source_gitlink": "toolchains/riscv-tools/riscv-isa-sim",
+    "source_commit": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "upstream_htif_sha256": "c669e8352c6e21d61118849b0b969d291b84100e83343659f3d08979ae89a11d",
+    "output_directory": "nova-out/htif-observer",
+    "manifest_path": "nova-out/htif-observer/manifest.json",
+    "make_fragment": "software/nova/observer/observer.mk",
+    "witness_max_bytes": 4096,
+    "dedicated_witness_required": True,
+    "signal_exit_accepted": False,
+})
 
 
 def _object(pairs):
@@ -222,7 +236,7 @@ def simulator_argv(root, config, binary, max_cycles=10000000, seed=1):
     ]
 
 
-def build_plan(root, jobs=2, java_heap="4G"):
+def build_plan(root, jobs=2, java_heap="4G", *, observe_target_exit=False):
     """Return a read-only plan for one clean campaign, repeated separately twice.
 
     ISA binary paths remain relative to a separately verified RISCV prefix. No
@@ -232,6 +246,8 @@ def build_plan(root, jobs=2, java_heap="4G"):
     _bounded_integer(jobs, 1, 2, "jobs")
     if not isinstance(java_heap, str) or not re.fullmatch(r"[1-8]G", java_heap):
         raise ValueError("java_heap must be 1G..8G")
+    if type(observe_target_exit) is not bool:
+        raise ValueError("observe_target_exit must be a boolean")
     manifest = load_workloads(_repository_input(root, "nova/g1-workloads.json"))
     _verify_source_provenance(root, manifest["source_provenance"])
     hello_build = str(root / "tests/build")
@@ -263,6 +279,17 @@ def build_plan(root, jobs=2, java_heap="4G"):
                      "nova-baseline", "nova-baseline-fail", "--parallel", str(jobs)],
         },
     ]
+    observer_make_args = []
+    if observe_target_exit:
+        common_build.insert(0, {
+            "id": "htif-observer-prepare", "timeout_seconds": 120,
+            "argv": ["python3", "-B", str(root / "scripts/nova/htif_observer.py"),
+                     "--prepare", "--root", str(root),
+                     "--output", str(root / "nova-out/htif-observer")],
+        })
+        observer_make_args = [
+            "-f", "Makefile", "-f", str(root / "software/nova/observer/observer.mk"),
+        ]
     workloads = []
     for item in manifest["smoke_workloads"]:
         workloads.append({"kind": "smoke", "binary_origin": "repository", **item})
@@ -280,6 +307,7 @@ def build_plan(root, jobs=2, java_heap="4G"):
             "build": {
                 "id": config + "-build", "timeout_seconds": 7200,
                 "argv": ["make", "-C", str(root / "sims/verilator"),
+                         *observer_make_args,
                          "CONFIG=" + config, "JAVA_HEAP_SIZE=" + java_heap,
                          "-j" + str(jobs)],
             },
@@ -288,8 +316,9 @@ def build_plan(root, jobs=2, java_heap="4G"):
             "simulation_limits": {"max_cycles": 10000000, "seed": 1, "timeout_seconds": 300},
             "workloads": copy.deepcopy(workloads),
         })
-    return {
-        "schema_version": 1, "scope": "G1 declared single-core workload plan only",
+    plan = {
+        "schema_version": 2 if observe_target_exit else 1,
+        "scope": "G1 declared single-core workload plan only",
         "hardware_qualified": False, "g1_gate_passed": False,
         "does_not_provision_toolchain_or_initialize_submodules": True,
         "build_dependency_resolution": "may_access_network",
@@ -312,6 +341,9 @@ def build_plan(root, jobs=2, java_heap="4G"):
             "Reference comparison remains unresolved; this plan cannot close T-ISA-001 or G1.",
         ],
     }
+    if observe_target_exit:
+        plan["target_exit_observer"] = dict(TARGET_EXIT_OBSERVER_POLICY)
+    return plan
 
 
 def main(argv=None):
@@ -319,9 +351,12 @@ def main(argv=None):
     parser.add_argument("--root", type=Path, default=ROOT)
     parser.add_argument("--jobs", type=int, default=2)
     parser.add_argument("--java-heap", default="4G")
+    parser.add_argument("--observe-target-exit", action="store_true",
+                        help="plan the dedicated HTIF target-exit observer")
     args = parser.parse_args(argv)
     try:
-        plan = build_plan(args.root, jobs=args.jobs, java_heap=args.java_heap)
+        plan = build_plan(args.root, jobs=args.jobs, java_heap=args.java_heap,
+                          observe_target_exit=args.observe_target_exit)
     except (ValueError, TypeError) as exc:
         print("Blocked: " + str(exc), file=sys.stderr)
         return 2

@@ -134,6 +134,7 @@ class RecordContractRegressions(unittest.TestCase):
         self.assertResult(left, right, "consistent")
         for field in ("source_before", "source_after"):
             right[field]["tree"] = "a" * 40
+            fixtures.refresh_source_digest(right[field])
         self.assertResult(left, right, "different")
 
     def test_recorded_artifacts_cannot_exceed_capture_file_ceiling(self):

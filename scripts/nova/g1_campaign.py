@@ -17,6 +17,7 @@ import math
 import os
 from pathlib import Path
 import re
+import secrets
 import shutil
 import signal
 import sys
@@ -32,6 +33,8 @@ MAX_LOG_BYTES = 64 * 1024 * 1024
 MAX_CYCLES = 10000000
 SEED = 1
 CLEANUP_RESERVE_SECONDS = 10
+OBSERVER_MANIFEST_PATH = "nova-out/htif-observer/manifest.json"
+MAX_WITNESS_BYTES = 4096
 SHA256 = re.compile(r"[0-9a-f]{64}\Z")
 CONFIGURATIONS = ("RocketConfig", "NovaM1BaselineConfig")
 LIMITATIONS = [
@@ -75,6 +78,8 @@ FORBIDDEN_ENV = frozenset({
     "RV64GC_ISA_TEST_PREFIXES", "RV64GC_ASM_TEST_EXCLUDES", "RV64GC_ASM_TESTS",
     "RISCV_BMARK_TEST_NAMES", "RISCV_BMARK_TESTS", "SIM_PREPROC_DEFINES",
     "VERILATOR_FLAGS", "VERILATOR_CXXFLAGS", "VERILATOR_LDFLAGS",
+    "LRISCV", "SIM_LDFLAGS", "NOVA_HTIF_OBSERVER_DIR", "NOVA_HTIF_WITNESS_PATH",
+    "NOVA_HTIF_RUN_ID", "NOVA_HTIF_BINDING_SHA256",
 })
 _CANCELLATION = ContextVar("nova_campaign_cancellation", default=None)
 
@@ -132,8 +137,9 @@ def _module(name):
 
 
 # All tool/hardware boundaries are patchable for offline tests.
-def build_plan(root, jobs=2, java_heap="4G"):
-    return _module("campaign_plan").build_plan(root, jobs=jobs, java_heap=java_heap)
+def build_plan(root, jobs=2, java_heap="4G", *, observe_target_exit=False):
+    return _module("campaign_plan").build_plan(
+        root, jobs=jobs, java_heap=java_heap, observe_target_exit=observe_target_exit)
 
 
 def simulator_argv(root, config, binary, max_cycles=MAX_CYCLES, seed=SEED):
@@ -174,6 +180,20 @@ def run_command(cwd, output_dir, name, argv, timeout_seconds, min_free_gib=10,
 def assess_workload(stdout_path, stderr_path, exit_code, workload, max_cycles=MAX_CYCLES):
     return _module("workload_assessment").assess_workload(stdout_path, stderr_path, exit_code,
                                                         workload, max_cycles=max_cycles)
+
+
+def build_observer_metadata(manifest_path, *, root, environ):
+    return _module("htif_observer").build_metadata(manifest_path, root=root, environ=environ)
+
+
+def validate_observer_metadata(metadata):
+    return _module("htif_observer").validate_build_metadata(metadata)
+
+
+def assess_exit(path, *, run_id, binding_sha256, expected_target_exit):
+    return _module("htif_exit_evidence").assess_exit(
+        path, run_id=run_id, binding_sha256=binding_sha256,
+        expected_target_exit=expected_target_exit)
 
 
 def utc_now():
@@ -321,8 +341,8 @@ def _require_command_passed(directory, result):
         raise CampaignStop("failed", result.get("reason") or "build or pinned-input check did not pass")
 
 
-def _new_record(resources):
-    return {
+def _new_record(resources, *, observe_target_exit=False):
+    record = {
         "schema_version": 1, "kind": "nova-g1-campaign", "status": "blocked",
         "source_before": None, "source_after": None, "plan_sha256": None,
         "declared_plan": None, "execution_paths": None, "elapsed_seconds": None,
@@ -335,6 +355,9 @@ def _new_record(resources):
         "reference_comparison": "not_run", "limitations": list(LIMITATIONS),
         "preflight": {}, "reasons": [],
     }
+    if observe_target_exit:
+        record.update(schema_version=2, target_exit_observer=None)
+    return record
 
 
 def _prepare_rows(record, plan):
@@ -350,14 +373,22 @@ def _prepare_rows(record, plan):
                            "stage": {"status": "not_run"}, "assessment": None}
                           for row in profile["workloads"]],
         })
+        if record["schema_version"] == 2:
+            for row in record["profiles"][-1]["workloads"]:
+                row["target_exit"] = {"status": "not_run"}
 
 
 def _preflight(root, directory, plan, record, deadline, env):
-    forbidden = sorted(FORBIDDEN_ENV.intersection(env))
+    forbidden = sorted(FORBIDDEN_ENV.intersection(env) |
+                       {name for name in env if name.startswith("NOVA_HTIF_")})
     if forbidden:
         raise CampaignStop("blocked", "inherited profile/build overrides must be unset: " + ", ".join(forbidden))
     _require_source(record["source_before"])
     stale = stale_products(root)
+    observer_output = root / Path(OBSERVER_MANIFEST_PATH).parent
+    if (record["schema_version"] == 2
+            and (observer_output.exists() or observer_output.is_symlink())):
+        stale.append(str(observer_output.relative_to(root)))
     if stale:
         raise CampaignStop("blocked", "stale generated products require a separate fresh checkout: " + ", ".join(stale))
     riscv = _safe_prefix(env, "RISCV")
@@ -406,8 +437,142 @@ def _preflight(root, directory, plan, record, deadline, env):
     return riscv
 
 
+def _verify_observer(root, record, env):
+    """Capture once, then revalidate every recorded observer build identity."""
+    _check_cancellation()
+    previous = record["target_exit_observer"]
+    try:
+        current = build_observer_metadata(root / OBSERVER_MANIFEST_PATH,
+                                          root=root, environ=env)
+        validate_observer_metadata(current)
+        if current["manifest_path"] != OBSERVER_MANIFEST_PATH:
+            raise ValueError("observer manifest differs from the declared fixed path")
+    except (OSError, ValueError, TypeError, KeyError, RuntimeError) as exc:
+        status = "blocked" if previous is None else "failed"
+        raise CampaignStop(status, "observer build evidence unavailable: " + str(exc)) from exc
+    if previous is None:
+        record["target_exit_observer"] = current
+    elif current != previous:
+        raise CampaignStop("failed", "observer build metadata changed during campaign")
+    _check_cancellation()
+
+
+def _exit_binding(record, configuration, workload_id, binary_sha256,
+                  simulator_sha256, run_id):
+    source = record["source_before"]
+    binding = {
+        "schema_version": 1, "configuration": configuration,
+        "workload_id": workload_id, "run_id": run_id,
+        "binary_sha256": binary_sha256, "simulator_sha256": simulator_sha256,
+        "observer_manifest_sha256": record["target_exit_observer"]["manifest_sha256"],
+        "source_revision": source["revision"], "source_tree": source["tree"],
+        "source_state_digest": source["state_digest"],
+        "max_cycles": record["resource_limits"]["max_cycles"],
+        "seed": record["resource_limits"]["seed"],
+    }
+    for field in ("run_id", "binary_sha256", "simulator_sha256",
+                  "observer_manifest_sha256", "source_state_digest"):
+        if type(binding[field]) is not str or SHA256.fullmatch(binding[field]) is None:
+            raise CampaignStop("failed", "invalid observer binding identity: " + field)
+    if any(type(binding[field]) is not int for field in ("schema_version", "max_cycles", "seed")):
+        raise CampaignStop("failed", "observer binding resource values must be integers")
+    return binding
+
+
+def _binding_digest(binding):
+    return hashlib.sha256(json.dumps(binding, sort_keys=True, separators=(",", ":"),
+                                     allow_nan=False).encode("utf-8")).hexdigest()
+
+
+def _capture_witness(directory, path):
+    return capture_file(directory, path, kind="htif_exit_witness", max_bytes=MAX_WITNESS_BYTES)
+
+
+def _fail_exit_assessment(target_exit, reason):
+    """A failed capture/recheck must not retain an optimistic observer flag."""
+    previous = target_exit.get("assessment")
+    if not isinstance(previous, dict):
+        previous = {}
+    reasons = previous.get("reasons")
+    reasons = list(reasons) if isinstance(reasons, list) else []
+    if reason not in reasons:
+        reasons.append(reason)
+    target_exit["assessment"] = {
+        "status": "failed", "target_exit_observed": False,
+        "target_completion_verified": False, "hardware_qualified": False,
+        "g1_gate_passed": False, "reasons": reasons,
+        "witness_sha256": previous.get("witness_sha256"),
+        "witness_bytes": previous.get("witness_bytes"), "event": previous.get("event"),
+    }
+
+
+def _assess_target_exit(directory, path, row, workload):
+    target_exit = row["target_exit"]
+    binding = target_exit["binding"]
+    try:
+        _check_cancellation()
+        # Even a missing or unsafe file gets the parser's diagnostic assessment;
+        # an unsuccessful independent capture can never authorize its result.
+        capture_error = None
+        try:
+            target_exit["witness"] = _capture_witness(directory, path)
+        except (OSError, ValueError, TypeError, RuntimeError) as exc:
+            capture_error = exc
+        assessment = assess_exit(path, run_id=binding["run_id"],
+                                 binding_sha256=_binding_digest(binding),
+                                 expected_target_exit=workload["expected_target_exit"])
+        target_exit["assessment"] = assessment
+        if capture_error is not None:
+            raise CampaignStop("failed", "dedicated HTIF witness could not be safely captured")
+        if _capture_witness(directory, path) != target_exit["witness"]:
+            raise CampaignStop("failed", "dedicated HTIF witness changed during assessment")
+        witness = target_exit["witness"]
+        if (not isinstance(assessment, dict) or assessment.get("status") != "observed"
+                or assessment.get("target_exit_observed") is not True
+                or assessment.get("target_completion_verified") is not True
+                or assessment.get("hardware_qualified") is not False
+                or assessment.get("g1_gate_passed") is not False
+                or assessment.get("reasons") != []
+                or assessment.get("witness_sha256") != witness["sha256"]
+                or type(assessment.get("witness_bytes")) is not int
+                or assessment["witness_bytes"] != witness["size_bytes"]):
+            raise CampaignStop("failed", "dedicated HTIF target exit not verified: " + workload["id"])
+        _check_cancellation()
+    except CampaignStop as exc:
+        _fail_exit_assessment(target_exit, str(exc))
+        raise
+    except (OSError, ValueError, TypeError, KeyError, RuntimeError) as exc:
+        reason = "dedicated HTIF witness evidence unavailable: " + str(exc)
+        _fail_exit_assessment(target_exit, reason)
+        raise CampaignStop("failed", reason) from exc
+
+
+def _recheck_witnesses(directory, record):
+    for profile in record["profiles"]:
+        for row in profile["workloads"]:
+            _check_cancellation()
+            target_exit = row["target_exit"]
+            witness = target_exit.get("witness")
+            if witness is None:
+                continue
+            try:
+                name = witness["path"]
+                if (not isinstance(name, str) or not name or Path(name).name != name
+                        or name in {".", ".."}):
+                    raise ValueError("witness path is not a retained basename")
+                if _capture_witness(directory, directory / name) != witness:
+                    raise ValueError("witness content changed")
+            except (OSError, ValueError, TypeError, KeyError, RuntimeError) as exc:
+                reason = "dedicated HTIF witness changed before finalization: " + row["id"]
+                _fail_exit_assessment(target_exit, reason)
+                raise CampaignStop("failed", reason) from exc
+
+
 def _run_workload(root, directory, profile, workload, row, simulator, riscv,
-                  simulator_digest, binary_digest, deadline, resources, env):
+                  simulator_digest, binary_digest, deadline, resources, env,
+                  *, observer_record=None, run_ids=None):
+    if observer_record is not None:
+        _verify_observer(root, observer_record, env)
     base = root if workload["binary_origin"] == "repository" else riscv
     binary = base / workload["binary"]
     row["binary"] = capture_file(base, binary, kind="riscv_elf")
@@ -420,22 +585,49 @@ def _run_workload(root, directory, profile, workload, row, simulator, riscv,
     name = profile["configuration"] + "-" + workload["id"]
     argv = simulator_argv(root, profile["configuration"], binary,
                           max_cycles=resources["max_cycles"], seed=resources["seed"])
+    stage_env = env
+    witness_path = None
+    if observer_record is not None:
+        run_id = secrets.token_hex(32)
+        if (type(run_id) is not str or SHA256.fullmatch(run_id) is None
+                or run_ids is None or run_id in run_ids):
+            raise CampaignStop("failed", "observer run identifier is invalid or reused")
+        run_ids.add(run_id)
+        binding = _exit_binding(observer_record, profile["configuration"], workload["id"],
+                                row["binary"]["sha256"], before["sha256"], run_id)
+        witness_path = directory / (name + ".htif-exit.json")
+        if witness_path.exists() or witness_path.is_symlink():
+            raise CampaignStop("failed", "dedicated HTIF witness path is not fresh")
+        row["target_exit"] = {"witness": None, "binding": binding, "assessment": None}
+        stage_env = {**env, "NOVA_HTIF_WITNESS_PATH": str(witness_path),
+                     "NOVA_HTIF_RUN_ID": run_id,
+                     "NOVA_HTIF_BINDING_SHA256": _binding_digest(binding)}
     row["stage"] = _stage(root, directory, name, argv,
                           profile["simulation_limits"]["timeout_seconds"],
-                          deadline, resources, env, cwd=Path(profile["simulation_cwd"]))
+                          deadline, resources, stage_env, cwd=Path(profile["simulation_cwd"]))
+    if witness_path is not None:
+        # Retain bytes from a failed process when safe, without assessing them
+        # as target completion or letting capture errors override process status.
+        try:
+            row["target_exit"]["witness"] = _capture_witness(directory, witness_path)
+        except (OSError, ValueError, TypeError, RuntimeError):
+            pass
+        _check_cancellation()
     row["binary_after"] = capture_file(base, binary, kind="riscv_elf")
     after = capture_file(root, simulator, kind="simulator")
     row["simulator_sha256_after"] = after["sha256"]
     if row["binary"] != row["binary_after"] or before != after:
         raise CampaignStop("failed", "workload or simulator binary changed while executing")
     stage = row["stage"]
-    if stage.get("status") == "blocked":
+    if stage.get("status") == "blocked" or stage.get("interrupted"):
         raise CampaignStop("blocked", stage.get("reason") or "workload execution blocked")
     logs = _safe_logs(directory, stage)
     if (stage.get("status") not in {"passed", "failed"}
             or type(stage.get("exit_code")) is not int or stage.get("timed_out")
             or stage.get("reason") not in {None, "", "command exited unsuccessfully"}):
         raise CampaignStop("failed", stage.get("reason") or "workload did not produce an intact process result")
+    if stage["exit_code"] == 125:
+        raise CampaignStop("failed", "workload process reported reserved observer failure 125")
     negative = workload["expected_target_exit"] != 0
     if negative:
         if (stage["status"] != "failed" or stage["exit_code"] == 0
@@ -463,9 +655,12 @@ def _run_workload(root, directory, profile, workload, row, simulator, riscv,
             or assessment.get("hardware_qualified") is not False
             or assessment.get("g1_gate_passed") is not False or assessment.get("reasons") != []):
         raise CampaignStop("failed", "declared workload expectation not verified: " + workload["id"])
+    if observer_record is not None:
+        _verify_observer(root, observer_record, env)
+        _assess_target_exit(directory, witness_path, row, workload)
 
 
-def _finalize(root, record, deadline, env):
+def _finalize(root, record, deadline, env, *, directory=None):
     """Retain post-run identity even on failure; never manufacture success."""
     try:
         _check_cancellation()
@@ -513,6 +708,14 @@ def _finalize(root, record, deadline, env):
         record["reasons"].append(str(exc))
         if record["status"] != "failed":
             record["status"] = exc.status if isinstance(exc, CampaignStop) else "blocked"
+    if record["schema_version"] == 2 and record["target_exit_observer"] is not None:
+        try:
+            _verify_observer(root, record, env)
+            _recheck_witnesses(directory, record)
+        except (OSError, ValueError, TypeError, KeyError, RuntimeError, CampaignStop) as exc:
+            record["reasons"].append("post-execution observer evidence: " + str(exc))
+            if record["status"] != "failed":
+                record["status"] = exc.status if isinstance(exc, CampaignStop) else "failed"
     if time.monotonic() > deadline:
         record["reasons"].append("aggregate wall-clock deadline exceeded; campaign is not accepted")
         if record["status"] != "failed":
@@ -528,21 +731,27 @@ def _execute(root, args, env=None):
     if getattr(args, "approved_budget", False) is not True:
         raise ValueError("execution requires --approved-budget")
     resources = resource_limits(args)
+    observe_target_exit = getattr(args, "observe_target_exit", False)
+    if type(observe_target_exit) is not bool:
+        raise ValueError("observe_target_exit must be boolean")
     root = Path(root).resolve(strict=True)
     if root != ROOT.resolve(strict=True):
         raise ValueError("execution root must be the checkout containing this runner and its helpers")
     env = dict(os.environ if env is None else env)
     deadline = time.monotonic() + resources["total_timeout_seconds"]
-    record = _new_record(resources)
+    record = _new_record(resources, observe_target_exit=observe_target_exit)
     record["execution_paths"] = {
         "repository": str(root), "riscv_prefix": None, "python": sys.executable,
     }
     directory = make_output_dir(root)
+    run_ids = set()
     try:
         _check_cancellation()
         record["source_before"] = capture_source(root)
         _check_cancellation()
-        plan = build_plan(root, jobs=resources["jobs"], java_heap=resources["java_heap"])
+        observer_options = {"observe_target_exit": True} if observe_target_exit else {}
+        plan = build_plan(root, jobs=resources["jobs"], java_heap=resources["java_heap"],
+                          **observer_options)
         record["plan_sha256"] = plan_digest(plan, root)
         record["declared_plan"] = normalized_plan(plan, root)
         record["profile_sha256"] = capture_file(root, root / PROFILE_PATH)["sha256"]
@@ -554,16 +763,25 @@ def _execute(root, args, env=None):
                               stage["timeout_seconds"], deadline, resources, env)
             record["common_stages"].append(observed)
             _require_command_passed(directory, observed)
+            if observe_target_exit:
+                if (record["target_exit_observer"] is None
+                        and stage["id"] != "htif-observer-prepare"):
+                    raise CampaignStop("failed", "observer preparation must be the first common stage")
+                _verify_observer(root, record, env)
         binary_digests = {}
         for workload in plan["profiles"][0]["workloads"]:
             base = root if workload["binary_origin"] == "repository" else riscv
             binary_digests[workload["id"]] = capture_file(
                 base, base / workload["binary"], kind="riscv_elf")["sha256"]
         for profile, result in zip(plan["profiles"], record["profiles"]):
+            if observe_target_exit:
+                _verify_observer(root, record, env)
             build = profile["build"]
             result["build"] = _stage(root, directory, build["id"], build["argv"],
                                       build["timeout_seconds"], deadline, resources, env)
             _require_command_passed(directory, result["build"])
+            if observe_target_exit:
+                _verify_observer(root, record, env)
             artifacts = capture_profile_artifacts(root, profile["configuration"])
             result["artifacts"] = artifacts
             if (not isinstance(artifacts, dict) or artifacts.get("status") != "captured"
@@ -573,8 +791,11 @@ def _execute(root, args, env=None):
             simulator = Path(profile["simulator"])
             simulator_digest = capture_file(root, simulator, kind="simulator")["sha256"]
             for workload, row in zip(profile["workloads"], result["workloads"]):
+                observer_options = ({"observer_record": record, "run_ids": run_ids}
+                                    if observe_target_exit else {})
                 _run_workload(root, directory, profile, workload, row, simulator, riscv,
-                              simulator_digest, binary_digests[workload["id"]], deadline, resources, env)
+                              simulator_digest, binary_digests[workload["id"]], deadline, resources, env,
+                              **observer_options)
             if capture_profile_artifacts(root, profile["configuration"]) != artifacts:
                 raise CampaignStop("failed", "profile artifacts changed during workload execution")
         record["status"] = "workloads_observed"
@@ -589,7 +810,7 @@ def _execute(root, args, env=None):
         record["status"] = "blocked"
         record["reasons"].append("campaign interrupted; remaining workloads not run")
     finally:
-        _finalize(root, record, deadline, env)
+        _finalize(root, record, deadline, env, directory=directory)
         path = directory / "record.json"
         with path.open("x", encoding="utf-8") as stream:
             _retain_cancellation(record)
@@ -619,6 +840,8 @@ def main(argv=None):
     mode.add_argument("--plan", action="store_true", help="read-only default; execute no tools")
     mode.add_argument("--execute", action="store_true", help="run in an already prepared clean environment")
     parser.add_argument("--approved-budget", action="store_true")
+    parser.add_argument("--observe-target-exit", action="store_true",
+                        help="require a separately bound HTIF target-exit witness for each workload")
     parser.add_argument("--root", type=Path, default=ROOT)
     parser.add_argument("--jobs", type=int, default=2)
     parser.add_argument("--java-heap", default="4G")
@@ -633,7 +856,8 @@ def main(argv=None):
         root = args.root.resolve(strict=True)
         resources = resource_limits(args)
         if not args.execute:
-            plan = build_plan(root, jobs=args.jobs, java_heap=args.java_heap)
+            observer_options = {"observe_target_exit": True} if args.observe_target_exit else {}
+            plan = build_plan(root, jobs=args.jobs, java_heap=args.java_heap, **observer_options)
             result = {"kind": "nova-g1-campaign-plan", "resource_limits": resources,
                       "plan_sha256": plan_digest(plan, root),
                       "plan": normalized_plan(plan, root),

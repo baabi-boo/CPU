@@ -22,10 +22,22 @@ PLAN_SPEC = importlib.util.spec_from_file_location(
 planner = importlib.util.module_from_spec(PLAN_SPEC)
 PLAN_SPEC.loader.exec_module(planner)
 PLAN_CACHE = {}
+PROFILE_DECLARATION = json.loads((ROOT / "nova/g1-profile.json").read_text())
+SOURCE_PINS = {row["path"]: row["commit"] for row in
+               json.loads((ROOT / "nova/upstream-lock.json").read_text())["submodules"]}
 
 
 def digest(label):
     return hashlib.sha256(("SYNTHETIC ONLY: " + label).encode()).hexdigest()
+
+
+def refresh_source_digest(source):
+    """Keep invented clean metadata coherent with capture_source's JSON format."""
+    state = {key: value for key, value in source.items()
+             if key not in {"state_digest", "checkout_identity_sha256"}}
+    state["status_sha256"] = hashlib.sha256(b"").hexdigest()
+    source["state_digest"] = hashlib.sha256(json.dumps(
+        state, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
 def synthetic_stage(name, negative=False):
@@ -46,28 +58,42 @@ def synthetic_stage(name, negative=False):
 
 def synthetic_record(checkout, jobs=2):
     """Claims are deliberately invented fixtures, NEVER real campaign evidence."""
+    required_paths = set(PROFILE_DECLARATION["required_source_gitlinks"])
+    initialized_paths = required_paths | set(PROFILE_DECLARATION["provisioning_source_gitlinks"])
     source = {
         "revision": "1" * 40, "tree": "2" * 40, "clean": True,
-        "checkout_identity_sha256": digest(checkout), "state_digest": digest("source state"),
+        "checkout_identity_sha256": digest(checkout),
         "lock_hashes": {name: digest(name) for name in sorted(compare.CONDA_INPUTS)},
         "source_inputs": {name: digest(name) for name in sorted(compare.SOURCE_INPUTS)},
-        "submodules": [{"path": "synthetic-source/" + str(index), "pin": "3" * 40,
-                        "revision": "3" * 40, "initialized": True, "clean": True,
-                        "state": "at_pin"} for index in range(57)],
+        # Paths and declared pins mirror the producer; these observed checkout
+        # states and every build/execution result remain invented test doubles.
+        "submodules": [{"path": path, "pin": pin,
+                        "revision": pin if path in initialized_paths else None,
+                        "initialized": path in initialized_paths,
+                        "clean": True if path in initialized_paths else None,
+                        "state": "at_pin" if path in initialized_paths else "uninitialized"}
+                       for path, pin in sorted(SOURCE_PINS.items())],
     }
+    refresh_source_digest(source)
     provenance = {
         "capture_complete": True, "toolchain_versions_verified": False,
         "host": {"os": "synthetic", "architecture": "synthetic"},
         "tool_versions": {name: "synthetic-version" for name in (
             "java", "verilator", "firtool", "make", "cmake", "riscv64-unknown-elf-gcc")},
         "lock_hashes": copy.deepcopy(source["lock_hashes"]),
-        "submodules": [{"path": "synthetic", "pin": "3" * 40}],
+        "submodules": [{"path": row["path"], "pin": row["pin"], "state": row["state"],
+                        "required": row["path"] in required_paths} for row in source["submodules"]],
     }
     profiles = []
     for config in compare.CONFIGURATIONS:
         simulator_digest = digest(config + " simulator")
-        artifacts = [{"path": "synthetic/" + config + "/" + kind,
-                      "kind": kind, "size_bytes": 100,
+        generated = "sims/verilator/generated-src/chipyard.harness.TestHarness." + config + "/"
+        paths = {"simulator": "sims/verilator/simulator-chipyard.harness-" + config,
+                 "rtl": generated + "SYNTHETIC-UNEXECUTED.sv",
+                 "device_tree": generated + "SYNTHETIC-UNEXECUTED.dts",
+                 "metadata": generated + "SYNTHETIC-UNEXECUTED.json"}
+        artifacts = [{"path": paths[kind],
+                      "kind": kind, "size_bytes": 256 if kind == "simulator" else 100,
                       "sha256": simulator_digest if kind == "simulator" else digest(config + kind)}
                      for kind in ("simulator", "rtl", "device_tree", "metadata")]
         workloads = []
@@ -87,7 +113,7 @@ def synthetic_record(checkout, jobs=2):
             workloads.append({
                 "id": identifier, "stage": stage, "assessment": assessment,
                 "simulator_sha256": simulator_digest,
-                "binary": {"path": "synthetic/" + identifier, "size_bytes": 100,
+                "binary": {"path": "synthetic/" + identifier, "size_bytes": 256,
                            "sha256": digest(identifier), "kind": "riscv_elf"},
             })
         profiles.append({"configuration": config, "build": synthetic_stage(config + "-build"),
@@ -135,10 +161,41 @@ def synthetic_record(checkout, jobs=2):
                   reasons=[], inventory_after=copy.deepcopy(result["inventory"]))
     result["plan_sha256"] = hashlib.sha256(json.dumps(
         plan, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()).hexdigest()
-    ready = {"profile": "g1-chisel6-rocket", "status": "ready",
+    # This report has the real inspector's structure, but its availability,
+    # version and hash observations are explicitly synthetic fixtures.
+    pinned_versions = PROFILE_DECLARATION["expected_tool_versions"]
+    tool_names = ("java", "verilator", "firtool", "make", "cmake", "gcc", "g++", "ar", "jq", "dtc",
+                  "riscv64-unknown-elf-gcc", "riscv64-unknown-elf-g++",
+                  "riscv64-unknown-elf-objdump", "riscv64-unknown-elf-readelf", "spike")
+    collateral_paths = {"fesvr_header": "include/fesvr/htif.h", "riscv_header": "include/riscv/processor.h",
+                        "fesvr_library": "lib/libfesvr.a", "riscv_library": "lib/libriscv.a",
+                        "htif_specs": "riscv64-unknown-elf/lib/htif_nano.specs",
+                        "htif_linker": "toolchains/libgloss/util/htif.ld",
+                        "htif_installed_linker": "riscv64-unknown-elf/lib/htif.ld"}
+    collateral = {name: {"available": True, "path": path, "bytes": 256,
+                         "sha256": digest("synthetic " + ("linker" if "linker" in name else name))}
+                  for name, path in collateral_paths.items()}
+    collateral["htif_installed_linker"]["matches_pinned"] = True
+    ready = {"schema_version": 1, "profile": "g1-chisel6-rocket", "status": "ready",
              "known_prerequisites_present": True, "toolchain_version_inputs_verified": True,
              "hardware_qualified": False, "g1_gate_passed": False, "blockers": [],
-             "collateral": {"synthetic": {"sha256": digest("synthetic collateral")}}}
+             "dependency_closure_qualified": False,
+             "host": {"system": "Linux", "architecture": "x86_64"},
+             "nested_dependency_closure": "unqualified", "maven_artifact_closure": "unqualified",
+             "initialized_optional_generators": [],
+             "source_inputs": {path: {"sha256": source["source_inputs"][path], "matches_profile": True}
+                               for path in PROFILE_DECLARATION["source_inputs_sha256"]},
+             "source_gitlinks": [{"path": path, "pin": SOURCE_PINS[path], "state": "at_pin"}
+                                 for path in PROFILE_DECLARATION["required_source_gitlinks"]],
+             "provisioning_sources": [{"path": path, "pin": SOURCE_PINS[path], "state": "at_pin"}
+                                      for path in PROFILE_DECLARATION["provisioning_source_gitlinks"]],
+             "tools": [{"name": name, "available": True,
+                        "observed_version": pinned_versions.get(name, "0.0"),
+                        "expected_version": pinned_versions.get(name),
+                        "version_matches": True if name in pinned_versions else None,
+                        "identity_verified": False} for name in tool_names],
+             "collateral": collateral,
+             "limitations": ["Synthetic unexecuted prerequisite observations; no host/tool inspection."]}
     checker = synthetic_stage("pinned-input-check")
     checker.update(command=[paths["python"], "-B", "scripts/nova/check.py"], timeout_seconds=120)
     result.update(preflight={"profile": ready, "checker": checker}, profile_after=copy.deepcopy(ready))
@@ -207,6 +264,7 @@ class CompareCampaignsTests(unittest.TestCase):
     def test_changed_input_identity_is_different(self):
         for snapshot in ("source_before", "source_after"):
             self.right[snapshot]["tree"] = "5" * 40
+            refresh_source_digest(self.right[snapshot])
         self.assertEqual(self.result()["status"], "different")
 
     def test_changed_environment_identity_is_different(self):
@@ -455,7 +513,7 @@ class CompareCampaignsTests(unittest.TestCase):
                 self.right[field] = None
                 self.assertEqual(self.result()["status"], "blocked")
         self.right = synthetic_record("synthetic-right")
-        self.right["profile_after"]["collateral"]["synthetic"]["sha256"] = digest("changed library")
+        self.right["profile_after"]["collateral"]["fesvr_library"]["sha256"] = digest("changed library")
         self.assertEqual(self.result()["status"], "blocked")
         self.right = synthetic_record("synthetic-right")
         self.right["inventory_after"]["matching_package_count"] = 164
@@ -531,6 +589,7 @@ class CompareRecordReaderTests(unittest.TestCase):
                 if mode == "different":
                     for snapshot in ("source_before", "source_after"):
                         right_record[snapshot]["tree"] = "5" * 40
+                        refresh_source_digest(right_record[snapshot])
                 elif mode == "blocked":
                     right_record["schema_version"] = True
                 self.write_record("right.json", right_record)
