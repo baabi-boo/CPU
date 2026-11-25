@@ -32,6 +32,9 @@ NEGATIVE_MARKER = "NOVA_BASELINE_V1 EXPECTED_FAIL hart=0 code=7"
 TERMINAL_NAMESPACE = re.compile(
     rb"NOVA_BASELINE|hello[ \t]+world[ \t]+from[ \t]+core", re.IGNORECASE
 )
+# Pinned fesvr/syscall.cc prints this exact stderr line for the direct odd
+# tohost payload used by libgloss _exit(7), before the SimTSI assertion.
+NEGATIVE_TOHOST = b"*** FAILED *** (tohost = 7)\n"
 NEGATIVE_ASSERTION = re.compile(
     rb"(?:Assertion failed:[ \t]*)?\*\*\* FAILED \*\*\* "
     rb"\(exit code =[ \t]+7\)[ \t]*\n"
@@ -47,9 +50,10 @@ UNEXPECTED_FAILURE = re.compile(
 )
 SUCCESS_WORDING = re.compile(
     rb"\b(?:pass|passed|success|succeeded)\b|\bcompleted[ \t]+after\b", re.IGNORECASE)
-# Timeout/launcher/interruption results are not target failures. A direct
-# Verilator assertion typically produces -SIGABRT (-6); a wrapper may report
-# 134. Neither is treated as the target's own HTIF exit value.
+# Timeout/launcher/interruption results are not target failures. Pinned HTIF's
+# SIGABRT handler calls exit(-1), yielding host status 255. Native abort forms
+# -SIGABRT (-6) and wrapper status 134 are also supported. None is treated as
+# the target's own HTIF exit value.
 EXCLUDED_EXITS = {0, 124, 125, 126, 127, 130, 137, 139, 143}
 
 
@@ -138,9 +142,15 @@ def _negative(stdout_path, stderr_path, exit_code, max_cycles):
     if target_records != 1:
         reasons.append("stdout must contain exactly one expected negative-control record")
 
+    tohost_records = 0
     assertions = 0
     trailers = 0
     for line in logs["stderr"]["data"].splitlines(keepends=True):
+        if line == NEGATIVE_TOHOST:
+            if tohost_records or assertions or trailers:
+                reasons.append("stderr contains a repeated or misplaced HTIF tohost-code-7 diagnostic")
+            tohost_records += 1
+            continue
         if NEGATIVE_ASSERTION.fullmatch(line):
             assertions += 1
             continue

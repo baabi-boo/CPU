@@ -29,7 +29,8 @@ COMPLETION = re.compile(
 )
 COMPLETION_WORDING = re.compile(rb"\bpassed\b|\bcompleted[ \t]+after\b", re.IGNORECASE)
 FAILURE_INDICATOR = re.compile(
-    rb"\b(?:fail|failed|fatal|timeout|timed[ \t]+out)\b|%Error(?:\b|:)", re.IGNORECASE
+    rb"\b(?:fail|failed|fatal|timeout|timed[ \t]+out|segmentation[ \t]+fault)\b"
+    rb"|%Error(?:\b|:)", re.IGNORECASE
 )
 
 
@@ -151,7 +152,7 @@ def assess_simulation(stdout_path, stderr_path, exit_code, expected_marker=None,
     stderr = logs["stderr"]["data"]
     for label, data in (("stdout", stdout), ("stderr", stderr)):
         if FAILURE_INDICATOR.search(data):
-            reasons.append(label + " contains a failure, fatal, or timeout indicator")
+            reasons.append(label + " contains a failure, fatal, timeout, or crash indicator")
     if COMPLETION_WORDING.search(stdout):
         reasons.append("simulator completion wording appeared on stdout")
     matches = []
