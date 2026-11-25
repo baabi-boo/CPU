@@ -97,14 +97,22 @@ def _cancellation_scope():
         if state["signal"] is None:
             state["signal"] = number
 
+    def restore_handlers():
+        # The record owner can restore while its exclusive descriptor is still
+        # open. Keep the latch available until that record has been reconciled.
+        for number, handler in list(previous.items()):
+            signal.signal(number, handler)
+            del previous[number]
+
     try:
         for number in (signal.SIGINT, signal.SIGTERM):
             previous[number] = signal.signal(number, interrupted)
-        yield
+        yield restore_handlers
     finally:
-        for number, handler in previous.items():
-            signal.signal(number, handler)
-        _CANCELLATION.reset(token)
+        try:
+            restore_handlers()
+        finally:
+            _CANCELLATION.reset(token)
 
 
 def _check_cancellation():
@@ -562,10 +570,14 @@ def _recheck_witnesses(directory, record):
                     raise ValueError("witness path is not a retained basename")
                 if _capture_witness(directory, directory / name) != witness:
                     raise ValueError("witness content changed")
-            except (OSError, ValueError, TypeError, KeyError, RuntimeError) as exc:
+            except (OSError, ValueError, TypeError, KeyError, RuntimeError):
                 reason = "dedicated HTIF witness changed before finalization: " + row["id"]
                 _fail_exit_assessment(target_exit, reason)
-                raise CampaignStop("failed", reason) from exc
+                # A mismatch must not prevent the remaining retained witnesses
+                # from losing stale completion flags. Retain failure immediately
+                # so a later cancellation cannot downgrade it to blocked.
+                record["status"] = "failed"
+                record["reasons"].append("post-execution observer evidence: " + reason)
 
 
 def _run_workload(root, directory, profile, workload, row, simulator, riscv,
@@ -660,6 +672,34 @@ def _run_workload(root, directory, profile, workload, row, simulator, riscv,
         _assess_target_exit(directory, witness_path, row, workload)
 
 
+def _retain_final_state(record, deadline, *, refresh_clock=True):
+    """Reconcile acceptance after bounded final work, without endless rewrites."""
+    before = (record["status"], len(record["reasons"]))
+    now = time.monotonic()
+    if now > deadline:
+        reason = "aggregate wall-clock deadline exceeded; campaign is not accepted"
+        if reason not in record["reasons"]:
+            record["reasons"].append(reason)
+        if record["status"] != "failed":
+            record["status"] = "blocked"
+    _retain_cancellation(record)
+    if refresh_clock or before != (record["status"], len(record["reasons"])):
+        record["elapsed_seconds"] = round(now - (
+            deadline - record["resource_limits"]["total_timeout_seconds"]), 6)
+        record["finished_utc"] = utc_now()
+        _retain_cancellation(record)
+    return before != (record["status"], len(record["reasons"]))
+
+
+def _write_record(stream, record):
+    """Reuse the exclusively created descriptor, including for corrections."""
+    stream.seek(0)
+    stream.truncate()
+    json.dump(record, stream, sort_keys=True, indent=2, allow_nan=False)
+    stream.write("\n")
+    stream.flush()
+
+
 def _finalize(root, record, deadline, env, *, directory=None):
     """Retain post-run identity even on failure; never manufacture success."""
     try:
@@ -716,17 +756,10 @@ def _finalize(root, record, deadline, env, *, directory=None):
             record["reasons"].append("post-execution observer evidence: " + str(exc))
             if record["status"] != "failed":
                 record["status"] = exc.status if isinstance(exc, CampaignStop) else "failed"
-    if time.monotonic() > deadline:
-        record["reasons"].append("aggregate wall-clock deadline exceeded; campaign is not accepted")
-        if record["status"] != "failed":
-            record["status"] = "blocked"
-    record["elapsed_seconds"] = round(time.monotonic() - (
-        deadline - record["resource_limits"]["total_timeout_seconds"]), 6)
-    record["finished_utc"] = utc_now()
-    _retain_cancellation(record)
+    _retain_final_state(record, deadline)
 
 
-def _execute(root, args, env=None):
+def _execute(root, args, env=None, *, restore_handlers):
     """Return (record, path), retaining blocked/failed valid execution attempts."""
     if getattr(args, "approved_budget", False) is not True:
         raise ValueError("execution requires --approved-budget")
@@ -814,24 +847,26 @@ def _execute(root, args, env=None):
         path = directory / "record.json"
         with path.open("x", encoding="utf-8") as stream:
             _retain_cancellation(record)
-            json.dump(record, stream, sort_keys=True, indent=2, allow_nan=False)
-            stream.write("\n")
-            # A latched signal during serialization must not leave a successful
-            # record. Reuse our still-open exclusive descriptor, not a new path.
-            before = (record["status"], len(record["reasons"]))
-            _retain_cancellation(record)
-            if before != (record["status"], len(record["reasons"])):
-                stream.seek(0)
-                stream.truncate()
-                json.dump(record, stream, sort_keys=True, indent=2, allow_nan=False)
-                stream.write("\n")
+            _write_record(stream, record)
+            # Restoration can itself receive the last campaign-owned signal.
+            # Reconcile it and elapsed evidence I/O while this descriptor is
+            # still open; subsequent signals belong to the caller's handlers.
+            restore_handlers()
+            _retain_final_state(record, deadline)
+            while True:
+                _write_record(stream, record)
+                # A corrective serialization/flush can also cross the budget.
+                # Rewrite only for a newly retained failure, not the continually
+                # advancing clock. Cancellation and deadline reasons are latched.
+                if not _retain_final_state(record, deadline, refresh_clock=False):
+                    break
     return record, path
 
 
 def execute(root, args, env=None):
     """Execute only this checkout, with scoped cooperative signal cancellation."""
-    with _cancellation_scope():
-        return _execute(root, args, env)
+    with _cancellation_scope() as restore_handlers:
+        return _execute(root, args, env, restore_handlers=restore_handlers)
 
 
 def main(argv=None):
