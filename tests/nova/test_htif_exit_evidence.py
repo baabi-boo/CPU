@@ -1,6 +1,7 @@
 """Synthetic HTIF observer witnesses; these tests never execute a processor."""
 
 import contextlib
+import errno
 import hashlib
 import importlib.util
 import io
@@ -20,6 +21,51 @@ evidence = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(evidence)
 RUN_ID = "a" * 64
 BINDING = "b" * 64
+
+
+class _DescriptorCloseFault:
+    """Release real descriptors, then reuse their numbers before reporting EINTR."""
+
+    def __init__(self, witness, should_fail):
+        self.original_open, self.original_close = os.open, os.close
+        self.witness, self.should_fail = witness, should_fail
+        self.live = {}
+        self.leaves = []
+        self.unowned_closes = []
+        self.errors = []
+        self.reused = {}
+
+    def open(self, path, flags, *args, **kwargs):
+        descriptor = self.original_open(path, flags, *args, **kwargs)
+        self.live[descriptor] = flags
+        if not flags & os.O_DIRECTORY:
+            self.leaves.append(descriptor)
+        return descriptor
+
+    def close(self, descriptor):
+        flags = self.live.pop(descriptor, None)
+        if flags is None:
+            self.unowned_closes.append(descriptor)
+        self.original_close(descriptor)
+        if flags is not None and self.should_fail(self, descriptor, flags):
+            # This descriptor belongs to the fault fixture, not the reader.
+            # dup2 makes reuse deterministic even if a lower number is free.
+            replacement = self.original_open(self.witness, os.O_RDONLY | os.O_CLOEXEC)
+            if replacement != descriptor:
+                os.dup2(replacement, descriptor)
+                self.original_close(replacement)
+            self.reused[descriptor] = os.fstat(descriptor)
+            error = OSError(errno.EINTR, "private completed-close fixture detail")
+            self.errors.append(error)
+            raise error
+
+    def cleanup(self):
+        # A failing regression must not leave its deliberately leaked fds behind.
+        for descriptor in set(self.live) | set(self.reused):
+            try:
+                self.original_close(descriptor)
+            except OSError:
+                pass
 
 
 class HtifExitEvidenceTests(unittest.TestCase):
@@ -54,6 +100,30 @@ class HtifExitEvidenceTests(unittest.TestCase):
                      "hardware_qualified", "g1_gate_passed"):
             self.assertIs(result[flag], False)
         self.assertTrue(result["reasons"])
+
+    @contextlib.contextmanager
+    def close_fault(self, should_fail):
+        fault = _DescriptorCloseFault(self.witness, should_fail)
+        self.addCleanup(fault.cleanup)
+        with patch.object(evidence.os, "open", side_effect=fault.open), \
+             patch.object(evidence.os, "close", side_effect=fault.close):
+            yield fault
+
+    def assertDescriptorsReleased(self, fault, expected_errors):
+        self.assertEqual(len(fault.errors), expected_errors)
+        self.assertEqual(fault.live, {}, "reader leaked independently owned descriptors")
+        self.assertEqual(fault.unowned_closes, [], "reader retried a released descriptor")
+        for descriptor, identity in fault.reused.items():
+            self.assertEqual(os.fstat(descriptor), identity,
+                             "reader closed a descriptor belonging to another owner")
+
+    def assertUnreadFailure(self, result, reason):
+        self.assertFailed(result)
+        self.assertEqual(result["reasons"], [reason])
+        for field in ("witness_sha256", "witness_bytes", "event"):
+            self.assertIsNone(result[field])
+        self.assertNotIn("private", json.dumps(result))
+        self.assertNotIn(str(self.root), json.dumps(result))
 
     def test_matching_zero_and_code7_observations_have_exact_result_fields(self):
         for code in (0, 7):
@@ -257,6 +327,87 @@ class HtifExitEvidenceTests(unittest.TestCase):
         self.assertFailed(result)
         self.assertNotIn("private fixture detail", json.dumps(result))
         self.assertNotIn(str(self.root), json.dumps(result))
+
+    def test_directory_close_error_releases_next_directory_without_retry(self):
+        for cleanup_fails in (False, True):
+            with self.subTest(cleanup_fails=cleanup_fails), \
+                 self.close_fault(lambda fault, _fd, _flags:
+                                  cleanup_fails or not fault.errors) as fault:
+                with self.assertRaises(OSError) as raised:
+                    evidence._open_directory(self.root)
+                self.assertIs(raised.exception, fault.errors[0])
+                self.assertDescriptorsReleased(fault, 2 if cleanup_fails else 1)
+
+    def test_leaf_parent_close_error_releases_leaf_without_retry(self):
+        for cleanup_fails in (False, True):
+            with self.subTest(cleanup_fails=cleanup_fails), \
+                 self.close_fault(lambda fault, _fd, _flags:
+                                  bool(fault.leaves) and
+                                  (cleanup_fails or not fault.errors)) as fault:
+                with self.assertRaises(OSError) as raised:
+                    evidence._open_leaf(self.witness)
+                self.assertIs(raised.exception, fault.errors[0])
+                self.assertDescriptorsReleased(fault, 2 if cleanup_fails else 1)
+
+    def test_walk_and_leaf_close_errors_return_sanitized_failed_assessments(self):
+        for stage in ("walk", "leaf_parent"):
+            def should_fail(fault, _descriptor, flags):
+                return not fault.errors and (stage == "walk" or
+                    len(fault.leaves) == 2 and flags & os.O_DIRECTORY)
+
+            with self.subTest(stage=stage), self.close_fault(should_fail) as fault:
+                result = self.assess()
+                self.assertUnreadFailure(result, "witness is missing, unreadable, or unsafe")
+                self.assertDescriptorsReleased(fault, 1)
+
+    def test_final_cleanup_closes_every_descriptor_even_when_closes_fail(self):
+        for fail_at in (0, 1, 2, "all"):
+            final_closes = []
+
+            def should_fail(fault, descriptor, flags):
+                if len(fault.leaves) != 2:
+                    return False
+                # The second traversal's parent closes before final cleanup.
+                if not final_closes and flags & os.O_DIRECTORY:
+                    return False
+                final_closes.append(descriptor)
+                return fail_at == "all" or len(final_closes) - 1 == fail_at
+
+            with self.subTest(fail_at=fail_at), self.close_fault(should_fail) as fault:
+                result = self.assess()
+                self.assertUnreadFailure(result, "witness could not be safely read and closed")
+                self.assertEqual(len(final_closes), 3)
+                self.assertDescriptorsReleased(fault, 3 if fail_at == "all" else 1)
+
+    def test_read_failure_or_interrupt_takes_priority_over_cleanup_errors(self):
+        for error in (OSError(errno.EIO, "private read fixture detail"), KeyboardInterrupt()):
+            with self.subTest(error=type(error).__name__), \
+                 self.close_fault(lambda fault, _fd, _flags: bool(fault.leaves)) as fault, \
+                 patch.object(evidence.os, "read", side_effect=error):
+                if isinstance(error, KeyboardInterrupt):
+                    with self.assertRaises(KeyboardInterrupt) as raised:
+                        self.assess()
+                    self.assertIs(raised.exception, error)
+                else:
+                    result = self.assess()
+                    self.assertUnreadFailure(result, "witness is missing, unreadable, or unsafe")
+                self.assertDescriptorsReleased(fault, 2)
+
+    def test_validation_failure_takes_priority_over_cleanup_error(self):
+        self.witness.write_bytes(b" " * (evidence.MAX_WITNESS_BYTES + 1))
+        open_directory = evidence._open_directory
+        parents = []
+
+        def remember_parent(path):
+            descriptor = open_directory(path)
+            parents.append(descriptor)
+            return descriptor
+
+        with self.close_fault(lambda _fault, descriptor, _flags: descriptor in parents) as fault, \
+             patch.object(evidence, "_open_directory", side_effect=remember_parent):
+            result = self.assess()
+            self.assertUnreadFailure(result, "witness exceeds the 4096-byte limit")
+            self.assertDescriptorsReleased(fault, 1)
 
     def test_content_change_during_read_fails(self):
         read = os.read

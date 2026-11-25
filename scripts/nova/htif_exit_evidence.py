@@ -34,6 +34,22 @@ def _identity(info):
             info.st_mtime_ns, info.st_ctime_ns)
 
 
+def _close_descriptors(*descriptors, failed=False):
+    """Attempt every owned close once, without replacing an earlier failure."""
+    first_error = None
+    for descriptor in descriptors:
+        if descriptor is not None:
+            try:
+                os.close(descriptor)
+            except BaseException as error:
+                # On Linux, even an interrupted close releases the descriptor;
+                # retrying its number could close another owner's descriptor.
+                if first_error is None:
+                    first_error = error
+    if first_error is not None and not failed:
+        raise first_error
+
+
 def _open_directory(path):
     """Walk an absolute path using no-follow directory descriptors."""
     flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
@@ -41,21 +57,26 @@ def _open_directory(path):
     try:
         for component in path.parts[1:]:
             following = os.open(component, flags, dir_fd=descriptor)
-            os.close(descriptor)
-            descriptor = following
+            previous, descriptor = descriptor, following
+            os.close(previous)
         return descriptor
     except BaseException:
-        os.close(descriptor)
+        _close_descriptors(descriptor, failed=True)
         raise
 
 
 def _open_leaf(path):
     parent = _open_directory(path.parent)
+    descriptor = None
     try:
         flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC
-        return os.open(path.name, flags, dir_fd=parent)
-    finally:
-        os.close(parent)
+        descriptor = os.open(path.name, flags, dir_fd=parent)
+        closing, parent = parent, None
+        os.close(closing)
+        return descriptor
+    except BaseException:
+        _close_descriptors(descriptor, parent, failed=True)
+        raise
 
 
 def _read_witness(value):
@@ -66,6 +87,7 @@ def _read_witness(value):
     a FIFO. These checks do not promise immutability after this call returns.
     """
     parent = descriptor = reopened = None
+    failed = True
     try:
         if (os.name != "posix" or not hasattr(os, "O_NOFOLLOW")
                 or not hasattr(os, "O_DIRECTORY")):
@@ -107,15 +129,15 @@ def _read_witness(value):
                 or _identity(before) != _identity(current)
                 or _identity(before) != _identity(os.fstat(descriptor))):
             raise _WitnessFailure("witness path changed while it was being read")
-        return b"".join(chunks)
+        data = b"".join(chunks)
+        failed = False
+        return data
     except _WitnessFailure:
         raise
     except (OSError, RuntimeError, TypeError, ValueError):
         raise _WitnessFailure("witness is missing, unreadable, or unsafe") from None
     finally:
-        for opened in (reopened, descriptor, parent):
-            if opened is not None:
-                os.close(opened)
+        _close_descriptors(reopened, descriptor, parent, failed=failed)
 
 
 def _unique_object(pairs):
