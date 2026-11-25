@@ -5,6 +5,7 @@ itself contains no test hook. A kernel file-size limit also exercises real faile
 writes. No dependency is installed, target compiled, or simulator launched.
 """
 
+import fcntl
 import json
 import os
 from pathlib import Path
@@ -35,7 +36,8 @@ class NativeHtifObserverFixtureTests(unittest.TestCase):
         cls.addClassCleanup(temporary.cleanup)
         cls.build_root = Path(temporary.name).resolve()
         cls.executable = cls.build_root / "native-observer-fixture"
-        wrappers = ("openat", "write", "fsync", "fstat", "fchmod", "close")
+        wrappers = ("openat", "write", "fsync", "fstat", "fstatat", "ftruncate",
+                    "fchmod", "close")
         # Exercise fortified libc declarations in this same build on Linux.
         # Clear any compiler default first to avoid macro-redefinition warnings.
         fortify = (["-U_FORTIFY_SOURCE", "-D_FORTIFY_SOURCE=2"]
@@ -233,11 +235,17 @@ class NativeHtifObserverFixtureTests(unittest.TestCase):
             with self.subTest(fault=fault):
                 path = self.root / (fault + ".json")
                 self.assert_fatal(self.run_native(fault=fault, path=path))
-                self.assertFalse(path.exists(), "failed owned witness must be discarded")
+                if fault in ("close-error", "close-eintr"):
+                    # The descriptor was released before its close error was
+                    # reported. Status 125 must reject even intact bytes; do not
+                    # reopen or unlink a path that may now name a foreign inode.
+                    self.assert_witness(path)
+                else:
+                    self.assertEqual(path.read_bytes(), b"")
 
     def test_real_kernel_write_failure_invalidates_partial_witness(self):
         self.assert_fatal(self.run_native(fault="kernel-write-error"))
-        self.assertFalse(self.witness.exists())
+        self.assertEqual(self.witness.read_bytes(), b"")
 
     def test_initial_and_late_multiple_links_are_rejected_and_invalidated(self):
         for fault in ("early-hardlink", "late-hardlink"):
@@ -246,20 +254,37 @@ class NativeHtifObserverFixtureTests(unittest.TestCase):
                 parent.mkdir()
                 path = parent / "witness.json"
                 self.assert_fatal(self.run_native(fault=fault, path=path))
-                self.assertFalse(path.exists())
+                self.assertEqual(path.read_bytes(), b"")
                 self.assertEqual((parent / "native-extra-link").read_bytes(), b"")
 
     def test_replaced_leaf_is_rejected_without_deleting_foreign_replacement(self):
         self.assert_fatal(self.run_native(fault="replace-leaf"))
         self.assertEqual(self.witness.read_bytes(), b"foreign replacement\n")
 
-    def test_late_parent_symlink_is_rejected_and_owned_output_is_discarded(self):
+    def test_cleanup_cannot_delete_replacement_after_its_identity_check(self):
+        foreign = self.root / "foreign.txt"
+        foreign.write_bytes(b"foreign replacement\n")
+        self.assert_fatal(self.run_native(fault="replace-after-cleanup-stat"))
+        # A cleanup fstatat/unlinkat pair would move then delete foreign.txt.
+        # Descriptor-only cleanup has no pathname identity check to race.
+        self.assertEqual(foreign.read_bytes(), b"foreign replacement\n")
+        self.assertEqual(self.witness.read_bytes(), b"")
+
+    def test_replacement_during_invalidation_preserves_the_foreign_inode(self):
+        foreign = self.root / "foreign.txt"
+        foreign.write_bytes(b"foreign replacement\n")
+        self.assert_fatal(self.run_native(fault="replace-during-truncate"))
+        self.assertFalse(foreign.exists(), "the fixture must actually replace the leaf")
+        self.assertEqual(self.witness.read_bytes(), b"foreign replacement\n")
+        self.assertEqual((self.root / "native-displaced-witness").read_bytes(), b"")
+
+    def test_late_parent_symlink_is_rejected_and_owned_output_is_invalidated(self):
         parent = self.root / "watched"
         parent.mkdir()
         path = parent / "witness.json"
         self.assert_fatal(self.run_native(fault="replace-parent-with-symlink", path=path))
         self.assertTrue(parent.is_symlink())
-        self.assertEqual(list((self.root / "watched.moved").iterdir()), [])
+        self.assertEqual((self.root / "watched.moved" / "witness.json").read_bytes(), b"")
 
     def test_exact_private_mode_is_preserved_under_restrictive_umask(self):
         result = self.run_native(fault="restrictive-umask")
@@ -280,6 +305,75 @@ class NativeHtifObserverFixtureTests(unittest.TestCase):
             os.close(write_fd)
         self.assertEqual(result.returncode, 125)
         self.assertEqual(result.stdout, b"")
+        self.assertFalse(self.witness.exists())
+
+    def test_writable_stderr_keeps_exact_diagnostic_and_inherited_flags(self):
+        for blocking in (True, False):
+            for fault in ("none", "stderr-eintr", "stderr-short-write"):
+                with self.subTest(blocking=blocking, fault=fault):
+                    read_fd, write_fd = os.pipe()
+                    try:
+                        os.set_blocking(write_fd, blocking)
+                        flags = fcntl.fcntl(write_fd, fcntl.F_GETFL)
+                        result = subprocess.run(
+                            [str(self.executable), "positive", fault], cwd=self.root,
+                            stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                            stderr=write_fd, timeout=5, check=False,
+                            env=self.environment(remove=("NOVA_HTIF_RUN_ID",)),
+                        )
+                        self.assertEqual(result.returncode, 125)
+                        self.assertEqual(result.stdout, b"")
+                        self.assertEqual(fcntl.fcntl(write_fd, fcntl.F_GETFL), flags)
+                        os.set_blocking(read_fd, False)
+                        self.assertEqual(os.read(read_fd, 4096), FATAL)
+                    finally:
+                        os.close(write_fd)
+                        os.close(read_fd)
+        self.assertFalse(self.witness.exists())
+
+    def test_full_stderr_pipe_cannot_delay_fatal_exit_or_change_inherited_flags(self):
+        for blocking in (True, False):
+            with self.subTest(blocking=blocking):
+                read_fd, write_fd = os.pipe()
+                try:
+                    os.set_blocking(write_fd, False)
+                    filled = 0
+                    while True:
+                        try:
+                            filled += os.write(write_fd, b"x" * 4096)
+                        except BlockingIOError:
+                            break
+                    self.assertGreater(filled, 0)
+                    os.set_blocking(write_fd, blocking)
+                    flags = fcntl.fcntl(write_fd, fcntl.F_GETFL)
+                    result = subprocess.run(
+                        [str(self.executable), "positive", "none"], cwd=self.root,
+                        stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                        stderr=write_fd, timeout=5, check=False,
+                        env=self.environment(remove=("NOVA_HTIF_RUN_ID",)),
+                    )
+                    self.assertEqual(result.returncode, 125)
+                    self.assertEqual(result.stdout, b"")
+                    self.assertEqual(fcntl.fcntl(write_fd, fcntl.F_GETFL), flags)
+                    os.set_blocking(read_fd, False)
+                    drained = bytearray()
+                    while True:
+                        try:
+                            chunk = os.read(read_fd, 4096)
+                        except BlockingIOError:
+                            break
+                        if not chunk:
+                            break
+                        drained.extend(chunk)
+                    self.assertEqual(drained, b"x" * filled)
+                finally:
+                    os.close(write_fd)
+                    os.close(read_fd)
+        self.assertFalse(self.witness.exists())
+
+    def test_repeated_diagnostic_eintr_still_terminates_with_fatal_status(self):
+        result = self.run_native(fault="stderr-eintr-always", remove=("NOVA_HTIF_RUN_ID",))
+        self.assertEqual((result.returncode, result.stdout, result.stderr), (125, b"", b""))
         self.assertFalse(self.witness.exists())
 
 

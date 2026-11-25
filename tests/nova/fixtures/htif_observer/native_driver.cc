@@ -22,7 +22,9 @@ int witness = -1;
 int witness_parent = -1;
 char witness_leaf[4096];
 unsigned int writes = 0;
+unsigned int diagnostic_writes = 0;
 unsigned int stats = 0;
+bool cleanup_started = false;
 bool is_fault(const char *name) { return std::strcmp(fault, name) == 0; }
 
 void fixture_check(bool condition) {
@@ -35,6 +37,8 @@ int __real_openat(int directory, const char *path, int flags, ...);
 ssize_t __real_write(int descriptor, const void *buffer, size_t size);
 int __real_fsync(int descriptor);
 int __real_fstat(int descriptor, struct stat *info);
+int __real_fstatat(int directory, const char *path, struct stat *info, int flags);
+int __real_ftruncate(int descriptor, off_t size);
 int __real_fchmod(int descriptor, mode_t mode);
 int __real_close(int descriptor);
 
@@ -61,6 +65,15 @@ int __wrap_openat(int directory, const char *path, int flags, ...) {
 }
 
 ssize_t __wrap_write(int descriptor, const void *buffer, size_t size) {
+  if (descriptor == STDERR_FILENO) {
+    ++diagnostic_writes;
+    if (is_fault("stderr-eintr-always") ||
+        (is_fault("stderr-eintr") && diagnostic_writes == 1)) {
+      errno = EINTR;
+      return -1;
+    }
+    if (is_fault("stderr-short-write")) size = std::min<size_t>(size, 7);
+  }
   if (descriptor == witness) {
     ++writes;
     if (is_fault("write-error") ||
@@ -80,7 +93,10 @@ ssize_t __wrap_write(int descriptor, const void *buffer, size_t size) {
 }
 
 int __wrap_fsync(int descriptor) {
-  if (descriptor == witness && is_fault("fsync-error")) {
+  if (descriptor == witness && (is_fault("fsync-error") ||
+                                is_fault("replace-after-cleanup-stat") ||
+                                is_fault("replace-during-truncate"))) {
+    cleanup_started = true;
     errno = EIO;
     return -1;
   }
@@ -120,6 +136,29 @@ int __wrap_fstat(int descriptor, struct stat *info) {
     return -1;
   }
   return __real_fstat(descriptor, info);
+}
+
+int __wrap_fstatat(int directory, const char *path, struct stat *info, int flags) {
+  const int result = __real_fstatat(directory, path, info, flags);
+  if (result == 0 && cleanup_started && is_fault("replace-after-cleanup-stat") &&
+      directory == witness_parent && std::strcmp(path, witness_leaf) == 0) {
+    // Reproduce a replacement after a cleanup identity check, immediately
+    // before a subsequent pathname unlink would delete the foreign inode.
+    fixture_check(::renameat(directory, "foreign.txt", directory, path) == 0);
+  }
+  return result;
+}
+
+int __wrap_ftruncate(int descriptor, off_t size) {
+  if (descriptor == witness && is_fault("replace-during-truncate")) {
+    // Keep an alias of the owned inode so the test can observe its invalidation
+    // while a foreign inode is installed at the original witness pathname.
+    fixture_check(::renameat(witness_parent, witness_leaf, witness_parent,
+                              "native-displaced-witness") == 0);
+    fixture_check(::renameat(witness_parent, "foreign.txt", witness_parent,
+                              witness_leaf) == 0);
+  }
+  return __real_ftruncate(descriptor, size);
 }
 
 int __wrap_fchmod(int descriptor, mode_t mode) {

@@ -16,6 +16,7 @@
 namespace {
 constexpr std::size_t kPathLimit = 4096;
 constexpr std::size_t kWitnessLimit = 4096;
+constexpr unsigned int kFatalIoAttempts = 64;
 constexpr char kFatal[] =
     "NOVA HTIF observer fatal: witness recording failed\n";
 std::atomic_flag called = ATOMIC_FLAG_INIT;
@@ -29,32 +30,32 @@ struct Output {
   int file = -1;
   const char *leaf = nullptr;
   struct stat identity {};
-  bool identified = false;
 };
 
 bool same_file(const struct stat &left, const struct stat &right) {
   return left.st_dev == right.st_dev && left.st_ino == right.st_ino;
 }
 
-// Invalidate our own incomplete witness when possible. Never remove a replaced
-// path or any pre-existing output. Host status 125 remains authoritative even
-// when a failing filesystem prevents this best-effort cleanup.
+// Invalidate only the descriptor we still own. Never unlink a pathname: a stat
+// check cannot bind a later unlink to that inode, so even a checked pathname may
+// already name a foreign replacement. Status 125 remains authoritative when a
+// failed truncate or a previously released descriptor leaves recorded bytes.
 void discard(Output *output) {
   if (output == nullptr) return;
   if (output->file >= 0) {
     const int truncated = ::ftruncate(output->file, 0);
     (void)truncated;  // Cleanup failure must not override the pending status 125.
   }
-  if (output->parent >= 0 && output->identified) {
-    struct stat current {};
-    if (::fstatat(output->parent, output->leaf, &current,
-                  AT_SYMLINK_NOFOLLOW) == 0 &&
-        same_file(current, output->identity)) {
-      (void)::unlinkat(output->parent, output->leaf, 0);
-    }
-  }
   if (output->file >= 0) (void)::close(output->file);
   if (output->parent >= 0) (void)::close(output->parent);
+}
+
+bool set_stderr_flags(int flags) {
+  for (unsigned int attempt = 0; attempt != kFatalIoAttempts; ++attempt) {
+    if (::fcntl(STDERR_FILENO, F_SETFL, flags) == 0) return true;
+    if (errno != EINTR) break;
+  }
+  return false;
 }
 
 [[noreturn]] void fatal(Output *output = nullptr) {
@@ -64,15 +65,26 @@ void discard(Output *output) {
   sigset_t blocked;
   if (::sigemptyset(&blocked) == 0 && ::sigaddset(&blocked, SIGPIPE) == 0 &&
       ::sigprocmask(SIG_BLOCK, &blocked, nullptr) == 0) {
-    std::size_t offset = 0;
-    while (offset != sizeof(kFatal) - 1) {
-      const ssize_t count =
-          ::write(STDERR_FILENO, kFatal + offset, sizeof(kFatal) - 1 - offset);
-      if (count > 0) {
-        offset += static_cast<std::size_t>(count);
-      } else if (count != -1 || errno != EINTR) {
-        break;
+    const int flags = ::fcntl(STDERR_FILENO, F_GETFL);
+    if (flags >= 0 && ((flags & O_NONBLOCK) != 0 ||
+                      set_stderr_flags(flags | O_NONBLOCK))) {
+      // A full pipe must not postpone _Exit. Bound retries as well, since a
+      // repeatedly interrupted diagnostic is less important than termination.
+      std::size_t offset = 0;
+      for (unsigned int attempt = 0;
+           attempt != kFatalIoAttempts && offset != sizeof(kFatal) - 1;
+           ++attempt) {
+        const std::size_t remaining = sizeof(kFatal) - 1 - offset;
+        const ssize_t count = ::write(STDERR_FILENO, kFatal + offset, remaining);
+        if (count > 0 && static_cast<std::size_t>(count) <= remaining) {
+          offset += static_cast<std::size_t>(count);
+        } else if (count != -1 || errno != EINTR) {
+          break;
+        }
       }
+      // Status flags belong to the shared open-file description, including an
+      // inherited parent's pipe. Restore them even after EAGAIN/EPIPE/EINTR.
+      if ((flags & O_NONBLOCK) == 0) (void)set_stderr_flags(flags);
     }
   }
   std::_Exit(125);
@@ -185,7 +197,6 @@ void nova_htif_observe_stop(const void *instance, bool present,
                          0600);
   if (output.file < 0) fatal(&output);
   if (::fstat(output.file, &output.identity) != 0) fatal(&output);
-  output.identified = true;
   if (!S_ISREG(output.identity.st_mode) || output.identity.st_nlink != 1 ||
       output.identity.st_size != 0 || ::fchmod(output.file, 0600) != 0) {
     fatal(&output);
