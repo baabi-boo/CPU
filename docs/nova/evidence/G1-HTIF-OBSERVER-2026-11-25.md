@@ -773,8 +773,35 @@ complete successfully in
 [GitHub Actions run 45706964047](https://github.com/baabi-boo/CPU/actions/runs/45706964047),
 checked at **21:50 UTC on 2026-11-25**. This remote result applies to that exact
 published source commit, alongside the separate local 836-test checkpoint.
-Subsequent documentation-only commits require their own validation; no later
-remote result is asserted here.
+Subsequent documentation-only commits require their own validation. The
+separate final checkout and publication observations follow below.
+
+## Final independent checkout and publication review
+
+Worker 56 checked local `a5ebc3515138e358de9f43e352b32b8c87669a1f`, tree
+`c24e3fc83bbe994c387347effc3b505718e14505`, in a fresh detached checkout.
+`make -f nova.mk check` passed **836 tests in 37.508 seconds**, with zero
+skips, failures, or errors; metadata and whitespace checks passed and the
+checkout remained clean. The [unchanged full log](checkpoints/FINAL-CHECK-2026-11-25.log)
+is 135,657 bytes, SHA256
+`004b549e1076fabb3ca41674db6894c54c824d0419e63c3e8d793e8969492aed`.
+The suite includes native recorder fixtures but does not repeat experiment
+50's twelve-case pinned replay or establish CPU execution.
+
+Worker 60 independently confirmed that published
+[f8c428195da4d64cea8d3736e9eaa5e7903d0301](https://github.com/baabi-boo/CPU/commit/f8c428195da4d64cea8d3736e9eaa5e7903d0301)
+has this exact tested tree, with only documentation changes since the
+source-complete checkpoint. It also checked all 110 retained native files and
+108 manifest payload hashes, reviewed the operator handoff, and found no
+blocking publication issue. The integrating agent observed
+[run 45709224803](https://github.com/baabi-boo/CPU/actions/runs/45709224803)
+complete successfully for that exact published commit.
+
+The [completed 60-worker ledger](G1-60-AGENT-REVIEW-2026-11-25.md) records all
+actual assignments and their evidence boundaries. That ledger, this final
+documentation section, and the retained full check log are a later
+documentation-only closeout, outside worker 56's tested tree; the named CI
+successes are not transferred to a later commit.
 
 ## Remaining G1 work
 

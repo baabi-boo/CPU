@@ -49,9 +49,12 @@ recorded identities, respectively, not authenticated execution or independent
 build reproduction. Follow the [runbook](BASELINE_RUNBOOK.md) for the exact
 commands and remaining hardware campaign.
 
-The [automated review ledger](evidence/G1-60-AGENT-REVIEW-2026-11-12.md)
-records the ten-wave development/review sequence and clean-checkout tooling
-checks. Automated review is not human gate acceptance or processor validation.
+The [completed observer review ledger](evidence/G1-60-AGENT-REVIEW-2026-11-25.md)
+records all sixty distinct assignments, the independent 836-test checkout,
+native evidence, source preservation, and publication review. The
+[November 12 ledger](evidence/G1-60-AGENT-REVIEW-2026-11-12.md) remains the
+historical ten-wave development/review record. Automated review is not human
+gate acceptance or processor validation.
 
 ## Design and qualification
 

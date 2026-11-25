@@ -59,13 +59,16 @@ Status date: 2026-11-25. Baseline: Chipyard commit
   paths in original and observed builds, including the reproduced signal-only
   ambiguity. Synthetic host memory and configuration are explicit; no CPU,
   Verilator, RTL, or installed pinned-toolchain qualification was performed.
-- A fresh checkout of the first committed observer integration passed
-  **752 repository-only tooling tests**. This is an integration checkpoint,
-  not the final evolving suite total or processor qualification. Consult the
-  [current observer evidence](evidence/G1-HTIF-OBSERVER-2026-11-25.md) for checked
-  revisions and final integration results; the earlier
-  [automated review ledger](evidence/G1-60-AGENT-REVIEW-2026-11-12.md) preserves
-  the historical 532-test checkpoint.
+- An independent fresh checkout of the final observer implementation and native
+  evidence passed **836 repository-only tooling tests, with zero skips,
+  failures, or errors**. Its exact tree matches published `f8c42819`, whose
+  GitHub Actions run also passed. The
+  [completed 60-worker ledger](evidence/G1-60-AGENT-REVIEW-2026-11-25.md) records
+  the checked identities, retained log, and separate publication review.
+  The [current observer evidence](evidence/G1-HTIF-OBSERVER-2026-11-25.md)
+  preserves earlier checkpoints; the
+  [November 12 ledger](evidence/G1-60-AGENT-REVIEW-2026-11-12.md) retains the
+  historical 532-test result. These checks do not qualify a processor.
 - The earlier single-profile `rocket_baseline.py` helper remains available.
   Its stage-local cancellation handling retains observed subprocess exits
   separately from normalized diagnostic codes and cleans up its process group.
@@ -79,7 +82,7 @@ Executed checks and review findings are recorded in
 [NOVA-001 preflight](evidence/NOVA-001-PREFLIGHT-2026-11-11.md), and the
 [G1 preparation evidence](evidence/G1-PREPARATION-2026-11-12.md), with subsequent
 tooling checks in the
-[automated review ledger](evidence/G1-60-AGENT-REVIEW-2026-11-12.md) and
+[completed observer review ledger](evidence/G1-60-AGENT-REVIEW-2026-11-25.md) and
 [current observer evidence](evidence/G1-HTIF-OBSERVER-2026-11-25.md). Follow the
 [Rocket baseline runbook](BASELINE_RUNBOOK.md) for the remaining campaign. This
 foundation is not a CPU or SoC release. The only available registered test

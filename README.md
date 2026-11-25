@@ -45,6 +45,9 @@ No Rocket/NOVA CPU execution has been demonstrated by these tooling changes.
 The strict G1 profile still reports 38 blockers; see the
 [preparation record](docs/nova/evidence/G1-PREPARATION-2026-11-12.md) and
 [current observer evidence](docs/nova/evidence/G1-HTIF-OBSERVER-2026-11-25.md).
+The [completed 60-worker review](docs/nova/evidence/G1-60-AGENT-REVIEW-2026-11-25.md)
+records the independent 836-test checkout, native experiments, and publication
+review, with their exact revisions and limits.
 
 The implemented campaign declares 15 workloads for each of `RocketConfig` and
 `NovaM1BaselineConfig`: hello, an eight-check NOVA target, its deliberate failure
