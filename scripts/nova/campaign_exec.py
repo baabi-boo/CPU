@@ -191,11 +191,18 @@ This scope does not handle signals delivered outside run_command or SIGKILL.
                     signal.signal(signum, request_cancellation)
             except (OSError, RuntimeError, ValueError):
                 cancellation["unavailable"] = True
-        return _run_command(cwd, output_dir, name, argv, timeout_seconds,
-                            min_free_gib, env, max_log_bytes, cancellation)
+        result = _run_command(cwd, output_dir, name, argv, timeout_seconds,
+                              min_free_gib, env, max_log_bytes, cancellation)
     finally:
         for signum, handler in previous_handlers.items():
             signal.signal(signum, handler)
+    # Final timestamps and handler restoration can still receive scoped signals.
+    # Once restoration is complete, new signals belong to the caller's handlers.
+    if cancellation["signal"] is not None:
+        result.update(status="blocked", interrupted=True,
+                      interruption_signal=cancellation["signal"],
+                      reason="command execution interrupted")
+    return result
 
 
 def _run_command(cwd, output_dir, name, argv, timeout_seconds, min_free_gib,
