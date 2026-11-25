@@ -22,6 +22,12 @@ SPEC = importlib.util.spec_from_file_location("nova_g1_campaign_tested", ROOT / 
 campaign = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(campaign)
 
+MAKE_OVERRIDE_VALUES = {
+    "ASPECTS": "chipyard.upf.ChipTopUPFAspect",
+    "ASPECT_ARGS": "--with-aspect chipyard.upf.ChipTopUPFAspect",
+    "MAKE": "make CXXFLAGS=-DNOVA_INHERITED_OVERRIDE",
+}
+
 
 class CampaignTests(unittest.TestCase):
     def setUp(self):
@@ -235,6 +241,85 @@ class CampaignTests(unittest.TestCase):
                 self.assertIn(key, record["reasons"][0])
                 del self.env[key]
         self.assertEqual(self.commands, [])
+
+    def test_aspect_and_recursive_make_overrides_block_both_modes_before_commands(self):
+        def unexpected(*args, **kwargs):
+            raise AssertionError("rejected environment reached a probe or command")
+
+        for observed in (False, True):
+            self.args.observe_target_exit = observed
+            for key, override in MAKE_OVERRIDE_VALUES.items():
+                for value in ("", override):
+                    with self.subTest(observed=observed, key=key, empty=not value), \
+                         patch.dict(os.environ, {**self.env, key: value}, clear=True), \
+                         self.prepared(run_command=unexpected, inspect_profile=unexpected,
+                                       inspect_inventory=unexpected, collect_provenance=unexpected,
+                                       build_observer_metadata=unexpected):
+                        record, path = campaign.execute(self.root, self.args)
+                        self.assertEqual(json.loads(path.read_text()), record)
+                        self.assertEqual(record["status"], "blocked")
+                        self.assertEqual(record["reasons"][0],
+                                         "inherited profile/build overrides must be unset: " + key)
+                        self.assertEqual(record["schema_version"], 2 if observed else 1)
+                        self.assertEqual(record["preflight"], {})
+                        self.assertEqual(record["common_stages"], [])
+                        self.assertTrue(all(profile["build"] == {"status": "not_run"}
+                                            for profile in record["profiles"]))
+                        self.assertTrue(all(row["stage"] == {"status": "not_run"}
+                                            for profile in record["profiles"]
+                                            for row in profile["workloads"]))
+                        if observed:
+                            self.assertIsNone(record["target_exit_observer"])
+                            self.assertTrue(all(row["target_exit"] == {"status": "not_run"}
+                                                for profile in record["profiles"]
+                                                for row in profile["workloads"]))
+                        if value:
+                            self.assertNotIn(value, json.dumps(record))
+
+    def test_aspect_and_recursive_make_overrides_leave_read_only_plans_unchanged(self):
+        before = sorted(str(path.relative_to(self.root)) for path in self.root.rglob("*"))
+        with patch("subprocess.run", side_effect=AssertionError("subprocess ran")), \
+             patch("subprocess.Popen", side_effect=AssertionError("subprocess ran")), \
+             patch.object(campaign, "make_output_dir", side_effect=AssertionError("created output")):
+            for observed in (False, True):
+                argv = ["--root", str(self.root), "--plan"]
+                if observed:
+                    argv.append("--observe-target-exit")
+                reports = []
+                for overrides in ({}, MAKE_OVERRIDE_VALUES,
+                                  {key: "" for key in MAKE_OVERRIDE_VALUES}):
+                    output = io.StringIO()
+                    with self.subTest(observed=observed, overrides=overrides), \
+                         patch.dict(os.environ, {**self.env, **overrides}, clear=True), \
+                         contextlib.redirect_stdout(output):
+                        self.assertEqual(campaign.main(argv), 0)
+                    reports.append(json.loads(output.getvalue()))
+                self.assertEqual(reports[0], reports[1])
+                self.assertEqual(reports[0], reports[2])
+        self.assertEqual(before, sorted(str(path.relative_to(self.root)) for path in self.root.rglob("*")))
+
+    def test_inherited_path_and_toolchain_prefixes_reach_checker_unchanged(self):
+        self.env["PATH"] = str(self.riscv / "bin") + ":" + str(self.conda / "bin") + ":/usr/bin"
+
+        def stop_at_checker(*args, **kwargs):
+            result = self.fake_run(*args, **kwargs)
+            result.update(status="failed", exit_code=1, reason="intentional offline checker stop")
+            return result
+
+        for observed in (False, True):
+            self.args.observe_target_exit = observed
+            self.commands.clear()
+            with self.subTest(observed=observed), \
+                 patch.dict(os.environ, self.env, clear=True), \
+                 self.prepared(run_command=stop_at_checker):
+                record, path = campaign.execute(self.root, self.args)
+                self.assertEqual(dict(os.environ), self.env)
+            self.assertEqual(json.loads(path.read_text()), record)
+            self.assertEqual(record["status"], "failed")
+            self.assertEqual(record["reasons"], ["intentional offline checker stop"])
+            self.assertEqual([command["name"] for command in self.commands], ["pinned-input-check"])
+            self.assertEqual(self.commands[0]["env"], self.env)
+            self.assertEqual(record["execution_paths"]["riscv_prefix"], str(self.riscv))
 
     def test_conditional_pinned_make_inputs_are_enumerated_in_override_policy(self):
         inputs = ("variables.mk", "common.mk", "sims/common-sim-flags.mk", "sims/verilator/Makefile")
