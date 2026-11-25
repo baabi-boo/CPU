@@ -15,6 +15,8 @@ PATTERNS = (
     "nova/*.json", "scripts/nova/*.py", "tests/nova/*.py",
     "software/nova/baseline/*.c", "software/nova/baseline/*.md",
     "software/nova/baseline/CMakeLists.txt",
+    "software/nova/observer/*.cc", "software/nova/observer/*.h",
+    "software/nova/observer/*.mk", "tests/nova/fixtures/htif_observer/*.cc",
     ".github/ISSUE_TEMPLATE/*.yml",
 )
 

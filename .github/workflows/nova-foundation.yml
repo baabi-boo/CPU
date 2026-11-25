@@ -29,11 +29,16 @@ jobs:
           persist-credentials: false
           submodules: false
 
-      - name: Record lightweight tool versions
+      - name: Check native fixture prerequisite and record tool versions
         run: |
+          if ! command -v g++ >/dev/null; then
+            echo "::error::Native observer fixtures require preinstalled g++."
+            exit 1
+          fi
           git --version
           python3 --version
           make --version
+          g++ --version
 
       - name: Validate repository foundation
         run: make -f nova.mk check

@@ -12,7 +12,13 @@ Ubuntu 24.04 job has a five-minute timeout and cancels superseded runs for the
 same branch or PR. It uses read-only repository permission, a commit-pinned
 checkout action, no persisted checkout credentials, and no submodule downloads.
 
-The runner's Git, Python 3, and GNU Make execute the same entry point used locally:
+The job requires existing Git, Python 3, GNU Make, and `g++`. It explicitly checks
+for `g++` and reports its version before running the tests, so native observer
+fixtures cannot silently skip for a missing compiler in CI. The C++ fixtures use
+C++17; no missing compiler or other dependency is installed. Local native fixture
+tests skip when `g++` is unavailable, so a local green result with those skips
+does not establish native fixture coverage. The entry point is the same locally
+and in CI:
 
 ```bash
 make -f nova.mk check
@@ -21,19 +27,19 @@ make -f nova.mk check
 | Target | Scope |
 | --- | --- |
 | `validate` | Structured project/requirement checks, local documentation targets, source configuration scaffolds, and preserved upstream provenance |
-| `test` | Standard-library test harness for NOVA tooling, including bounded local fixtures, with a nonempty-discovery guard |
+| `test` | Python standard-library test harness for NOVA tooling, including bounded local subprocess fixtures and native C++ observer compilation/execution, with a nonempty-discovery guard |
 | `whitespace` | NOVA-managed text files, including committed files, plus `git diff --check` |
 | `check` | All three checks above |
 
 The `doctor`/`doctor-strict`, `preflight`/`preflight-strict`, and
 `g1-profile`/`g1-profile-strict` targets are opt-in local diagnostics, not members
 of `check`. `conda-plan` inspects the pinned package inventory without installing
-it. The `rocket-plan`, `g1-plan`, and `g1-campaign-plan` targets are also opt-in;
-they print proposed commands and their limits without executing a build or
-workload. An environment missing the RISC-V toolchain should not fail the
-repository-only CI job merely because it cannot build a processor. Conversely,
-a green `check` does not waive an unsafe bootstrap preflight or establish a
-hardware result.
+it. The `rocket-plan`, `g1-plan`, `g1-campaign-plan`, and `g1-observed-plan` targets
+are also opt-in; they print proposed commands and their limits without executing
+a build or workload. An environment missing the RISC-V toolchain should not fail
+the repository-only CI job merely because it cannot build a processor.
+Conversely, a green `check` does not waive an unsafe bootstrap preflight or
+establish a hardware result.
 
 These checks do not install a toolchain, publish a package, contact a cloud
 service, fetch optional hardware dependencies, or use project secrets. External
@@ -50,13 +56,20 @@ checks, completion-log parsing, and producer-to-comparator record contracts.
 Their simulator logs, target observations, and prepared-toolchain identities are
 explicitly synthetic fixtures, not retained hardware results. Process-lifecycle
 tests launch bounded local fixture children to check cancellation and cleanup;
-temporary Git repositories exercise provenance rules. Host C syntax checks do
-not cross-compile or execute the RV64 workload. Passing these tests cannot turn
-the declared 15-workload, two-configuration campaign into an executed campaign.
+temporary Git repositories exercise provenance rules. Native observer fixtures
+compile the real host recorder with `g++` and run it with a small driver that
+supplies synthetic HTIF terminal states and controlled file-I/O failures. They
+check recording, witness-file handling, and failure behavior without compiling
+RTL, launching a processor simulator, or observing a real target exit. Host C
+syntax checks do not cross-compile or execute the RV64 workload. Passing these
+tests cannot turn the declared 15-workload, two-configuration campaign into an
+executed campaign.
 
 The managed-text check rejects trailing whitespace and missing final newlines in
-NOVA documentation, metadata, tooling, configuration scaffolds, and selected CI
-files. It excludes preserved upstream documents and licenses. Unlike a working
+NOVA documentation, metadata, tooling, configuration scaffolds, selected CI
+files, `software/nova/observer` C++ sources/headers/make fragments, and
+`tests/nova/fixtures/htif_observer` C++ sources. It excludes generated observer
+output, preserved upstream source, documents, and licenses. Unlike a working
 tree diff alone, it also checks a clean CI checkout. Small workflow text-contract
 tests guard the pinned action, read-only permissions, bounded job, and upstream
 entry-point restrictions; they do not replace GitHub's YAML/workflow validation.
@@ -88,6 +101,7 @@ make -f nova.mk g1-profile-strict
 make -f nova.mk conda-plan
 make -f nova.mk g1-plan
 make -f nova.mk g1-campaign-plan
+make -f nova.mk g1-observed-plan
 # Equivalent strict invocation:
 python3 scripts/nova/doctor.py --strict
 ```
@@ -118,23 +132,53 @@ reducing it. It does not provision the toolchain or initialize submodules, but
 explicit build tools can resolve JVM dependencies under the approved network
 policy. It is not an offline build-closure guarantee.
 
-The possible result `workloads_observed` describes retained protocol observations,
-not hardware qualification. The pinned HTIF/SimTSI path can signal success after
-a signal-induced shutdown without a target exit value; see the
+The default campaign emits schema-1 records. Its possible `workloads_observed`
+result describes retained protocol observations, not hardware qualification.
+The pinned HTIF/SimTSI path can signal success after a signal-induced shutdown
+without a target exit value; see the
 [source-level completion review](evidence/G1-COMPLETION-PROTOCOL-2026-11-12.md).
-Positive observations therefore keep `target_completion_verified: false` even
-when `completion_protocol_observed: true`. The deliberate failure control has
-its own exact code-7 assertion contract; arbitrary nonzero exits do not satisfy
-it. Runner-owned interruption, timeouts, or evidence-integrity failures cannot
-be reclassified as successful workload observations.
+Ordinary log assessments therefore keep `target_completion_verified: false`
+even when `completion_protocol_observed: true`. The deliberate failure control
+has its own exact code-7 assertion contract; arbitrary nonzero exits do not
+satisfy it. Runner-owned interruption, timeouts, or evidence-integrity failures
+cannot be reclassified as successful workload observations.
+
+The optional `--observe-target-exit` mode emits schema-2 campaign records and
+adds a pinned HTIF stop observer to the planned simulator build. The
+`g1-observed-plan` target selects this mode for read-only planning; execution
+still requires `--execute --approved-budget`, a prepared checkout, and the same
+resource approval. Observer preparation produces a local overlay and manifest
+under `nova-out/htif-observer` without editing preserved upstream source. The
+runner records and rechecks that manifest and its build inputs, assigns each
+workload a fresh run ID, and binds the dedicated witness to that run, its source
+state, configuration, workload, binary, simulator, observer manifest, seed, and
+cycle limit.
+
+Each schema-2 workload retains the ordinary protocol-only `assessment` and adds
+`target_exit` with its witness identity, binding, and separate assessment. Only
+the nested `target_exit.assessment.target_completion_verified` can become true,
+after the supplied witness matches the binding and reports the expected target
+exit with no signal exit. Positive workloads require target exit zero; the
+deliberate failure control requires target exit seven. Process/log checks and
+artifact rechecks still apply; missing or invalid witnesses and reserved host
+recorder failure status 125 prevent successful workload observation. These
+recorded observer claims do not authenticate execution. The overall success
+status remains `workloads_observed`, and `hardware_qualified` and `g1_gate_passed`
+remain false throughout both schemas. Foundation fixtures exercise these
+contracts with synthetic events; they do not establish an executed schema-2
+hardware campaign.
 
 [`compare_campaigns.py`](../../scripts/nova/compare_campaigns.py) is also read-only.
 Its `consistent` result means that the supplied record identities agree; it does
 not authenticate execution, prove independent clean builds, validate shared-cache
-absence, or close a gate. Hardware and G1 qualification flags remain false in all
-these helpers. See the [baseline runbook](BASELINE_RUNBOOK.md) for the operator
-procedure and the [preparation record](evidence/G1-PREPARATION-2026-11-12.md) for
-the observed blocked host state.
+absence, or close a gate. Schema-1 and schema-2 campaigns cannot be compared with
+each other. For schema-2 pairs, reused run IDs within or across records are
+rejected; observer metadata and exit semantics are compared as recorded, while
+raw witnesses and execution remain unauthenticated. Hardware and G1 qualification
+flags remain false in all these helpers. See the
+[baseline runbook](BASELINE_RUNBOOK.md) for the operator procedure and the
+[preparation record](evidence/G1-PREPARATION-2026-11-12.md) for the observed blocked
+host state.
 
 The narrower legacy [`rocket_baseline.py`](../../scripts/nova/rocket_baseline.py)
 runner has an execution mode requiring both `--execute` and

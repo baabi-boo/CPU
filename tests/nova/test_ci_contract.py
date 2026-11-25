@@ -28,18 +28,24 @@ class WhitespaceTests(unittest.TestCase):
     def test_scope_excludes_preserved_upstream_and_generated_files(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            for name in ("docs/nova/a.md", "docs/nova/upstream/old.md",
-                         "scripts/nova/a.py", "scripts/nova/__pycache__/a.pyc",
-                         "nova/a.json", "README.chipyard.md", "LICENSE"):
+            managed = ("docs/nova/a.md", "scripts/nova/a.py", "nova/a.json",
+                       "software/nova/observer/recorder.cc",
+                       "software/nova/observer/recorder.h",
+                       "software/nova/observer/observer.mk",
+                       "tests/nova/fixtures/htif_observer/native_driver.cc")
+            preserved = ("docs/nova/upstream/old.md", "README.chipyard.md", "LICENSE",
+                         "toolchains/riscv-tools/riscv-isa-sim/fesvr/htif.cc")
+            generated = ("scripts/nova/__pycache__/a.pyc",
+                         "nova-out/htif-observer/htif.cc",
+                         "software/nova/observer/native-observer-fixture")
+            for name in managed + preserved + generated:
                 path = root / name
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.touch()
             names = {str(path.relative_to(root)) for path in WHITESPACE.managed_paths(root)}
-            self.assertIn("docs/nova/a.md", names)
-            self.assertIn("scripts/nova/a.py", names)
-            self.assertIn("nova/a.json", names)
-            for name in ("docs/nova/upstream/old.md", "README.chipyard.md",
-                         "LICENSE", "scripts/nova/__pycache__/a.pyc"):
+            for name in managed:
+                self.assertIn(name, names)
+            for name in preserved + generated:
                 self.assertNotIn(name, names)
 
     def test_nonexistent_root_is_a_failure(self):
@@ -72,6 +78,8 @@ class CIContractTests(unittest.TestCase):
         self.assertIn("timeout-minutes: 5", self.workflow)
         self.assertIn("runs-on: ubuntu-24.04", self.workflow)
         self.assertIn("run: make -f nova.mk check", self.workflow)
+        self.assertIn("command -v g++", self.workflow)
+        self.assertIn("g++ --version", self.workflow)
         for command in ("build-setup.sh", "sims/verilator", "docker push", "pip install",
                         "rocket_baseline.py", "git submodule update", "apt-get",
                         "conda install", "micromamba install"):
