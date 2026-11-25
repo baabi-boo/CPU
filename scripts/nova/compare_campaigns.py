@@ -958,6 +958,20 @@ def _constant(_value):
     raise RecordError("record contains a non-finite JSON number")
 
 
+def parse_record_bytes(raw):
+    """Parse bounded UTF-8 JSON already captured by a caller's safe reader."""
+    if type(raw) is not bytes or len(raw) > MAX_RECORD_BYTES:
+        raise RecordError("record must be bounded captured bytes")
+    try:
+        result = json.loads(raw.decode("utf-8"), object_pairs_hook=_object, parse_constant=_constant)
+        _canonical(result)
+        return result
+    except RecordError:
+        raise
+    except (ValueError, TypeError, UnicodeError, RecursionError) as exc:
+        raise RecordError("record is not safely readable canonical JSON") from exc
+
+
 def read_record(path):
     """Read a bounded stable regular JSON record, rejecting symlink components."""
     try:
@@ -979,9 +993,7 @@ def read_record(path):
         if (len(raw) > MAX_RECORD_BYTES or not identity(before) == identity(opened)
                 == identity(after) == identity(current)):
             raise RecordError("record changed during bounded read")
-        result = json.loads(raw.decode("utf-8"), object_pairs_hook=_object, parse_constant=_constant)
-        _canonical(result)
-        return result
+        return parse_record_bytes(raw)
     except RecordError:
         raise
     except (OSError, ValueError, TypeError, UnicodeError, RecursionError) as exc:
