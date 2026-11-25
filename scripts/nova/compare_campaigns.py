@@ -5,6 +5,10 @@ A consistent result means agreement between unauthenticated JSON records, not
 proof of independent builds, trustworthy logs, or hardware correctness.
 """
 
+import sys
+
+sys.dont_write_bytecode = True  # Read-only CLI paths must not create import caches.
+
 import argparse
 from contextlib import ExitStack
 from datetime import datetime, timezone

@@ -8,6 +8,10 @@ their external paths are never opened. An intact bundle is not authenticated
 execution, independent reproduction, hardware qualification, or G1 acceptance.
 """
 
+import sys
+
+sys.dont_write_bytecode = True  # Read-only CLI paths must not create import caches.
+
 import argparse
 import hashlib
 import importlib.util

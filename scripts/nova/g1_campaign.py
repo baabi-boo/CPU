@@ -5,6 +5,10 @@ The read-only plan does not access the network. Explicit builds can resolve JVM
 dependencies under the operator's separately approved network/resource policy.
 """
 
+import sys
+
+sys.dont_write_bytecode = True  # Read-only CLI paths must not create import caches.
+
 import argparse
 from contextlib import contextmanager
 from contextvars import ContextVar
@@ -20,7 +24,6 @@ import re
 import secrets
 import shutil
 import signal
-import sys
 import threading
 import time
 
