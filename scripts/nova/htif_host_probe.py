@@ -66,6 +66,8 @@ MAX_TOTAL_SECONDS = 300
 MAX_LOG_BYTES = 4 * 1024 * 1024
 MAX_ARTIFACT_BYTES = 32 * 1024 * 1024
 MAX_ARTIFACT_TOTAL_BYTES = 128 * 1024 * 1024
+MAX_ARTIFACT_FILES = 256
+MAX_ARTIFACT_ENTRIES = 512
 FINALIZE_RESERVE_SECONDS = 3.0
 SYNTHETIC_CONFIG = (
     b"// SYNTHETIC native host fixture; not an installed pinned toolchain configuration.\n"
@@ -81,11 +83,21 @@ LIMITATIONS = [
     "No ELF loading, TSI, TestChipIP, Verilator, RTL, or campaign execution.",
     "Nested parser target_completion_verified values describe supplied fixture events only.",
     "Deadlines reserve process cleanup and evidence capture; disk/log limits are sampled, not OS quotas.",
+    "Artifact traversal and reads check time/cancellation cooperatively; blocking filesystem calls have no hard time quota.",
+    "Elapsed time includes initial metadata writes and handler restoration; final corrective writes, close and return may follow its last sample.",
 ]
 
 
 class ProbeError(ValueError):
     """The requested native comparison could not establish complete evidence."""
+
+
+class _ProbeStopped(ProbeError):
+    """A cooperative boundary stopped optional work, preserving prior failure."""
+
+    def __init__(self, reason, *, deadline_exhausted=False):
+        super().__init__(reason)
+        self.deadline_exhausted = deadline_exhausted
 
 
 def _sha(data):
@@ -211,20 +223,25 @@ def _write_new(path, data):
         os.close(descriptor)
 
 
-def _read_artifact(output, relative, maximum):
+def _read_artifact(output, relative, maximum, *, check=None):
     path = output / relative
+    check = check or (lambda: None)
+    check()
     # The existing capture helper intentionally disallows empty inputs; logs
     # are allowed to be empty and still need a no-follow bounded read.
     parent = observer._directory(path.parent)
     try:
         descriptor = os.open(path.name, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK, dir_fd=parent)
         try:
+            check()
             before = os.fstat(descriptor)
             if not stat.S_ISREG(before.st_mode) or before.st_nlink != 1 or before.st_size > maximum:
                 raise ProbeError("artifact is not a bounded regular file: " + relative)
             chunks, count = [], 0
             while True:
+                check()
                 part = os.read(descriptor, min(65536, maximum + 1 - count))
+                check()
                 if not part:
                     break
                 chunks.append(part)
@@ -237,11 +254,203 @@ def _read_artifact(output, relative, maximum):
                     or observer._identity(after) != observer._identity(current)
                     or count != before.st_size):
                 raise ProbeError("artifact changed during capture: " + relative)
+            check()
             return b"".join(chunks)
         finally:
             os.close(descriptor)
     finally:
         os.close(parent)
+
+
+def _artifact_paths(output, check):
+    """Stream a capped traversal, including empty directories in the work cap."""
+    pending, files, entries_seen = [output], 0, 0
+    while pending:
+        check()
+        directory = pending.pop()
+        descriptor = observer._directory(directory)
+        try:
+            with os.scandir(descriptor) as entries:
+                while True:
+                    check()
+                    try:
+                        entry = next(entries)
+                    except StopIteration:
+                        break
+                    check()
+                    entries_seen += 1
+                    if entries_seen > MAX_ARTIFACT_ENTRIES:
+                        raise ProbeError("artifact directory entry limit exceeded")
+                    info = entry.stat(follow_symlinks=False)
+                    check()
+                    path = directory / entry.name
+                    if stat.S_ISDIR(info.st_mode):
+                        pending.append(path)
+                    else:
+                        files += 1
+                        if files > MAX_ARTIFACT_FILES:
+                            raise ProbeError("artifact count limit exceeded")
+                        # Symlinks and special files reach the no-follow regular
+                        # file check instead of silently disappearing from evidence.
+                        yield path, info.st_size
+        finally:
+            os.close(descriptor)
+
+
+def _add_reason(result, reason):
+    reasons = result.setdefault("reasons", [])
+    if reason not in reasons:
+        reasons.append(reason)
+
+
+def _retain_error(result, error, *, finalization=False):
+    if isinstance(error, _ProbeStopped):
+        if result["status"] != "failed":
+            result["status"] = "blocked"
+        if error.deadline_exhausted:
+            result["deadline_exhausted"] = True
+    elif finalization or result["status"] not in {"blocked", "failed"}:
+        result["status"] = "failed"
+    _add_reason(result, str(error))
+
+
+def _check_remaining(deadline, cancellation, *, reserve=0):
+    if cancellation["signal"] is not None:
+        raise _ProbeStopped("native comparison interrupted")
+    remaining = deadline - time.monotonic() - reserve
+    if remaining < 0.001:
+        raise _ProbeStopped("total native comparison deadline exhausted", deadline_exhausted=True)
+    return remaining
+
+
+def _terminal_state(result):
+    return (result["status"], tuple(result.get("reasons", ())), result.get("interrupted"),
+            result.get("interruption_signal"), result.get("deadline_exhausted"),
+            result.get("artifacts_incomplete"))
+
+
+def _retain_final_state(result, started, deadline, cancellation, *, refresh_clock=True):
+    """Latch terminal facts; a known failure is never downgraded to blocked."""
+    before = _terminal_state(result)
+    now = time.monotonic()
+    if now >= deadline:
+        _retain_error(result, _ProbeStopped("total native comparison deadline exhausted",
+                                           deadline_exhausted=True))
+    if cancellation["signal"] is not None:
+        _retain_error(result, _ProbeStopped("native comparison interrupted"))
+        result.update(interrupted=True, interruption_signal=cancellation["signal"])
+    changed = before != _terminal_state(result)
+    if refresh_clock or changed:
+        result["elapsed_seconds"] = round(now - started, 6)
+    return changed
+
+
+def _write_owned(descriptor, data):
+    """Correct only a descriptor created exclusively by this finalization."""
+    os.lseek(descriptor, 0, os.SEEK_SET)
+    os.ftruncate(descriptor, 0)
+    remaining = memoryview(data)
+    while remaining:
+        written = os.write(descriptor, remaining)
+        if written <= 0:
+            raise ProbeError("native evidence write made no progress")
+        remaining = remaining[written:]
+    os.fsync(descriptor)
+
+
+def _finalize_probe(output, result, started, deadline, cancellation, restore_handlers):
+    """Retain partial evidence and reconcile late events before closing our FDs.
+
+    Optional capture stops at cooperative boundaries. Terminal metadata still
+    gets a bounded best-effort write after a stop. This is not a transactional
+    publisher: concurrent readers must wait for this call to finish, and a
+    filesystem call, SIGKILL or a crash can prevent complete persistence.
+    """
+    artifacts, total = [], 0
+    check = lambda: _check_remaining(deadline, cancellation)
+    try:
+        for path, size in _artifact_paths(output, check):
+            check()
+            relative = str(path.relative_to(output))
+            remaining = MAX_ARTIFACT_TOTAL_BYTES - total
+            if size > remaining:
+                raise ProbeError("aggregate artifact byte limit exceeded")
+            data = _read_artifact(output, relative, min(MAX_ARTIFACT_BYTES, remaining), check=check)
+            total += len(data)
+            digest = _sha(data)
+            check()
+            artifacts.append({"path": relative, "bytes": len(data), "sha256": digest})
+    except (ProbeError, observer.ObserverError, OSError) as error:
+        _retain_error(result, error, finalization=True)
+        result["artifacts_incomplete"] = True
+    artifacts.sort(key=lambda item: item["path"])
+
+    directory, descriptors, metadata, failed_writes = None, {}, {}, set()
+
+    def write_failed(name, error):
+        # First failure per file is retained once, so retries cannot create an
+        # unbounded sequence of reasons or timestamp-only corrective writes.
+        if name not in failed_writes:
+            failed_writes.add(name)
+            _retain_error(result, ProbeError("could not retain " + name + ": " + str(error)),
+                          finalization=True)
+        result["artifacts_incomplete"] = True
+        metadata.pop(name, None)
+
+    def inventory():
+        return artifacts + [metadata[name] for name in ("commands.json", "results.json") if name in metadata]
+
+    def persist():
+        for name in ("results.json", "artifacts.json"):
+            if name not in descriptors:
+                continue
+            try:
+                data = _json(result if name == "results.json" else inventory())
+                _write_owned(descriptors[name], data)
+                metadata[name] = {"path": name, "bytes": len(data), "sha256": _sha(data)}
+            except (ProbeError, observer.ObserverError, OSError) as error:
+                write_failed(name, error)
+
+    try:
+        try:
+            data = _json(result["commands"])
+            _write_new(output / "commands.json", data)
+            metadata["commands.json"] = {"path": "commands.json", "bytes": len(data), "sha256": _sha(data)}
+        except (ProbeError, observer.ObserverError, OSError) as error:
+            write_failed("commands.json", error)
+        try:
+            directory = observer._directory(output)
+        except (observer.ObserverError, OSError) as error:
+            write_failed("evidence directory", error)
+        if directory is not None:
+            for name in ("results.json", "artifacts.json"):
+                try:
+                    descriptors[name] = os.open(
+                        name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW | os.O_CLOEXEC,
+                        0o600, dir_fd=directory)
+                except OSError as error:
+                    write_failed(name, error)
+        _retain_final_state(result, started, deadline, cancellation)
+        persist()
+        # Signals caught during either initial write or restoration still belong
+        # to us. After restoration, new signals belong to the caller's handlers.
+        restore_handlers()
+        _retain_final_state(result, started, deadline, cancellation)
+        while True:
+            before = _terminal_state(result)
+            persist()
+            _retain_final_state(result, started, deadline, cancellation,
+                                refresh_clock=before != _terminal_state(result))
+            if before == _terminal_state(result):
+                break
+            # Only a first write error or the first deadline observation can
+            # change state here. The clock alone never triggers another pass.
+    finally:
+        restore_handlers()
+        for descriptor in descriptors.values():
+            os.close(descriptor)
+        if directory is not None:
+            os.close(directory)
 
 
 def command_matches(record, expected):
@@ -254,13 +463,13 @@ def command_matches(record, expected):
                      and record.get("reason") == "command exited unsuccessfully")))
 
 
-def verify_linkage(output, members, original_symbols, observed_symbols):
+def verify_linkage(output, members, original_symbols, observed_symbols, *, check=None):
     expected = [name + ".o" for name in SOURCE_NAMES]
     if members.splitlines() != expected:
         raise ProbeError("archive does not contain exactly the seven real source objects")
     archive_member = str(output / "libfesvr-host-fixture.a") + "(htif.o)"
-    original_map = _read_artifact(output, "original.map", MAX_ARTIFACT_BYTES).decode()
-    observed_map = _read_artifact(output, "observed.map", MAX_ARTIFACT_BYTES).decode()
+    original_map = _read_artifact(output, "original.map", MAX_ARTIFACT_BYTES, check=check).decode()
+    observed_map = _read_artifact(output, "observed.map", MAX_ARTIFACT_BYTES, check=check).decode()
     if archive_member not in original_map or archive_member in observed_map:
         raise ProbeError("link maps do not prove the original htif.o was excluded only for the overlay")
     for symbols in (original_symbols, observed_symbols):
@@ -296,12 +505,13 @@ def execute_probe(source_root, output, *, budget=None):
             cancellation["signal"] = signum
 
     def check():
-        if cancellation["signal"] is not None:
-            raise ProbeError("native comparison interrupted")
-        remaining = deadline - time.monotonic() - engine.CLEANUP_GRACE_SECONDS - FINALIZE_RESERVE_SECONDS
-        if remaining < 0.001:
-            raise ProbeError("total native comparison deadline exhausted")
-        return remaining
+        return _check_remaining(deadline, cancellation,
+                                reserve=engine.CLEANUP_GRACE_SECONDS + FINALIZE_RESERVE_SECONDS)
+
+    def restore_handlers():
+        for signum, previous_handler in list(previous.items()):
+            signal.signal(signum, previous_handler)
+            del previous[signum]
 
     try:
         for signum in (signal.SIGINT, signal.SIGTERM):
@@ -340,7 +550,7 @@ def execute_probe(source_root, output, *, budget=None):
         assessor = _load("nova_host_snapshot_assessor", native / "htif_exit_evidence.py")
         runner = _load("nova_host_snapshot_runner", native / "campaign_exec.py")
         _write_new(output / "nova_htif.cc", generator.render_overlay(
-            _read_artifact(output, "inputs/spike/fesvr/htif.cc", observer.MAX_INPUT_BYTES)))
+            _read_artifact(output, "inputs/spike/fesvr/htif.cc", observer.MAX_INPUT_BYTES, check=check)))
         # Explicit minimal environment avoids ambient include paths, compiler
         # options, and an inherited witness configuration. No shell is used.
         environment = {"PATH": os.defpath, "LC_ALL": "C", "LANG": "C",
@@ -360,15 +570,15 @@ def execute_probe(source_root, output, *, budget=None):
                 if record[channel] is not None:
                     record[channel] = "logs/" + record[channel]
             result["commands"].append(record)
-            _write_new(output / "records" / (name + ".json"), _json(record))
-            if record.get("interrupted"):
+            if record.get("interrupted") and cancellation["signal"] is None:
                 cancellation["signal"] = record.get("interruption_signal") or signal.SIGINT
+            _write_new(output / "records" / (name + ".json"), _json(record))
             if not record["expected_exit_observed"]:
                 result["status"] = "blocked" if record["status"] == "blocked" else "failed"
                 raise ProbeError(name + ": " + record.get("reason", "unexpected native process status"))
             captured = []
             for channel in ("stdout", "stderr"):
-                data = _read_artifact(output, record[channel], budget["max_log_bytes"])
+                data = _read_artifact(output, record[channel], budget["max_log_bytes"], check=check)
                 if _sha(data) != record[channel + "_sha256"]:
                     raise ProbeError("captured command log hash changed")
                 captured.append(data)
@@ -381,13 +591,13 @@ def execute_probe(source_root, output, *, budget=None):
                 build_logs[name] = stdout.decode()
         check()
         result.update(verify_linkage(output, build_logs["archive-members"],
-                                     build_logs["symbols-original"], build_logs["symbols-observed"]))
+                                     build_logs["symbols-original"], build_logs["symbols-observed"], check=check))
         result["tool_versions"] = {key: build_logs["version-" + key].splitlines()[0]
                                    for key in ("gxx", "ar", "nm")}
         baseline = {}
         for variant in ("original", "observed"):
             binary = output / ("probe-" + variant)
-            binary_hash = _sha(_read_artifact(output, binary.name, MAX_ARTIFACT_BYTES))
+            binary_hash = _sha(_read_artifact(output, binary.name, MAX_ARTIFACT_BYTES, check=check))
             for mode in MODES:
                 expected = 7 if "7" in mode else 0
                 identity = secrets.token_hex(32)
@@ -435,48 +645,16 @@ def execute_probe(source_root, output, *, budget=None):
         result.update(status="passed", native_processes=12, signal_only_rejection_observed=True,
                       mixed_signal_rejection_observed=True, synthetic_config="synthetic-config/config.h")
     except (ProbeError, observer.ObserverError, OSError, ValueError, RuntimeError) as error:
-        if cancellation["signal"] or "deadline" in str(error):
-            result["status"] = "blocked"
-        elif result["status"] not in {"blocked", "failed"}:
-            result["status"] = "failed"
-        result["reasons"] = [str(error)]
+        _retain_error(result, error)
     finally:
         try:
-            if cancellation["signal"] is not None:
-                result.update(status="blocked", interrupted=True, interruption_signal=cancellation["signal"])
             if created:
-                # Bound final capture separately; never overwrite prior results.
-                artifacts, total = [], 0
-                try:
-                    paths = sorted(path for path in output.rglob("*") if path.is_file() or path.is_symlink())
-                    if len(paths) > 256:
-                        raise ProbeError("artifact count limit exceeded")
-                    for path in paths:
-                        relative = str(path.relative_to(output))
-                        size = path.lstat().st_size
-                        total += size
-                        if total > MAX_ARTIFACT_TOTAL_BYTES:
-                            raise ProbeError("aggregate artifact byte limit exceeded")
-                        data = _read_artifact(output, relative, MAX_ARTIFACT_BYTES)
-                        artifacts.append({"path": relative, "bytes": len(data), "sha256": _sha(data)})
-                except (ProbeError, observer.ObserverError, OSError) as error:
-                    result.update(status="failed", artifacts_incomplete=True)
-                    result.setdefault("reasons", []).append(str(error))
-                result["elapsed_seconds"] = round(time.monotonic() - started, 6)
-                if time.monotonic() > deadline:
-                    result.update(status="blocked")
-                    result.setdefault("reasons", []).append("total native comparison deadline exhausted")
-                if cancellation["signal"] is not None:
-                    result.update(status="blocked", interrupted=True,
-                                  interruption_signal=cancellation["signal"])
-                for name, value in (("commands.json", result["commands"]), ("results.json", result)):
-                    data = _json(value)
-                    _write_new(output / name, data)
-                    artifacts.append({"path": name, "bytes": len(data), "sha256": _sha(data)})
-                _write_new(output / "artifacts.json", _json(artifacts))
+                _finalize_probe(output, result, started, deadline, cancellation, restore_handlers)
+            else:
+                restore_handlers()
+                _retain_final_state(result, started, deadline, cancellation)
         finally:
-            for signum, previous_handler in previous.items():
-                signal.signal(signum, previous_handler)
+            restore_handlers()
     return result
 
 
