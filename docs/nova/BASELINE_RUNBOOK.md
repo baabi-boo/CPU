@@ -70,12 +70,35 @@ explicit migration review. This selector behavior does not itself prove that a
 glibc 2.41 host cannot use the older 2.34 sysroot; a pin-preserving preparation
 procedure still needs separate review and validation.
 
-The upstream lean setup also initializes many optional Git submodules with
-`--full`; the word *lean* does not imply limited downloads. A selective
-dependency/Conda setup is only a proposal until validated, including nested
-gitlinks, `env.sh`, `RISCV`, the HTIF toolchain, and CIRCT. Never use host tools
-or changed pins silently to get a green result. See
-[DEVELOPMENT](DEVELOPMENT.md) for the opt-in setup entry point and its risks.
+The broad lean setup example in [DEVELOPMENT](DEVELOPMENT.md) is an inherited
+reference, **not a validated fixed-G1 preparation recipe**. Step 2 still invokes
+`init-submodules-no-riscv-tools.sh --full`; the
+[initializer](../../scripts/init-submodules-no-riscv-tools-nolog.sh) enables all
+14 optional generators. [`build.sbt`](../../build.sbt) adds initialized optional
+generators to the compiled dependencies/sources, while the
+[fixed profile](../../nova/g1-profile.json) expects none and
+[`g1_profile.py`](../../scripts/nova/g1_profile.py) rejects any. Choosing a host
+that leaves the sysroot pin unchanged does not resolve this source-graph conflict.
+
+Skipping the automatic Conda and submodule stages also leaves step 3 active.
+Its [`build-toolchain-extra.sh`](../../scripts/build-toolchain-extra.sh) call
+unconditionally initializes Gemmini and `software/libgemmini` for `riscv-tools`,
+alongside other collateral builds. In
+[`build-util.sh`](../../scripts/build-util.sh), `module_all` initializes nested
+sources, and the script defaults parallelism to the host thread count unless
+controlled by `NPROC`.
+Those source and resource effects must be addressed in selective preparation;
+the two skip options alone are not a qualifying procedure.
+
+**Before section 3, NOVA-001 still needs an implemented and validated selective
+toolchain/runtime preparation procedure.** It must preserve the unchanged lean
+lock and fixed source inventory, resolve required nested dependencies, produce
+the HTIF/runtime and observed-mode collateral, and establish `env.sh`, `RISCV`,
+`CONDA_PREFIX`, supplementary tools, and effective resource bounds. Follow the
+[concrete preparation task](DEVELOPMENT.md#next-nova-001-task-implement-selective-preparation)
+to develop and retain that evidence. No complete selective recipe is implemented
+or verified here. Never use host tools or changed pins silently to get a green
+result.
 
 The [G1 profile](../../nova/g1-profile.json) enumerates known required source
 gitlinks, provisioning sources, optional-generator inventory, and tool/runtime

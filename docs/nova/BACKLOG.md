@@ -18,14 +18,33 @@ Run `make -f nova.mk check`, the non-mutating
 is a recorded blocker, not a reason to relax the checks. Record missing
 prerequisites without attempting an unapproved installation.
 Before heavyweight setup, obtain maintainer agreement on host, RAM/disk capacity,
-network access, CPU parallelism, wall-time limit, and any monetary cost. Then use
-the pinned, opt-in procedure in [DEVELOPMENT](DEVELOPMENT.md); preserve pins and
-disable the setup script's cleanup stage as documented there. Before running
-upstream setup, compare host glibc with the pinned `sysroot_linux-64` input:
-`scripts/build-setup.sh` can rewrite `conda-reqs/chipyard-base.yaml` and
-regenerate locks even without `--use-unpinned-deps`. On a host where that
-rewrite would occur, stop and select a reviewed pin-preserving procedure or
-propose a separate dependency migration; do not execute setup blindly.
+network access, CPU parallelism, wall-time limit, and any monetary cost. The next
+engineering deliverable is an implemented and validated **selective
+toolchain/runtime preparation procedure**, as specified in
+[DEVELOPMENT](DEVELOPMENT.md#next-nova-001-task-implement-selective-preparation).
+That procedure remains unimplemented and unverified; the broad lean example
+there is an inherited reference, not a fixed-G1 recipe. Preserve pins and avoid
+the setup script's cleanup stage. Before selecting setup steps, compare host
+glibc with the pinned `sysroot_linux-64` input:
+[`scripts/build-setup.sh`](../../scripts/build-setup.sh) can rewrite
+`conda-reqs/chipyard-base.yaml` and regenerate locks even without
+`--use-unpinned-deps`. On a host where that rewrite would occur, stop and develop
+the pin-preserving procedure or propose a separate dependency migration; do not
+execute setup blindly.
+
+Matching the selected sysroot alone is insufficient. Lean setup leaves step 2's
+`--full` [initialization](../../scripts/init-submodules-no-riscv-tools-nolog.sh)
+enabled for all 14 optional generators; [`build.sbt`](../../build.sbt) includes
+initialized generators in the compiled source graph, and the
+[fixed G1 inspector](../../scripts/nova/g1_profile.py) rejects any. Skipping
+automatic Conda and submodule stages still leaves step 3's
+[`build-toolchain-extra.sh`](../../scripts/build-toolchain-extra.sh), which
+unconditionally initializes Gemmini/`software/libgemmini` for `riscv-tools`
+and builds other extras. The selective procedure must address all three setup
+stages, preserve the unchanged lock and zero optional-generator inventory, and
+produce the required runtime/HTIF/observer inputs with recorded environment
+activation, supplementary tools, nested dependencies, and bounded setup jobs.
+No tested replacement command follows from the current diagnostics.
 
 **Observed preparation state, 2026-11-25:** NOVA-001 execution and G1 are
 **blocked**, as recorded in the
@@ -87,9 +106,9 @@ to obtain a green result. No FPGA purchase or paid runner is authorized here.
 ### NOVA-001 — Reproduce the pinned Rocket toolchain
 
 - **P0 · G1 · owner:** build maintainer, unassigned. **Depends on:** G0 acceptance and resource approval.
-- **Area:** `scripts/build-setup.sh`, `conda-reqs`, `nova/upstream-lock.json`, diagnostic tooling.
-- **State:** blocked. Inspectors are implemented; the prepared environment and actual setup evidence are absent.
-- **Acceptance:** an approved clean environment initializes the required pinned dependencies (including DRAMSim2 for the selected Verilator target); record host glibc/sysroot compatibility, resolved versions and all diagnostic gaps. No unreviewed lock/gitlink drift. The CMake `hello` test also requires an available, pinned `toolchains/libgloss` linker script and suitable HTIF-capable RISC-V toolchain. Verify that the selected compiler resolves the installed `htif.ld` to content matching the preserved source, and retain matching package metadata plus runtime-collateral observations. These are test prerequisites, not evidence of execution or complete dependency closure.
+- **Area:** inherited [setup](../../scripts/build-setup.sh) and [extra-toolchain](../../scripts/build-toolchain-extra.sh) behavior, `conda-reqs`, `nova/upstream-lock.json`, [fixed G1 profile](../../nova/g1-profile.json), diagnostic tooling, and the missing selective preparation procedure.
+- **State:** blocked. Inspectors are implemented; selective toolchain/runtime preparation remains unimplemented and unverified, and the prepared environment and actual setup evidence are absent.
+- **Acceptance:** implement and validate the selective procedure in an approved clean environment, initializing required pinned dependencies (including DRAMSim2 for the selected Verilator target) while keeping all 14 optional generators uninitialized. Record setup commands and effective resource bounds, host glibc/sysroot compatibility, resolved versions and all diagnostic gaps. No unreviewed lock/gitlink drift. The CMake `hello` test also requires an available, pinned `toolchains/libgloss` linker script and suitable HTIF-capable RISC-V toolchain. Verify that the selected compiler resolves the installed `htif.ld` to content matching the preserved source, and retain matching package metadata plus runtime-collateral and observed-mode prerequisite observations. These are test prerequisites, not evidence of execution or complete dependency closure.
 - **Evidence:** `REQ-BUILD-001` / `T-BUILD-001`; exact source/gitlink manifest, SHA-256 of all nine tracked Conda inputs before/after setup, preflight report, setup command, host budget, exit status, sanitized log. Tool availability alone does not close G1.
 
 ### NOVA-002 — Execute the unmodified Rocket baseline

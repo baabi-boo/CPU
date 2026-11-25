@@ -88,36 +88,54 @@ GNU coreutils `timeout`. A command timeout and `-j2` alone do not constrain
 peak RAM, disk usage, or total host CPU consumption. The pinned setup
 selects Linux x86-64 or AArch64 Conda lockfiles; this guide does not claim a
 validated NOVA host-platform matrix.
-Install/activate the prerequisite Conda environment using the pinned upstream
-[setup guidance](../Chipyard-Basics/Initial-Repo-Setup.rst) and inspect
-[`scripts/build-setup.sh`](../../scripts/build-setup.sh) before running it.
+Consult the pinned upstream [setup guidance](../Chipyard-Basics/Initial-Repo-Setup.rst)
+and inspect [`scripts/build-setup.sh`](../../scripts/build-setup.sh) before
+selecting provisioning steps.
+
+### Broad upstream setup reference
 
 The upstream script downloads dependencies, creates an environment, initializes
 submodules, prepares the toolchain, and can compile sources. It is not part of
-the lightweight offline checks. **Before running it**, capture the source
-revision and tracked lockfile hashes, run the non-mutating bootstrap preflight,
+the lightweight offline checks. **The broad lean example below is not a validated
+fixed-G1 preparation recipe: its default source initialization conflicts with
+the fixed profile even on a host that preserves the sysroot pin.** Before running
+any selected setup procedure, capture the source revision and tracked lockfile
+hashes, run the non-mutating bootstrap preflight,
 and inspect the result for expected lockfile regeneration. Stop if changing a
-pin would require an unapproved migration. In a clean working copy on an
-approved compatible host, the initial lean setup entry point is below. The
-example sends TERM after two hours and allows a further 30 seconds before KILL;
+pin would require an unapproved migration. The inherited entry point below sends
+TERM after two hours and allows a further 30 seconds before KILL;
 choose an approved setup budget before starting. Interrupting setup can leave a
 partial environment.
 
 ```bash
-timeout --kill-after=30s 2h ./build-setup.sh --use-lean-conda --skip-clean riscv-tools &&
-source ./env.sh &&
-make -f nova.mk doctor-strict
+timeout --kill-after=30s 2h ./build-setup.sh --use-lean-conda --skip-clean riscv-tools
 ```
 
-Lean setup omits FireSim and FireMarshal; Linux-workload preparation is therefore
-a later explicit step. However, the script still invokes
-`init-submodules-no-riscv-tools.sh --full`, which fetches optional dependencies
-well beyond the minimum known Rocket baseline. Budget and record those downloads
-or choose a reviewed, narrower initialization plan. `--skip-clean` prevents the
-setup's repository-cleanup stage. Do not use `--use-unpinned-deps` or replace
-locked dependencies with latest versions to bypass a failure. Record blockers
-and propose a reviewed migration. Do not pass tokens on command lines or enable
-verbose tracing around credentials.
+Lean setup skips the dedicated FireSim and FireMarshal setup stages;
+Linux-workload preparation remains a later explicit step. It leaves step 2
+enabled, which invokes `init-submodules-no-riscv-tools.sh --full`. The
+[initializer](../../scripts/init-submodules-no-riscv-tools-nolog.sh) enables all
+14 optional generators and still initializes the top-level FireSim/FireMarshal
+sources. [`build.sbt`](../../build.sbt) discovers initialized optional generators
+and adds their dependencies and sources. The
+[fixed profile](../../nova/g1-profile.json) expects zero initialized optional
+generators, and [`g1_profile.py`](../../scripts/nova/g1_profile.py) rejects any.
+This is a compiled-source-graph conflict as well as a download-budget issue.
+
+Skipping automatic Conda and submodule setup alone does not make the remaining
+steps selective. Step 3 still invokes
+[`build-toolchain-extra.sh`](../../scripts/build-toolchain-extra.sh); its
+`riscv-tools` path unconditionally initializes Gemmini and `software/libgemmini`,
+and also builds other collateral such as PK and spike-devices. Its
+[`module_all` helper](../../scripts/build-util.sh) recursively initializes
+sources. That stage therefore also needs a selective replacement or decomposition
+before it can prepare the fixed G1 environment. No such procedure is implemented
+or verified here.
+
+`--skip-clean` prevents the setup's repository-cleanup stage. Do not use
+`--use-unpinned-deps` or replace locked dependencies with latest versions to bypass
+a failure. Record blockers and propose a reviewed migration. Do not pass tokens
+on command lines or enable verbose tracing around credentials.
 
 The pinned setup also checks host glibc and can rewrite
 `conda-reqs/chipyard-base.yaml` and regenerate lockfiles even without
@@ -131,19 +149,41 @@ unreviewed regenerated lock. The automatic selector's rewrite is the observed
 integrity problem; glibc 2.41 by itself does not establish incompatibility with
 the older pinned 2.34 sysroot.
 
-For a pin-preserving NOVA-001 experiment, prefer an approved host for which
-the setup script keeps the selected sysroot unchanged. Another possible
-approach is to provision the exact existing lock manually, initialize only the
-reviewed required gitlinks at their recorded SHAs, and skip the automatic Conda
-and submodule setup stages. **That selective path is a proposal, not a verified
-build procedure:** it must be reviewed for nested dependencies, runtime
-compatibility, generated `env.sh`/`RISCV` settings and missing tools before use.
-In particular, the lean lock does not itself establish the availability of
-`cmake`; the first `hello` test uses HTIF headers, linker inputs, and toolchain
-collateral. Mark any missing prerequisite `blocked` instead of silently
-substituting the host toolchain. Account for supplementary tools separately in
-the reviewed environment; adding packages to the frozen Conda prefix changes
-the exact inventory and cannot silently be treated as the original lock.
+### Next NOVA-001 task: implement selective preparation
+
+The next engineering task is to implement and validate a pin-preserving
+toolchain/runtime preparation procedure for the fixed G1 profile. Selecting a
+host where the automatic sysroot stays unchanged addresses only the lock-rewrite
+path; it does not resolve optional-generator initialization or prove runtime
+compatibility. **Selective preparation remains unimplemented and unverified.**
+Its concrete deliverable must specify and exercise:
+
+1. Installation of the unchanged lean lock, with supplementary tools such as
+   CMake accounted for separately. Adding packages to the frozen Conda prefix
+   changes the exact inventory checked by
+   [`conda_inventory.py`](../../scripts/nova/conda_inventory.py).
+2. The required source and nested-gitlink initialization set at recorded SHAs,
+   preserving zero initialized optional generators. Review the effects of setup
+   steps 1, 2, and 3; skipping only the first two does not meet that contract.
+3. Selective production of the installed toolchain/runtime inputs required by
+   the [G1 inspector](../../scripts/nova/g1_profile.py),
+   [workload manifest](../../nova/g1-workloads.json), and
+   [observer preparation](../../scripts/nova/htif_observer.py): Spike/FESVR,
+   HTIF/libgloss inputs, the declared ISA binaries, and pinned CIRCT, together
+   with a reviewed `env.sh` and absolute `RISCV`/`CONDA_PREFIX` directories.
+4. Effective setup job/resource bounds and retained commands, results, tool
+   provenance, and pre/post source/lock identities. The inherited
+   [`build-util.sh`](../../scripts/build-util.sh) defaults build parallelism to
+   host thread count unless `NPROC` controls it; an outer timeout alone does not
+   bound that work.
+
+Run the [prepared-environment checks](BASELINE_RUNBOOK.md#3-qualify-the-prepared-environment)
+and retain separate setup/build evidence for runtime/link compatibility and
+observed-mode inputs. The known source/tool inventory does not prove those
+properties or complete nested or JVM dependency closure.
+Mark any missing prerequisite `blocked` instead of silently substituting the
+host toolchain. No replacement installation command is established by this
+proposal.
 
 The build needs the selected Java, Verilator, FIRRTL/CIRCT `firtool`, C/C++ build
 tools, and RISC-V toolchain. The default sbt invocation uses Java and
