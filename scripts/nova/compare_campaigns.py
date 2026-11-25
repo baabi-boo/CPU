@@ -6,6 +6,7 @@ proof of independent builds, trustworthy logs, or hardware correctness.
 """
 
 import argparse
+from contextlib import ExitStack
 from datetime import datetime, timezone
 import hashlib
 import importlib.util
@@ -972,31 +973,72 @@ def parse_record_bytes(raw):
         raise RecordError("record is not safely readable canonical JSON") from exc
 
 
-def read_record(path):
-    """Read a bounded stable regular JSON record, rejecting symlink components."""
+def _record_file_identity(info):
+    return (info.st_dev, info.st_ino, info.st_mode, info.st_size,
+            info.st_mtime_ns, info.st_ctime_ns)
+
+
+def _open_record_directory(path):
+    """Anchor an absolute directory without following any symlink component."""
+    flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
+    descriptor = os.open(path.anchor, flags)
     try:
+        for component in path.parts[1:]:
+            following = os.open(component, flags, dir_fd=descriptor)
+            previous, descriptor = descriptor, following
+            os.close(previous)
+        return descriptor
+    except BaseException:
+        os.close(descriptor)
+        raise
+
+
+def read_record(path):
+    """Capture a bounded stable regular record through no-follow descriptors."""
+    try:
+        if (os.name != "posix" or not all(hasattr(os, flag) for flag in
+                ("O_DIRECTORY", "O_NOFOLLOW", "O_NONBLOCK", "O_CLOEXEC"))):
+            raise RecordError("record reading requires no-follow directory support")
         path = Path(path)
-        if ".." in path.parts or any(part.is_symlink() for part in (path, *path.parents)):
-            raise RecordError("record path contains traversal or a symlink")
-        before = path.stat(follow_symlinks=False)
-        if not stat.S_ISREG(before.st_mode) or before.st_size > MAX_RECORD_BYTES:
-            raise RecordError("record must be a bounded regular file")
-        descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
-        with os.fdopen(descriptor, "rb") as stream:
-            opened = os.fstat(stream.fileno())
-            if not stat.S_ISREG(opened.st_mode) or opened.st_size > MAX_RECORD_BYTES:
+        if ".." in path.parts:
+            raise RecordError("record path contains traversal")
+        path = path.absolute()
+        with ExitStack() as descriptors:
+            directory = _open_record_directory(path.parent)
+            descriptors.callback(os.close, directory)
+            before = os.stat(path.name, dir_fd=directory, follow_symlinks=False)
+            if not stat.S_ISREG(before.st_mode) or not 0 <= before.st_size <= MAX_RECORD_BYTES:
                 raise RecordError("record must be a bounded regular file")
-            raw = stream.read(MAX_RECORD_BYTES + 1)
-            after = os.fstat(stream.fileno())
-        current = path.stat(follow_symlinks=False)
-        identity = lambda item: (item.st_dev, item.st_ino, item.st_size, item.st_mtime_ns, item.st_ctime_ns)
-        if (len(raw) > MAX_RECORD_BYTES or not identity(before) == identity(opened)
-                == identity(after) == identity(current)):
-            raise RecordError("record changed during bounded read")
-        return parse_record_bytes(raw)
+            flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC
+            descriptor = os.open(path.name, flags, dir_fd=directory)
+            descriptors.callback(os.close, descriptor)
+            opened = os.fstat(descriptor)
+            if not stat.S_ISREG(opened.st_mode) or _record_file_identity(opened) != _record_file_identity(before):
+                raise RecordError("record changed before bounded read")
+            chunks, length = [], 0
+            while True:
+                chunk = os.read(descriptor, min(1024 * 1024, MAX_RECORD_BYTES + 1 - length))
+                if not chunk:
+                    break
+                length += len(chunk)
+                if length > MAX_RECORD_BYTES:
+                    raise RecordError("record grew beyond bounded read")
+                chunks.append(chunk)
+            after = os.fstat(descriptor)
+            current = os.stat(path.name, dir_fd=directory, follow_symlinks=False)
+            if (not _record_file_identity(before) == _record_file_identity(opened)
+                    == _record_file_identity(after) == _record_file_identity(current)
+                    or length != before.st_size):
+                raise RecordError("record changed during bounded read")
+            current_directory = _open_record_directory(path.parent)
+            descriptors.callback(os.close, current_directory)
+            original, reopened = os.fstat(directory), os.fstat(current_directory)
+            if (original.st_dev, original.st_ino) != (reopened.st_dev, reopened.st_ino):
+                raise RecordError("record directory changed during bounded read")
+            return parse_record_bytes(b"".join(chunks))
     except RecordError:
         raise
-    except (OSError, ValueError, TypeError, UnicodeError, RecursionError) as exc:
+    except (OSError, ValueError, TypeError, UnicodeError, RecursionError, NotImplementedError) as exc:
         raise RecordError("record is not safely readable canonical JSON") from exc
 
 
