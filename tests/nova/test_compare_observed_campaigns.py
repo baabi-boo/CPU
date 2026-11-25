@@ -364,6 +364,8 @@ class CompareObservedCampaignsTests(unittest.TestCase):
         metadata = self.right["target_exit_observer"]
         metadata["manifest_path"] = "nova-out/htif-observer/nested/manifest.json"
         metadata["generated"]["path"] = "nova-out/htif-observer/nested/htif.cc"
+        # The full manifest grows in output_directory and generated.path.
+        metadata["manifest_bytes"] += 2 * len("/nested")
         self.assertEqual(compare.observed_record.validate_extension(self.right), [])
         self.assert_blocked(self.right, "manifest path")
 

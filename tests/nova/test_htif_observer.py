@@ -304,7 +304,8 @@ class ManifestTests(ObserverFixture):
     def test_pure_metadata_validator_reads_no_files_and_refuses_contradictions(self):
         self.prepare()
         metadata = observer.build_metadata(self.manifest_path, root=self.root, environ=self.env)
-        with patch.object(observer.os, "open", side_effect=AssertionError("must not read files")):
+        with patch("builtins.open", side_effect=AssertionError("must not read files")), \
+                patch.object(observer.os, "open", side_effect=AssertionError("must not read files")):
             self.assertEqual(observer.validate_build_metadata(metadata), metadata)
         mutations = [
             lambda item: item.update(schema_version=True),
@@ -324,6 +325,59 @@ class ManifestTests(ObserverFixture):
             mutate(changed)
             with self.assertRaises(observer.ObserverError):
                 observer.validate_build_metadata(changed)
+
+    def test_pure_metadata_size_bound_uses_the_complete_manifest(self):
+        prepared = self.prepare()
+        # Start with the complete generated manifest, including fixed fields
+        # omitted from the metadata. Vary paths and integer widths as well.
+        for output, archive_size in (
+                (observer.DEFAULT_OUTPUT_REL, 1),
+                (observer.DEFAULT_OUTPUT_REL + "/retained-longer-attempt", observer.MAX_ARCHIVE_BYTES)):
+            manifest = copy.deepcopy(prepared)
+            manifest["output_directory"] = output
+            manifest["generated"]["path"] = output + "/htif.cc"
+            manifest["archive"]["size_bytes"] = archive_size
+            compact = json.dumps(manifest, sort_keys=True, separators=(",", ":"),
+                                 ensure_ascii=True, allow_nan=False).encode("ascii")
+            minimum = len(compact)
+            metadata = {
+                "schema_version": 1, "kind": "nova-htif-observer",
+                "manifest_path": output + "/manifest.json",
+                "manifest_sha256": hashlib.sha256(compact).hexdigest(), "manifest_bytes": minimum,
+                **{key: manifest[key] for key in observer.METADATA_COPY_KEYS},
+            }
+            with patch("builtins.open", side_effect=AssertionError("must not read files")), \
+                    patch.object(observer.os, "open", side_effect=AssertionError("must not read files")):
+                for size in (1, minimum - 1):
+                    with self.subTest(output=output, size=size), \
+                            self.assertRaisesRegex(observer.ObserverError, "byte count"):
+                        observer.validate_build_metadata(dict(metadata, manifest_bytes=size))
+                for size in (minimum, minimum + 1, observer.MAX_MANIFEST_BYTES):
+                    # Exact minimum needs no newline; additional whitespace is
+                    # allowed up to the unchanged overall manifest size limit.
+                    data = compact + b" " * (size - minimum)
+                    accepted = dict(metadata, manifest_bytes=size,
+                                    manifest_sha256=hashlib.sha256(data).hexdigest())
+                    with self.subTest(output=output, size=size):
+                        self.assertIs(observer.validate_build_metadata(accepted), accepted)
+
+    def test_metadata_capture_accepts_noncanonical_manifest_json(self):
+        manifest = self.prepare()
+        reordered = dict(reversed(sorted(manifest.items())))
+        variants = (
+            json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode("ascii"),
+            json.dumps(reordered, separators=(",", ":")).encode("ascii"),
+            b" \t\r\n" + json.dumps(reordered, indent="\t").encode("ascii") + b"\n\t ",
+        )
+        self.assertEqual(len(set(variants)), len(variants))
+        for data in variants:
+            with self.subTest(size=len(data), prefix=data[:30]):
+                self.manifest_path.write_bytes(data)
+                metadata = observer.build_metadata(self.manifest_path, root=self.root, environ=self.env)
+                self.assertEqual(metadata["manifest_bytes"], len(data))
+                self.assertEqual(metadata["manifest_sha256"], hashlib.sha256(data).hexdigest())
+                self.assertEqual({key: metadata[key] for key in observer.METADATA_COPY_KEYS},
+                                 {key: manifest[key] for key in observer.METADATA_COPY_KEYS})
 
     def test_metadata_only_read_does_not_authorize_missing_inputs(self):
         manifest = self.prepare()

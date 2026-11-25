@@ -518,8 +518,9 @@ def read_manifest(path, *, root=None, verify_files=True, environ=None):
 def validate_build_metadata(metadata):
     """Validate retained record metadata without reading any local files.
 
-    This verifies shape, fixed paths, and pinned source/overlay/header hashes.
-    It does not establish that a recorded build or execution actually occurred.
+    This verifies shape, fixed paths, pinned source/overlay/header hashes, and
+    a possible manifest byte count. It does not authenticate the retained raw
+    manifest hash or establish that a recorded build or execution occurred.
     """
     if (type(metadata) is not dict or set(metadata) != METADATA_KEYS
             or type(metadata.get("schema_version")) is not int or metadata["schema_version"] != 1
@@ -535,13 +536,22 @@ def validate_build_metadata(metadata):
             or not path.endswith("/manifest.json")
             or any(part in {"", ".", ".."} for part in path.split("/"))):
         raise ObserverError("invalid observer manifest metadata path")
-    _manifest_shape({
+    output_relative = path.rsplit("/", 1)[0]
+    manifest = {
         "schema_version": 1, "kind": "nova-htif-observer-build",
-        "output_directory": path.rsplit("/", 1)[0],
+        "output_directory": output_relative,
         "include_directories": [{"scope": scope, "path": relative}
                                 for scope, relative in INCLUDE_DIRECTORIES],
         **{key: metadata[key] for key in METADATA_COPY_KEYS},
-    }, path.rsplit("/", 1)[0])
+    }
+    _manifest_shape(manifest, output_relative)
+    # The complete validated shape contains only ASCII strings, bounded
+    # positive integers, and fixed booleans. Compact JSON is a byte lower
+    # bound; other key orders/whitespace are valid and no newline is required.
+    minimum_bytes = len(json.dumps(manifest, sort_keys=True, separators=(",", ":"),
+                                   ensure_ascii=True, allow_nan=False).encode("ascii"))
+    if metadata["manifest_bytes"] < minimum_bytes:
+        raise ObserverError("observer manifest byte count is smaller than its complete metadata")
     return metadata
 
 

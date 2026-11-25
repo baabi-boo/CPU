@@ -35,10 +35,9 @@ def synthetic_metadata():
     def identity(scope, path, sha256=None):
         return {"scope": scope, "path": path, "sha256": sha256 or digest(path), "size_bytes": 128}
 
-    return {
-        "schema_version": 1, "kind": "nova-htif-observer",
-        "manifest_path": observer.DEFAULT_OUTPUT_REL + "/manifest.json",
-        "manifest_sha256": digest("invented manifest"), "manifest_bytes": 4096,
+    manifest = {
+        "schema_version": 1, "kind": "nova-htif-observer-build",
+        "output_directory": observer.DEFAULT_OUTPUT_REL,
         "source_pin": observer.PINNED_SPIKE_COMMIT,
         "source": identity("repository", observer.SPIKE_REL + "/fesvr/htif.cc", observer.PINNED_HTIF_SHA256),
         "generated": identity("repository", observer.DEFAULT_OUTPUT_REL + "/htif.cc", observer.GENERATED_HTIF_SHA256),
@@ -52,8 +51,17 @@ def synthetic_metadata():
         "inputs": {name: identity("repository", path, observer.SIM_FLAGS_SHA256
                                   if name == "upstream_sim_flags" else None)
                    for name, path in observer.INPUT_PATHS.items()},
+        "include_directories": [{"scope": scope, "path": path}
+                                for scope, path in observer.INCLUDE_DIRECTORIES],
         "link_order": "overlay-object-before-static-fesvr", "hardware_qualified": False,
         "g1_gate_passed": False,
+    }
+    data = canonical(manifest)
+    return {
+        "schema_version": 1, "kind": "nova-htif-observer",
+        "manifest_path": observer.DEFAULT_OUTPUT_REL + "/manifest.json",
+        "manifest_sha256": hashlib.sha256(data).hexdigest(), "manifest_bytes": len(data),
+        **{key: manifest[key] for key in observer.METADATA_COPY_KEYS},
     }
 
 
@@ -193,6 +201,8 @@ class ObservedRecordTests(unittest.TestCase):
     def test_metadata_missing_extra_and_invalid_pinned_identities_fail(self):
         changes = (
             ("schema_version", True), ("manifest_bytes", True), ("manifest_sha256", "A" * 64),
+            ("manifest_bytes", 1),
+            ("manifest_bytes", self.record["target_exit_observer"]["manifest_bytes"] - 1),
             ("manifest_path", "../manifest.json"), ("source_pin", "0" * 40),
             ("link_order", "shared-fesvr-first"), ("unreviewed", False),
         )
