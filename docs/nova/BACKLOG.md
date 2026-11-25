@@ -2,8 +2,9 @@
 
 These are **repository-local tickets**, not created GitHub issues, assigned
 personnel, or completed milestones. NOVA-001 execution is `blocked`; NOVA-002
-through NOVA-012 remain `planned`. Preparation tooling and target source now
-exist, but no hardware ticket is complete. Owner names remain unassigned.
+through NOVA-012 remain `planned`. Preparation tooling, target source, optional
+HTIF exit observation, strict schema-2 comparison, and retained-bundle verification
+now exist, but no hardware ticket is complete. Owner names remain unassigned.
 P0 is bring-up priority, P1 follows it,
 and P2 is a later investigation. Research may overlap, but acceptance follows
 the [roadmap gates](ROADMAP.md) and [requirement register](../../nova/requirements.json).
@@ -13,7 +14,7 @@ the [roadmap gates](ROADMAP.md) and [requirement register](../../nova/requiremen
 Run `make -f nova.mk check`, the non-mutating
 `python3 -B scripts/nova/bootstrap_preflight.py --json`,
 `python3 -B scripts/nova/g1_profile.py --strict --json`, and
-`make -f nova.mk g1-campaign-plan` in a clean checkout. A nonzero strict diagnosis
+`make -f nova.mk g1-observed-plan` in a clean checkout. A nonzero strict diagnosis
 is a recorded blocker, not a reason to relax the checks. Record missing
 prerequisites without attempting an unapproved installation.
 Before heavyweight setup, obtain maintainer agreement on host, RAM/disk capacity,
@@ -26,11 +27,12 @@ regenerate locks even without `--use-unpinned-deps`. On a host where that
 rewrite would occur, stop and select a reviewed pin-preserving procedure or
 propose a separate dependency migration; do not execute setup blindly.
 
-**Observed preparation state, 2026-11-12:** NOVA-001 execution and G1 are
+**Observed preparation state, 2026-11-25:** NOVA-001 execution and G1 are
 **blocked**, as recorded in the
-[current preparation evidence](evidence/G1-PREPARATION-2026-11-12.md).
+[preparation evidence](evidence/G1-PREPARATION-2026-11-12.md) and
+[current observer evidence](evidence/G1-HTIF-OBSERVER-2026-11-25.md).
 This checkout has 57 uninitialized gitlinks, including 21 known required for the
-default Chipyard/Chisel 6 build path. The new strict G1 profile reports 38
+default Chipyard/Chisel 6 build path. The current strict G1 profile reports 38
 blockers and exits 2. The older doctor's 27 blockers belong to a separate
 [2026-11-11 diagnostic](evidence/NOVA-001-PREFLIGHT-2026-11-11.md).
 All nine pinned Conda inputs and all gitlink pins remain unchanged. Host glibc
@@ -39,22 +41,30 @@ automatic setup would choose 2.39 and rewrite the locks. Do not treat that path
 as an unchanged-pinned reproduction. G0 acceptance, a reviewed pin-preserving
 environment, and the heavy-setup resource approval remain outstanding.
 
-The new `g1_campaign.py` runner, profile/inventory inspectors, target source,
-protocol assessment, and record comparator have offline regression coverage.
+The `g1_campaign.py` runner, profile/inventory inspectors, target source,
+protocol assessment, optional observer, strict schema-2 comparator, and retained
+raw-bundle verifier have offline regression coverage.
 The declared workload set is three smoke/control programs plus twelve exact
 ISA tests for each of `RocketConfig` and `NovaM1BaselineConfig`: all thirty
 hardware executions remain **not run**. No simulated execution or independent
 hardware reproduction is implied by a green tooling suite. The comparator
 checks recorded identities, not authenticated execution.
 
-Before accepting positive workload completion, add and validate independent
-target-exit observability. Source review found that pinned HTIF can report zero
-success after signal-induced shutdown without a target exit; TestDriver PASS
-text and a zero host exit do not distinguish that path. Current positive records
-therefore keep `target_completion_verified: false`. This finding has not been
-reproduced in a CPU simulation here. After environment preparation, execute both
-profiles, repeat in a second clean checkout, resolve the supported pinned
-reference-comparison scope, and obtain a recorded maintainer decision. See the
+Independent target-exit observability is implemented and exercised by twelve
+native host cases using real pinned HTIF/FESVR source. Signal-only shutdown
+returned `done=true` and code 0 without a target exit; the generated overlay
+recorded the absent exit value and the parser rejected it. This is native host
+evidence only; TestDriver PASS text and a zero host exit still do not distinguish
+that path. Legacy `target_completion_verified` flags remain false. Only schema-2 nested
+`target_exit.assessment` can verify a matching supplied observer event, and
+neither witnesses nor hashes authenticate execution.
+
+After environment preparation, use `--observe-target-exit` for the full
+two-by-fifteen campaign in a fresh checkout. Retain raw logs, witnesses, and build
+identities, verify each bundle, repeat in a second independent clean build,
+compare the records, resolve the supported pinned reference-comparison scope,
+and obtain a recorded maintainer decision. Fresh campaign builds reject existing
+products; standalone observer Make reuse is not qualified. See the
 [baseline runbook](BASELINE_RUNBOOK.md) for exact commands and evidence limits.
 
 Record the superproject revision, all gitlink pins, and SHA-256 hashes of the
@@ -86,16 +96,16 @@ to obtain a green result. No FPGA purchase or paid runner is authorized here.
 
 - **P0 · G1 · owner:** build maintainer, unassigned. **Depends on:** NOVA-001.
 - **Area:** `sims/verilator`, `scripts/nova/g1_campaign.py`, `nova/g1-workloads.json`, `software/nova/baseline`, inherited `hello`, and the declared ISA subset.
-- **State:** planned; runner, manifest, assessment, and target source are implemented, but the hardware campaign is not run.
-- **Acceptance:** build `RocketConfig`, cross-compile the inherited hello and NOVA positive/negative targets, and execute all fifteen declared workloads without silently skipping a missing binary. Independently distinguish a target-originated terminal exit from signal-induced HTIF shutdown; the current completion-protocol parser alone cannot do this. Resolve the supported pinned reference-model comparison scope and exclusions, preserve actual negative-control diagnostics, and reproduce on a second clean build. A passing `hello` smoke test is not ISA, exception, or MMU qualification, and its hard-coded `core 0` text is not a hart-identity observation.
-- **Evidence:** `REQ-BUILD-001`, `REQ-CPU-001` / `T-BUILD-001`, `T-ISA-001`; generated RTL/map, simulator and binary hashes, exact commands/exit codes, actual memory model, observed hello/ISA results, negative failure diagnostics and exclusions.
+- **State:** planned; runner, manifest, target source, optional HTIF observer, strict schema-2 comparison, and retained-bundle verifier are implemented, but the hardware campaign is not run.
+- **Acceptance:** run a fresh `--observe-target-exit` campaign that builds `RocketConfig`, cross-compiles the inherited hello and NOVA positive/negative targets, and executes all fifteen declared workloads without silently skipping a missing binary. Retain dedicated witnesses that distinguish a target-originated terminal exit from signal-induced HTIF shutdown, alongside normal process/protocol checks; the observer's native host evidence does not qualify this simulator path. Resolve the supported pinned reference-model comparison scope and exclusions, preserve actual negative-control diagnostics, and reproduce on a second independent clean build. A passing `hello` smoke test is not ISA, exception, or MMU qualification, and its hard-coded `core 0` text is not a hart-identity observation.
+- **Evidence:** `REQ-BUILD-001`, `REQ-CPU-001` / `T-BUILD-001`, `T-ISA-001`; generated RTL/map, simulator and binary hashes, exact commands/exit codes, actual memory model, raw logs and dedicated exit witnesses, observed hello/ISA results, negative failure diagnostics and exclusions. Bundle integrity and record agreement do not authenticate execution or accept G1.
 
 ### NOVA-003 — Qualify the named configuration entry points
 
 - **P0 · G1/G2 · owner:** CPU integration lead, unassigned. **Depends on:** NOVA-002.
 - **Area:** `NovaM1Configs.scala` under `generators/chipyard/src/main/scala/config`.
 - **State:** planned; both aliases remain implemented but unverified source scaffolds.
-- **Acceptance:** elaborate/build `NovaM1BaselineConfig` separately under G1 and rerun the same declared workload binaries with retained evidence. Qualify `NovaM1MinimalConfig` separately under G2; its source selects one BOOM v3 plus one Rocket. Capture actual hart IDs and ISA/cache parameters. The single-core campaign does not complete the mixed-profile portion of this ticket.
+- **Acceptance:** elaborate/build `NovaM1BaselineConfig` separately under G1 and rerun the same fifteen declared workload binaries with the observer and retained raw evidence, then repeat in the second independent clean build. Qualify `NovaM1MinimalConfig` separately under G2; its source selects one BOOM v3 plus one Rocket. Capture actual hart IDs and ISA/cache parameters. The single-core campaign does not complete the mixed-profile portion of this ticket.
 - **Evidence:** `REQ-BUILD-001`, `REQ-CPU-002` / `T-BUILD-001`, `T-HART-001`; generated inventory and logs. Elaboration does not establish execution.
 
 ### NOVA-004 — Implement a bounded two-hart smoke test

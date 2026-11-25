@@ -56,6 +56,9 @@ blockers. The opt-in [G1 campaign runner](../../scripts/nova/g1_campaign.py)
 implements a fixed two-configuration observation campaign. Its offline tests
 are not a completed `T-BUILD-001` or `T-ISA-001` campaign. Both descriptors remain
 **planned**, and no result from this tooling automatically accepts G1.
+The optional schema-2 observer is implemented; the
+[current source and native evidence](evidence/G1-HTIF-OBSERVER-2026-11-25.md)
+records its pinned HTIF/FESVR host experiment, with no CPU or RTL execution.
 
 The [workload manifest](../../nova/g1-workloads.json) requires 15 workloads for
 each of `RocketConfig` and `NovaM1BaselineConfig`: 14 positive expectations
@@ -67,8 +70,10 @@ it cannot become an empty wildcard, a silent skip, or accepted coverage.
 1. **Preflight and preserve pins (`NOVA-001`, `T-BUILD-001`).** Record G0
    acceptance and approval for the host, RAM, disk, network, parallel jobs,
    time, and cost. Inspect `make -f nova.mk check`, `make -f nova.mk preflight`,
-   `make -f nova.mk g1-profile-strict`, and `make -f nova.mk g1-campaign-plan`
-   before execution. Require the declared Chisel-6 profile, expected source
+   `make -f nova.mk g1-profile-strict`, and `make -f nova.mk g1-observed-plan`
+   before execution. The observed plan selects `--observe-target-exit` and
+   schema 2; `make -f nova.mk g1-campaign-plan` retains the legacy schema-1
+   protocol-only plan. Require the declared Chisel-6 profile, expected source
    graph, tool/version observations, HTIF/FESVR runtime collateral, and matching
    pinned Conda metadata. The installed `htif.ld` must match the pinned libgloss
    source. `ready` and `matched` establish only their enumerated checks, not
@@ -85,18 +90,34 @@ it cannot become an empty wildcard, a silent skip, or accepted coverage.
    are not semantic validation of the address map, hart inventory, ISA/cache
    parameters, or memory model. Review those generated properties separately,
    including the actual DRAMSim2 configuration. Elaboration is not execution.
+   Observed mode also requires fresh observer and simulator products; retain
+   the observer manifest and generated inputs. Standalone incremental reuse of
+   the observer Make fragment is not qualified.
 3. **Observe positive workloads without overstating completion.** The runner
    invokes each simulator directly, retaining its actual exit status and
    separate, bounded stdout/stderr. Positive assessment requires a zero host
    exit, one valid TestDriver completion record within the cycle bound, the
    exact target record where required, and no conflicting terminal/failure
    records. The inherited hello line is hard-coded; it does not measure a hart
-   ID. A matching result sets `completion_protocol_observed: true` but keeps
-   `target_completion_verified: false`. The pinned HTIF path can produce its
-   success signal after `signal_exit` without a target-originated exit value.
-   This is a [source-level finding](evidence/G1-COMPLETION-PROTOCOL-2026-11-12.md),
-   not a reproduced CPU run. Independent observation of a real target terminal
-   event remains required before claiming successful target completion.
+   ID. A matching ordinary protocol assessment sets
+   `completion_protocol_observed: true` but keeps
+   `target_completion_verified: false` in both schemas. The pinned HTIF path can
+   produce its success signal after `signal_exit` without a target-originated
+   exit value.
+   The [source-level finding](evidence/G1-COMPLETION-PROTOCOL-2026-11-12.md) is
+   extended by the native host experiment linked above, which reproduces HTIF's
+   signal-only ambiguity without exercising the CPU or TestDriver path.
+   With `--observe-target-exit`, each workload must retain a dedicated witness
+   bound to its fresh run ID, configuration, workload, binary/simulator hashes,
+   observer manifest, source identity, cycle limit, and seed. Only a valid,
+   matching nested `target_exit.assessment` may set `target_exit_observed: true`
+   and `target_completion_verified: true`. These flags describe the supplied
+   observer event: a present, nonsignal exit with the expected raw/decoded code
+   (1/0 for positive workloads, 15/7 for the negative control). They do not
+   authenticate CPU execution. Missing, malformed, signal-only, wrong-code, or
+   incorrectly bound witnesses fail; a witness cannot override process/protocol
+   failure, interruption, timeout, or changed inputs. Legacy schema 1 cannot
+   make this nested verified-exit claim.
 4. **Exercise the deliberate failure and harness rejection cases.** The NOVA
    negative target reaches code 7 only after its eight checks. Its observation
    contract requires the exact negative marker, exactly one matching SimTSI
@@ -121,10 +142,19 @@ it cannot become an empty wildcard, a silent skip, or accepted coverage.
    a second clean checkout with the same declared inputs. Do not reuse generated
    simulators or targets. The runner rejects known stale products and checks
    pre/post source, profile, inventory, binary, simulator, and log identities;
-   it does not prove that every ignored or external cache was isolated. The
-   [record comparator](../../scripts/nova/compare_campaigns.py) checks metadata
-   agreement and contradictions. `consistent` means recorded identities agree,
-   not authenticated execution, independent builds, or reproduced hardware.
+   it does not prove that every ignored or external cache was isolated. Retain
+   each `record.json` with its original raw stdout/stderr and schema-2 witness
+   files. First run the
+   [bundle verifier](../../scripts/nova/verify_campaign_bundle.py) with
+   `--record <record.json>` on each retained bundle. `intact` means the bounded
+   local bytes, reassessed protocols, and observer bindings agree with the
+   record; external source/toolchain/binary/observer-build identities remain
+   metadata. Then use the
+   [record comparator](../../scripts/nova/compare_campaigns.py) with the two
+   record paths as positional arguments, `left` then `right`. Compare the same
+   schema and observer mode; schema-2 run IDs must be disjoint across records.
+   `consistent` means recorded identities and exit semantics agree. Neither
+   result authenticates execution, independent builds, or reproduced hardware.
    Distinct checkout identifiers alone do not establish cache independence.
 
 The campaign's strongest automatic outcome is `workloads_observed`, with

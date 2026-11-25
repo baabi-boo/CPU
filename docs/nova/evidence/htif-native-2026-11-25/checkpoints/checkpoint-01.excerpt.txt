@@ -1,0 +1,11 @@
+make: Entering directory '/tmp/nova-cpu-1f6d25e13e37-checkpoint-01'
+python3 -B scripts/nova/check.py
+NOVA repository checks passed. This is not HDL or hardware qualification.
+----------------------------------------------------------------------
+Ran 752 tests in 35.241s
+
+OK
+python3 -B scripts/nova/check_whitespace.py
+NOVA managed-text whitespace checks passed (including committed files).
+git diff --check
+make: Leaving directory '/tmp/nova-cpu-1f6d25e13e37-checkpoint-01'

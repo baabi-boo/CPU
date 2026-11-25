@@ -1,0 +1,435 @@
+[
+  {
+    "argv": [
+      "/usr/bin/g++",
+      "--version"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/00.stderr",
+    "stdout": "logs/00.stdout"
+  },
+  {
+    "argv": [
+      "/usr/bin/g++",
+      "-std=c++17",
+      "-O0",
+      "-g",
+      "-pthread",
+      "-DPREFIX=\"/nova-native-host-fixture-not-an-installed-toolchain\"",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/synthetic-config",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/fesvr",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/riscv",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/softfloat",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/nova",
+      "-c",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/fesvr/htif.cc",
+      "-o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/htif.o"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/01.stderr",
+    "stdout": "logs/01.stdout"
+  },
+  {
+    "argv": [
+      "/usr/bin/g++",
+      "-std=c++17",
+      "-O0",
+      "-g",
+      "-pthread",
+      "-DPREFIX=\"/nova-native-host-fixture-not-an-installed-toolchain\"",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/synthetic-config",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/fesvr",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/riscv",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/softfloat",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/nova",
+      "-c",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/fesvr/memif.cc",
+      "-o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/memif.o"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/02.stderr",
+    "stdout": "logs/02.stdout"
+  },
+  {
+    "argv": [
+      "/usr/bin/g++",
+      "-std=c++17",
+      "-O0",
+      "-g",
+      "-pthread",
+      "-DPREFIX=\"/nova-native-host-fixture-not-an-installed-toolchain\"",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/synthetic-config",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/fesvr",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/riscv",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/softfloat",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/nova",
+      "-c",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/fesvr/syscall.cc",
+      "-o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/syscall.o"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/03.stderr",
+    "stdout": "logs/03.stdout"
+  },
+  {
+    "argv": [
+      "/usr/bin/g++",
+      "-std=c++17",
+      "-O0",
+      "-g",
+      "-pthread",
+      "-DPREFIX=\"/nova-native-host-fixture-not-an-installed-toolchain\"",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/synthetic-config",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/fesvr",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/riscv",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/softfloat",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/nova",
+      "-c",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/fesvr/device.cc",
+      "-o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/device.o"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/04.stderr",
+    "stdout": "logs/04.stdout"
+  },
+  {
+    "argv": [
+      "/usr/bin/g++",
+      "-std=c++17",
+      "-O0",
+      "-g",
+      "-pthread",
+      "-DPREFIX=\"/nova-native-host-fixture-not-an-installed-toolchain\"",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/synthetic-config",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/fesvr",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/riscv",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/softfloat",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/nova",
+      "-c",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/fesvr/rfb.cc",
+      "-o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/rfb.o"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/05.stderr",
+    "stdout": "logs/05.stdout"
+  },
+  {
+    "argv": [
+      "/usr/bin/g++",
+      "-std=c++17",
+      "-O0",
+      "-g",
+      "-pthread",
+      "-DPREFIX=\"/nova-native-host-fixture-not-an-installed-toolchain\"",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/synthetic-config",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/fesvr",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/riscv",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/softfloat",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/nova",
+      "-c",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/fesvr/elfloader.cc",
+      "-o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/elfloader.o"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/06.stderr",
+    "stdout": "logs/06.stdout"
+  },
+  {
+    "argv": [
+      "/usr/bin/g++",
+      "-std=c++17",
+      "-O0",
+      "-g",
+      "-pthread",
+      "-DPREFIX=\"/nova-native-host-fixture-not-an-installed-toolchain\"",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/synthetic-config",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/fesvr",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/riscv",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/softfloat",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/nova",
+      "-c",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/fesvr/term.cc",
+      "-o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/term.o"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/07.stderr",
+    "stdout": "logs/07.stdout"
+  },
+  {
+    "argv": [
+      "/usr/bin/ar",
+      "rcsD",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/libfesvr-host-fixture.a",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/htif.o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/memif.o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/syscall.o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/device.o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/rfb.o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/elfloader.o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/term.o"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/08.stderr",
+    "stdout": "logs/08.stdout"
+  },
+  {
+    "argv": [
+      "/usr/bin/ar",
+      "t",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/libfesvr-host-fixture.a"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/09.stderr",
+    "stdout": "logs/09.stdout"
+  },
+  {
+    "argv": [
+      "/usr/bin/g++",
+      "-std=c++17",
+      "-O0",
+      "-g",
+      "-pthread",
+      "-DPREFIX=\"/nova-native-host-fixture-not-an-installed-toolchain\"",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/synthetic-config",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/fesvr",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/riscv",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/softfloat",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/nova",
+      "-c",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/nova/htif_host_probe.cc",
+      "-o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/probe.o"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/10.stderr",
+    "stdout": "logs/10.stdout"
+  },
+  {
+    "argv": [
+      "/usr/bin/g++",
+      "-std=c++17",
+      "-O0",
+      "-g",
+      "-pthread",
+      "-DPREFIX=\"/nova-native-host-fixture-not-an-installed-toolchain\"",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/synthetic-config",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/fesvr",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/riscv",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/softfloat",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/nova",
+      "-c",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/nova/nova_htif_exit.cc",
+      "-o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/nova_htif_exit.o"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/11.stderr",
+    "stdout": "logs/11.stdout"
+  },
+  {
+    "argv": [
+      "/usr/bin/g++",
+      "-std=c++17",
+      "-O0",
+      "-g",
+      "-pthread",
+      "-DPREFIX=\"/nova-native-host-fixture-not-an-installed-toolchain\"",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/synthetic-config",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/fesvr",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/riscv",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike/softfloat",
+      "-I/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/nova",
+      "-c",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/nova_htif.cc",
+      "-o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/nova_htif.o"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/12.stderr",
+    "stdout": "logs/12.stdout"
+  },
+  {
+    "argv": [
+      "/usr/bin/g++",
+      "-pthread",
+      "-o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/probe-original",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/probe.o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/libfesvr-host-fixture.a",
+      "-Wl,-Map,/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/original.map"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/13.stderr",
+    "stdout": "logs/13.stdout"
+  },
+  {
+    "argv": [
+      "/usr/bin/g++",
+      "-pthread",
+      "-o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/probe-observed",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/probe.o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/nova_htif.o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/objects/nova_htif_exit.o",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/libfesvr-host-fixture.a",
+      "-Wl,-Map,/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/observed.map"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/14.stderr",
+    "stdout": "logs/14.stdout"
+  },
+  {
+    "argv": [
+      "/usr/bin/nm",
+      "-C",
+      "--defined-only",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/probe-observed"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/15.stderr",
+    "stdout": "logs/15.stdout"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/probe-original",
+      "direct0"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/16.stderr",
+    "stdout": "logs/16.stdout"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/probe-original",
+      "direct7"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 7,
+    "stderr": "logs/17.stderr",
+    "stdout": "logs/17.stdout"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/probe-original",
+      "syscall0"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/18.stderr",
+    "stdout": "logs/18.stdout"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/probe-original",
+      "syscall7"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 7,
+    "stderr": "logs/19.stderr",
+    "stdout": "logs/19.stdout"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/probe-original",
+      "signal-only"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/20.stderr",
+    "stdout": "logs/20.stdout"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/probe-original",
+      "syscall7-signal"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 7,
+    "stderr": "logs/21.stderr",
+    "stdout": "logs/21.stdout"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/probe-observed",
+      "direct0"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/22.stderr",
+    "stdout": "logs/22.stdout"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/probe-observed",
+      "direct7"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 7,
+    "stderr": "logs/23.stderr",
+    "stdout": "logs/23.stdout"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/probe-observed",
+      "syscall0"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/24.stderr",
+    "stdout": "logs/24.stdout"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/probe-observed",
+      "syscall7"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 7,
+    "stderr": "logs/25.stderr",
+    "stdout": "logs/25.stdout"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/probe-observed",
+      "signal-only"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 0,
+    "stderr": "logs/26.stderr",
+    "stdout": "logs/26.stdout"
+  },
+  {
+    "argv": [
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/probe-observed",
+      "syscall7-signal"
+    ],
+    "cwd": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "returncode": 7,
+    "stderr": "logs/27.stderr",
+    "stdout": "logs/27.stdout"
+  }
+]

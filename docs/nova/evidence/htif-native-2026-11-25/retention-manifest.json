@@ -1,0 +1,1117 @@
+{
+  "excerpts": [
+    {
+      "experiment": "14",
+      "original_lines_inclusive_1_based": [
+        [
+          1,
+          17
+        ],
+        [
+          3153,
+          3154
+        ],
+        [
+          4082,
+          4082
+        ]
+      ],
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/original.map",
+      "original_sha256": "9991b2a0ed9067d886c0e8182bfc123f5082c2e522ea33eab14a5e0a3b5d40f5",
+      "original_size_bytes": 1056514,
+      "path": "excerpts/original.map.excerpt.txt",
+      "sha256": "7a00c41a82399193083dc9c9b239ed77a36c79a3e46db7b81c20bd8c1353a943",
+      "size_bytes": 1878,
+      "transformation": "Only concatenate these complete original lines, in original order. No labels, paths, or line contents changed; this is an excerpt, not a full map or symbol listing."
+    },
+    {
+      "experiment": "14",
+      "original_lines_inclusive_1_based": [
+        [
+          236,
+          236
+        ]
+      ],
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/symbols-original.stdout.log",
+      "original_sha256": "2a9624ef0140dfc880bfe06150f3b9c0a63044f0604f21497badb0ea234453b6",
+      "original_size_bytes": 369548,
+      "path": "excerpts/original.symbols.excerpt.txt",
+      "sha256": "0e6e9ffbe6b57da4856047cff3a3a9d2f1bcd8b4e91a7fe921105bf68c912ccb",
+      "size_bytes": 34,
+      "transformation": "Only concatenate these complete original lines, in original order. No labels, paths, or line contents changed; this is an excerpt, not a full map or symbol listing."
+    },
+    {
+      "experiment": "14",
+      "original_lines_inclusive_1_based": [
+        [
+          1,
+          15
+        ],
+        [
+          3151,
+          3154
+        ],
+        [
+          4091,
+          4091
+        ],
+        [
+          5821,
+          5821
+        ]
+      ],
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/observed.map",
+      "original_sha256": "01aee9b6d2620fe083c26a914c1e41572d533656e099d3c79eee433147862513",
+      "original_size_bytes": 1044285,
+      "path": "excerpts/observed.map.excerpt.txt",
+      "sha256": "f6bfabbaa3a0d82187cf4cf9866c9c730773c494465121b75c370020de3e8cf3",
+      "size_bytes": 1693,
+      "transformation": "Only concatenate these complete original lines, in original order. No labels, paths, or line contents changed; this is an excerpt, not a full map or symbol listing."
+    },
+    {
+      "experiment": "14",
+      "original_lines_inclusive_1_based": [
+        [
+          13,
+          13
+        ],
+        [
+          249,
+          249
+        ]
+      ],
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/symbols-observed.stdout.log",
+      "original_sha256": "b13f508268ab379d28c82d95c2881b565b57227f96f290f53f71c6712029a614",
+      "original_size_bytes": 370460,
+      "path": "excerpts/observed.symbols.excerpt.txt",
+      "sha256": "034b23b6abecedc6abf7eaeb3e5cd3a071f429a1a1d0a065fdf34e588bd323ae",
+      "size_bytes": 106,
+      "transformation": "Only concatenate these complete original lines, in original order. No labels, paths, or line contents changed; this is an excerpt, not a full map or symbol listing."
+    },
+    {
+      "experiment": "integration-checkpoint-01",
+      "original_lines_inclusive_1_based": [
+        [
+          1,
+          3
+        ],
+        [
+          763,
+          770
+        ]
+      ],
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/checkpoint-01-check.log",
+      "original_sha256": "24a7cd574a51192da86e0216afcd083c21985d2261e4c270f8bc39b9d7190449",
+      "original_size_bytes": 120499,
+      "path": "checkpoints/checkpoint-01.excerpt.txt",
+      "sha256": "655a6f4c50c4c2829ab74f9498084d9d970a24d53b6ca5a46837c1a18acdc2fe",
+      "size_bytes": 475,
+      "transformation": "Concatenation of complete original first three and last eight lines, without edits. This is a check-log excerpt, not the complete test log."
+    },
+    {
+      "experiment": "integration-checkpoint-02",
+      "original_lines_inclusive_1_based": [
+        [
+          1,
+          3
+        ],
+        [
+          812,
+          819
+        ]
+      ],
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/checkpoint-02-check.log",
+      "original_sha256": "b8f7a7ff83823ac8737eba271be67f178fbd2e368ec402e0745d16802e07f822",
+      "original_size_bytes": 129444,
+      "path": "checkpoints/checkpoint-02.excerpt.txt",
+      "sha256": "10eb71af5a7516df6810d67e9f08212f858c35fc178bbd051a2fa0ae4d07f720",
+      "size_bytes": 475,
+      "transformation": "Concatenation of complete original first three and last eight lines, without edits. This is a check-log excerpt, not the complete test log."
+    }
+  ],
+  "experiment_14_omitted_original_artifacts": [
+    {
+      "bytes": 16706,
+      "path": "inputs/nova/campaign_exec.py",
+      "sha256": "b642779102b990c76ae691224e591ddc5c151e3bce8df5f546b5c958ff920dd7"
+    },
+    {
+      "bytes": 11847,
+      "path": "inputs/nova/htif_exit_evidence.py",
+      "sha256": "8a51c52fbe80f2f7d4461f0e46bb26f5928e6487c3b9f65bb1364aa5e207cfc4"
+    },
+    {
+      "bytes": 5554,
+      "path": "inputs/nova/htif_host_probe.cc",
+      "sha256": "127b7041bd4322625e63752c8ce15036c24288360c9de9473ba4969dc2728df5"
+    },
+    {
+      "bytes": 28529,
+      "path": "inputs/nova/htif_host_probe.py",
+      "sha256": "9396e26c79bae06ee5f5b502d97757de2b015c15672b47710f8d7cf2b108d8ff"
+    },
+    {
+      "bytes": 27690,
+      "path": "inputs/nova/htif_observer.py",
+      "sha256": "086c63ed49bac0344c1be75ff3a35ed85017ef97cdd668ed43ba3ab2c973a206"
+    },
+    {
+      "bytes": 8337,
+      "path": "inputs/nova/nova_htif_exit.cc",
+      "sha256": "67f50419be6d8e8e0f1845ff68fe9012d2bf44f061d7c432f72c18165191cf3e"
+    },
+    {
+      "bytes": 856,
+      "path": "inputs/nova/nova_htif_exit.h",
+      "sha256": "6351e13842a4b6a3a98980ef6b8c08cc0c665c1dda5b4da399bc4142db9dcfb9"
+    },
+    {
+      "bytes": 1403,
+      "path": "inputs/spike/LICENSE",
+      "sha256": "c65e436d18972c9c4bd192494fe4870bd2e158179474975b80a3559f27631632"
+    },
+    {
+      "bytes": 3598,
+      "path": "inputs/spike/fesvr/byteorder.h",
+      "sha256": "af2a8f9dbbbbcfe892bfe464a7b21d34894ae303dbccc2caa1c06b7fac449492"
+    },
+    {
+      "bytes": 3723,
+      "path": "inputs/spike/fesvr/device.cc",
+      "sha256": "3feee8c3fb6d8cb29beb79840f2b5be3166b0211977eeb61317c5dbaa67a83cd"
+    },
+    {
+      "bytes": 2332,
+      "path": "inputs/spike/fesvr/device.h",
+      "sha256": "14bef783e6b9f8b403bfa91410b6e3250ffd766332d46da47738cb5436ef989e"
+    },
+    {
+      "bytes": 2962,
+      "path": "inputs/spike/fesvr/elf.h",
+      "sha256": "13e82d26bad50fe0fde7e3d999a3d569faa480f9f8c21cb94905b5dfb53c42ca"
+    },
+    {
+      "bytes": 6764,
+      "path": "inputs/spike/fesvr/elfloader.cc",
+      "sha256": "29e021317fb8ffe90c68e56a107bfd80bf1b24a059bb48c34b98b075319efa7b"
+    },
+    {
+      "bytes": 349,
+      "path": "inputs/spike/fesvr/elfloader.h",
+      "sha256": "abbdad19a0a0e9375848e82db9c5a8149dbea48c897934197cad5087c16d4ce0"
+    },
+    {
+      "bytes": 12925,
+      "path": "inputs/spike/fesvr/htif.cc",
+      "sha256": "c669e8352c6e21d61118849b0b969d291b84100e83343659f3d08979ae89a11d"
+    },
+    {
+      "bytes": 5965,
+      "path": "inputs/spike/fesvr/htif.h",
+      "sha256": "5aec4e8516d1ccc72941af7a728556027a9da88d199978c9434e0996e55be608"
+    },
+    {
+      "bytes": 4259,
+      "path": "inputs/spike/fesvr/memif.cc",
+      "sha256": "6cced20eb732a438a907ec2070e4f2be478f415e1427e6f25cbc64c2450c33ab"
+    },
+    {
+      "bytes": 2550,
+      "path": "inputs/spike/fesvr/memif.h",
+      "sha256": "483a03f681fa03d43afc28c15b6f3c75be444463fd1efcc1980334ab81546461"
+    },
+    {
+      "bytes": 5726,
+      "path": "inputs/spike/fesvr/rfb.cc",
+      "sha256": "10fc8b6215c382728f6cb871367b13aa05f678168e62e62d40bb83719895a02d"
+    },
+    {
+      "bytes": 1109,
+      "path": "inputs/spike/fesvr/rfb.h",
+      "sha256": "63e1a1ab02d8085e37856c44adc121d4e27f4775faaa7cffa9342bdf17c1f73b"
+    },
+    {
+      "bytes": 16574,
+      "path": "inputs/spike/fesvr/syscall.cc",
+      "sha256": "371639953ee8edf0bed1e57e5ed894f99948886b9cac63931398aea2b512a78a"
+    },
+    {
+      "bytes": 2515,
+      "path": "inputs/spike/fesvr/syscall.h",
+      "sha256": "ef19c0fb7f9f59f99002e267bb545fab682926eadfc2b9ac1727922df67e689b"
+    },
+    {
+      "bytes": 1000,
+      "path": "inputs/spike/fesvr/term.cc",
+      "sha256": "ed9bf6a4b7d00262b9cfcce63e6e26b724f48abaf1dc1ca7390d22a895c390c8"
+    },
+    {
+      "bytes": 130,
+      "path": "inputs/spike/fesvr/term.h",
+      "sha256": "7f8758b6f20f75f37be3f293fdffecc017f88c141203265e1af54ae815d4776a"
+    },
+    {
+      "bytes": 1747,
+      "path": "inputs/spike/riscv/cfg.h",
+      "sha256": "a0ea7f5348484f6684f8144ac0cd336ff1ea154a02de60618b15fb4665693427"
+    },
+    {
+      "bytes": 522,
+      "path": "inputs/spike/riscv/common.h",
+      "sha256": "0290c94d4315ba6b256b474d64c812f93028b68600bb49916f84ad2f4e5995c1"
+    },
+    {
+      "bytes": 7582,
+      "path": "inputs/spike/riscv/decode.h",
+      "sha256": "463d860f0617520c0d725d2fe18f65388de4d5d942a28a776e1a03d7c90696a1"
+    },
+    {
+      "bytes": 168441,
+      "path": "inputs/spike/riscv/encoding.h",
+      "sha256": "0b1cab26010ad4de8791aa7ac9eea0aae54dc1abe62640c4e242e2d3ca9228e5"
+    },
+    {
+      "bytes": 727,
+      "path": "inputs/spike/riscv/platform.h",
+      "sha256": "91d623c9cafdd44c5883cc06dc6b1904508b05db1bd9518c7c02ede8a5405d1a"
+    },
+    {
+      "bytes": 4128,
+      "path": "inputs/spike/riscv/trap.h",
+      "sha256": "7f9e68be8a51994b5d2d76d39b4457f40c683a61706bea410769b68e868abccd"
+    },
+    {
+      "bytes": 4076,
+      "path": "inputs/spike/softfloat/softfloat_types.h",
+      "sha256": "b7daff9a2a5d82a569d6cc37ae52231bd20a4b3fc53e7dc24db4d51de23138cc"
+    },
+    {
+      "bytes": 3825110,
+      "path": "libfesvr-host-fixture.a",
+      "sha256": "a62a65f0568cc343442a2a978a2783a9a48b07f2dab24072f1f7e765475476d5"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/archive-members.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/archive.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/archive.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-device.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-device.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-elfloader.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-elfloader.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-htif.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-htif.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-memif.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-memif.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-nova_htif.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-nova_htif.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-nova_htif_exit.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-nova_htif_exit.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-probe.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-probe.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-rfb.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-rfb.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-syscall.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-syscall.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-term.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-term.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/link-observed.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/link-observed.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/link-original.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/link-original.stdout.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/symbols-observed.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 370460,
+      "path": "logs/symbols-observed.stdout.log",
+      "sha256": "b13f508268ab379d28c82d95c2881b565b57227f96f290f53f71c6712029a614"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/symbols-original.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 369548,
+      "path": "logs/symbols-original.stdout.log",
+      "sha256": "2a9624ef0140dfc880bfe06150f3b9c0a63044f0604f21497badb0ea234453b6"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/version-ar.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/version-gxx.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/version-nm.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 13033,
+      "path": "nova_htif.cc",
+      "sha256": "1a6383e8d9b7bfc4d44c2e674fafe1d8067d826c3c2cd0dae7e20a27e08aef84"
+    },
+    {
+      "bytes": 742040,
+      "path": "objects/device.o",
+      "sha256": "00491c56f3455bde3e38a53c0e1473193aa2f11ec5db524b8177c0d31ba97f48"
+    },
+    {
+      "bytes": 393832,
+      "path": "objects/elfloader.o",
+      "sha256": "3a2d892dab637adfcdefc2883ddde763822d6f652e200c688a7e4e0e9261f083"
+    },
+    {
+      "bytes": 1200760,
+      "path": "objects/htif.o",
+      "sha256": "ce743a95428eae35402a8b850d09a767ae8db56e1a340bdf5b5cb2c150a2cbfd"
+    },
+    {
+      "bytes": 188944,
+      "path": "objects/memif.o",
+      "sha256": "241e6470966e44a88e7f03e3b1a3c5857ee942ff48fe9b9244063be979909996"
+    },
+    {
+      "bytes": 1201336,
+      "path": "objects/nova_htif.o",
+      "sha256": "11b2ad6e1923a068c94a31f0d2edd09e4de3294d9a1eba49202790a0a62580fc"
+    },
+    {
+      "bytes": 42584,
+      "path": "objects/nova_htif_exit.o",
+      "sha256": "ede2cac0a20331c7ee2a1f7e63156d04e1e5b0f12cd3f6b0bab39576e71bc3e2"
+    },
+    {
+      "bytes": 399320,
+      "path": "objects/probe.o",
+      "sha256": "69d8259f58cdee12166ab20debb34b56d282168e2ec9394a7673b9d4958fbf33"
+    },
+    {
+      "bytes": 359232,
+      "path": "objects/rfb.o",
+      "sha256": "801bcc7cd457846c00cbf0ad779179e441b0232a3bfd1a9d1ebf00974d60e0ce"
+    },
+    {
+      "bytes": 753128,
+      "path": "objects/syscall.o",
+      "sha256": "72a3a36fe36b81e86d18bb25647e2fc627950fe07c501c8dd05796423bebdecd"
+    },
+    {
+      "bytes": 25088,
+      "path": "objects/term.o",
+      "sha256": "ba51e3641c77b4b0045542be7352789a3d8c4b973007d8e2ad4a82110f2b454c"
+    },
+    {
+      "bytes": 1044285,
+      "path": "observed.map",
+      "sha256": "01aee9b6d2620fe083c26a914c1e41572d533656e099d3c79eee433147862513"
+    },
+    {
+      "bytes": 1056514,
+      "path": "original.map",
+      "sha256": "9991b2a0ed9067d886c0e8182bfc123f5082c2e522ea33eab14a5e0a3b5d40f5"
+    },
+    {
+      "bytes": 26911,
+      "path": "plan.json",
+      "sha256": "3b5a80b257fc531df02dc383ed5b6e93453da80caf9dfdd858658b575d651361"
+    },
+    {
+      "bytes": 1711664,
+      "path": "probe-observed",
+      "sha256": "f041eb0d1fcb8de9f56261d44eb13eb8f1a862c0a2780219e8ecc0a79d915357"
+    },
+    {
+      "bytes": 1693616,
+      "path": "probe-original",
+      "sha256": "e6ba1f9f5ce6d1903e691f073bd6fd7220d06c17d57901cf5681fecb5f9c6221"
+    },
+    {
+      "bytes": 936,
+      "path": "records/archive-members.json",
+      "sha256": "9a353aad3d9ec357c7f7f3e62f0ce29035293db08d0c9ce435accf468cfe4fe0"
+    },
+    {
+      "bytes": 1344,
+      "path": "records/archive.json",
+      "sha256": "73ba950fe010f165a031b964c598664e314eb720746078392bf5fc19671475c7"
+    },
+    {
+      "bytes": 1464,
+      "path": "records/compile-device.json",
+      "sha256": "a2b26e3056677ca0d16633e3a4f07710d5f90bad1798d2ea90755fcb4b908e1f"
+    },
+    {
+      "bytes": 1479,
+      "path": "records/compile-elfloader.json",
+      "sha256": "6be87f33a2b92f1f6b60409b6dd0dff788e38def8d48651768f5c64b88513a34"
+    },
+    {
+      "bytes": 1453,
+      "path": "records/compile-htif.json",
+      "sha256": "7713a661b854a79d55b9237fffca8fd861b266a1a24cc220d629b76ce6e9f69d"
+    },
+    {
+      "bytes": 1458,
+      "path": "records/compile-memif.json",
+      "sha256": "8ff949a5b073a789a157e3aa4a6b515522d09bf13309d70cf668e46f75d927d0"
+    },
+    {
+      "bytes": 1458,
+      "path": "records/compile-nova_htif.json",
+      "sha256": "c1f337fae6cb7d65c39fbc1ac7927d6cc68307f5226dbdb02f4cc8ce083c4e2d"
+    },
+    {
+      "bytes": 1497,
+      "path": "records/compile-nova_htif_exit.json",
+      "sha256": "b25b72775a40179ae836295027c198526e4bd42e17098d65193d52bbe13fe766"
+    },
+    {
+      "bytes": 1462,
+      "path": "records/compile-probe.json",
+      "sha256": "17fc7d159e8ed2e6fc508827add585a88ebf9e13b52569811e031d0223e15e14"
+    },
+    {
+      "bytes": 1449,
+      "path": "records/compile-rfb.json",
+      "sha256": "5f53ef78993e15a1f6b01b4791ebc372e24fbcd9f4800d96fa306516940e01bc"
+    },
+    {
+      "bytes": 1469,
+      "path": "records/compile-syscall.json",
+      "sha256": "6fdd7cbc031060bcc92b57d9ec09622d36ab917d2a007b7755c56a665df49581"
+    },
+    {
+      "bytes": 1454,
+      "path": "records/compile-term.json",
+      "sha256": "6c6ab6ade11f1d2a216942024e68f137834754e61cf605c74b7f42701db0e80d"
+    },
+    {
+      "bytes": 1270,
+      "path": "records/link-observed.json",
+      "sha256": "55651e112d2d75ec9a2aede5aa53204d91c29d782a8435cbaa64b5ae4a235bce"
+    },
+    {
+      "bytes": 1135,
+      "path": "records/link-original.json",
+      "sha256": "2242ca7c24ee923778364dc4fc4d18336c3de755c6d73aaf794222719e12216c"
+    },
+    {
+      "bytes": 917,
+      "path": "records/observed-direct0.json",
+      "sha256": "dc221c4957acb68a024fb65c35f6520bf0c3724bb199936e8e00dc15be8dd4f8"
+    },
+    {
+      "bytes": 963,
+      "path": "records/observed-direct7.json",
+      "sha256": "e7774e6977ef5f67da086b572fa04d53dd78eff66b89801961f1b7b85aab6748"
+    },
+    {
+      "bytes": 933,
+      "path": "records/observed-signal-only.json",
+      "sha256": "5c74bb55075c949a9350ed09cce30b29fd686af12e90411e823f0ce6e67f0614"
+    },
+    {
+      "bytes": 921,
+      "path": "records/observed-syscall0.json",
+      "sha256": "66e2f195325723b3204ab3ccbd0288e7562df150cb41e09cb436f076aea96cdd"
+    },
+    {
+      "bytes": 994,
+      "path": "records/observed-syscall7-signal.json",
+      "sha256": "fc9786a3b743c3dd307da31ca604e91b7ac6702192fddc64ed2eab1c7d7186b2"
+    },
+    {
+      "bytes": 966,
+      "path": "records/observed-syscall7.json",
+      "sha256": "1fc3938b15507cba9a2c49e405e12be9c5bfbc61a2235b94148dbcfb4a50d9bd"
+    },
+    {
+      "bytes": 917,
+      "path": "records/original-direct0.json",
+      "sha256": "4b7cb33f79ce2a1b782224ce4f21e26dbdb24371894918f755016f9704991d5e"
+    },
+    {
+      "bytes": 963,
+      "path": "records/original-direct7.json",
+      "sha256": "3e22f1ddb4eafaf85c63cf87cd471246c062c3f1f7beabe93802c9a05792a65f"
+    },
+    {
+      "bytes": 933,
+      "path": "records/original-signal-only.json",
+      "sha256": "7ef1c4efbb3f25fbdb71e4ea59c3b510c4efbd2a5a643effa99d92bfc61a802d"
+    },
+    {
+      "bytes": 921,
+      "path": "records/original-syscall0.json",
+      "sha256": "7cc175ae93abddbad689fa4ed75c24244f112f4d860b9272b90b58c537e6a010"
+    },
+    {
+      "bytes": 994,
+      "path": "records/original-syscall7-signal.json",
+      "sha256": "b05bbcf4a2bd78e6d7acd0ce8a0c0ce9adb68016db105b0a7c0f566cb9ecf0a5"
+    },
+    {
+      "bytes": 966,
+      "path": "records/original-syscall7.json",
+      "sha256": "fe36a198d5a1b404a390b1b466407dda0711b9f25e4f122d813e832921bb7cf6"
+    },
+    {
+      "bytes": 957,
+      "path": "records/symbols-observed.json",
+      "sha256": "baa7be98820f409c6328af6e20aef0028446738c4b1ff328ef3bbf533f947ae0"
+    },
+    {
+      "bytes": 956,
+      "path": "records/symbols-original.json",
+      "sha256": "28b2d59dceae239bf7123ec69ea8241374a038318be35dd8d71428d17f5ee166"
+    },
+    {
+      "bytes": 861,
+      "path": "records/version-ar.json",
+      "sha256": "63814eb7b35ce8ef00edf2ceb3f37d2ec99dcac20ff711bc781a3ffe60b2f789"
+    },
+    {
+      "bytes": 865,
+      "path": "records/version-gxx.json",
+      "sha256": "eef8f7a5cd0c98ec1bd6f5141f7591d5141ee6c8c5322427230011493dbc39ee"
+    },
+    {
+      "bytes": 860,
+      "path": "records/version-nm.json",
+      "sha256": "6aeb2d262a655139899248945d4f2572976f7232d2199c57c957b8ee9621f011"
+    },
+    {
+      "bytes": 105,
+      "path": "synthetic-config/config.h",
+      "sha256": "06f3444b152095135a72e025245f54466d46bfc27f6fe7b90e82d5be2531362f"
+    }
+  ],
+  "experiment_14_original_artifacts_included_unchanged": 38,
+  "experiment_14_original_inventory_entries": 152,
+  "included_bytes_excluding_manifest": 195601,
+  "included_file_count_excluding_manifest": 54,
+  "kind": "nova-native-evidence-selection",
+  "notes": [
+    "All unchanged_copies preserve original bytes, including absolute paths, random witness identifiers, timing, statuses, and original scope limitations.",
+    "Paths in raw observations identify original execution locations; they are not rewritten portable replay paths and are not promised to exist after this session.",
+    "artifacts.json is the unchanged 152-entry full experiment-14 run inventory, not an inventory of the files included in this selected directory.",
+    "original-retention.json describes the earlier 140-file coordination selection, not this smaller repository selection.",
+    "No upstream source or header snapshots, compiled products, full link maps, or full nm listings are included. Source URLs and byte identities remain in source-manifest.json.",
+    "Excerpts concatenate complete original lines without modification. The explicit source ranges and full-source hashes below identify precisely what was omitted.",
+    "The per-command records directory and remaining logs/plan are omitted; commands.json and results.json retain original command/result observations.",
+    "Experiment-08 and experiment-18 selections are limited to the listed raw JSON; their other source snapshots, probe scripts, logs, maps, objects and executables are not included.",
+    "Hashes provide content integrity, not proof of execution or durable availability of omitted artifacts.",
+    "This manifest excludes itself from included_file_count and included_bytes to avoid a recursive self-hash.",
+    "Checkpoint-01 and checkpoint-02 excerpts retain exact first/last log lines; their full test logs are not included. Commit/tree association is documented by the integrating agent in the evidence page."
+  ],
+  "original_run_roots": {
+    "08": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01",
+    "14": "/tmp/nova-cpu-1f6d25e13e37-a14-run-01",
+    "14_intermediate_retention": "/workspace/scratch/1f6d25e13e37/coordination/a14-native",
+    "18": "/tmp/nova-a18-mnepx5_i"
+  },
+  "record_date": "2026-11-25",
+  "schema_version": 1,
+  "scope": "Native host source/observer evidence selection; no CPU, RTL, simulator, or hardware qualification.",
+  "unchanged_copies": [
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/results.json",
+      "path": "results.json",
+      "sha256": "d69c4b3b05854ceac7a3909317581379b6b60ad1e92ee2f34e04806ff7fecc02",
+      "size_bytes": 54209,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/commands.json",
+      "path": "commands.json",
+      "sha256": "9d13c930267999f440954fe0866cb21e326695dc9f7339a93a0ddd9054c5e3e9",
+      "size_bytes": 37307,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/source-manifest.json",
+      "path": "source-manifest.json",
+      "sha256": "32fbd35bf25625fcb786ef892b5db1ea03a0888e0c61721df2a5d9210562483b",
+      "size_bytes": 9711,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/nova-inputs.json",
+      "path": "nova-inputs.json",
+      "sha256": "8a13766f0e0323394aeb739b57b4e911f7b9e0912172c32846ec0742d54e74ac",
+      "size_bytes": 1666,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/artifacts.json",
+      "path": "artifacts.json",
+      "sha256": "38c37db56a83a9dc345c497b183b411c79528e32853655b417814eab9224afa5",
+      "size_bytes": 23085,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/cli-rejection-controls.json",
+      "path": "cli-rejection-controls.json",
+      "sha256": "71b221508c75b78a8cd5d9e35ec6b553a7603c4b9d745726c953cbf79ab0bb97",
+      "size_bytes": 4586,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/focused-tests.stderr.log",
+      "path": "focused-tests.stderr.log",
+      "sha256": "1387f3876a80c531634e693f820fceac28afcbd485d206bc23d53c4e9e6fc920",
+      "size_bytes": 2391,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/retention.json",
+      "path": "original-retention.json",
+      "sha256": "039ca4cb42e19ac90c8b64f56d65ab8e77fed9d8d6758a6fc37a8e6afffe12d8",
+      "size_bytes": 463,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/probe-observed-direct0.json",
+      "path": "probe-observed-direct0.json",
+      "sha256": "7b46daa45de61cb567015aaa8eb274553a1a0b049c628d73ec46a383f112251b",
+      "size_bytes": 291,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/probe-observed-direct7.json",
+      "path": "probe-observed-direct7.json",
+      "sha256": "b45a442aa52e51d2e85d8db68d36dd7d7641b4d4f2c9cd26fc1901158ed41d44",
+      "size_bytes": 292,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/probe-observed-signal-only.json",
+      "path": "probe-observed-signal-only.json",
+      "sha256": "943188d13b5f263fa66865e14d3a9c12bca05256904d13c157179ba4587eecbd",
+      "size_bytes": 297,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/probe-observed-syscall0.json",
+      "path": "probe-observed-syscall0.json",
+      "sha256": "b4b69ccdd35049a3938f96490d30e852eddb1259eb2892f01a0d64597348fdcc",
+      "size_bytes": 291,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/probe-observed-syscall7-signal.json",
+      "path": "probe-observed-syscall7-signal.json",
+      "sha256": "718557c034e03f884d50ac155e1378e09932604c8f91931c6476e3e748582e7d",
+      "size_bytes": 291,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/probe-observed-syscall7.json",
+      "path": "probe-observed-syscall7.json",
+      "sha256": "cf5e5a3f0a3a23f82e4b977ea0dcfdc0d233523084056693f5d032c28c85c1d4",
+      "size_bytes": 292,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/archive-members.stdout.log",
+      "path": "logs/archive-members.stdout.log",
+      "sha256": "30a413c45b009a34dfa1814339f1ebe42914e67c42ff6ba9118d210f5bf4ec2c",
+      "size_bytes": 59,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/observed-direct0.stderr.log",
+      "path": "logs/observed-direct0.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/observed-direct0.stdout.log",
+      "path": "logs/observed-direct0.stdout.log",
+      "sha256": "b5e407c26fe354d50c642bc239b8bef5e837864dce09af5acf1da9e4d691e5a9",
+      "size_bytes": 218,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/observed-direct7.stderr.log",
+      "path": "logs/observed-direct7.stderr.log",
+      "sha256": "1f1a5b56c0f597aa3a63d946205ba32a9a3e1ebe472686340932da0f5064024f",
+      "size_bytes": 28,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/observed-direct7.stdout.log",
+      "path": "logs/observed-direct7.stdout.log",
+      "sha256": "f1ee1e60643d80182684bd6d5bd15b1d16f6aa79bbf0f239c490aca039a9d0d0",
+      "size_bytes": 218,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/observed-signal-only.stderr.log",
+      "path": "logs/observed-signal-only.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/observed-signal-only.stdout.log",
+      "path": "logs/observed-signal-only.stdout.log",
+      "sha256": "54db6a91eda04c0192bf118bd24d92ee17758402a2a366d1f8f6aa2cfd762bcc",
+      "size_bytes": 222,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/observed-syscall0.stderr.log",
+      "path": "logs/observed-syscall0.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/observed-syscall0.stdout.log",
+      "path": "logs/observed-syscall0.stdout.log",
+      "sha256": "460cd6c9c16bd576c38660a4062dbc2e457a28c09f3974b47550c6fa846ee064",
+      "size_bytes": 219,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/observed-syscall7-signal.stderr.log",
+      "path": "logs/observed-syscall7-signal.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/observed-syscall7-signal.stdout.log",
+      "path": "logs/observed-syscall7-signal.stdout.log",
+      "sha256": "70168b615ac5b67a3fcb16163e8dd28ad02ecb8ed1d754063165f1a6b313ed40",
+      "size_bytes": 226,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/observed-syscall7.stderr.log",
+      "path": "logs/observed-syscall7.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/observed-syscall7.stdout.log",
+      "path": "logs/observed-syscall7.stdout.log",
+      "sha256": "34ed25f24415f2e7b95955a22ec2cac6c832bc36505ee1a27c3213035c8429b1",
+      "size_bytes": 219,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/original-direct0.stderr.log",
+      "path": "logs/original-direct0.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/original-direct0.stdout.log",
+      "path": "logs/original-direct0.stdout.log",
+      "sha256": "b5e407c26fe354d50c642bc239b8bef5e837864dce09af5acf1da9e4d691e5a9",
+      "size_bytes": 218,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/original-direct7.stderr.log",
+      "path": "logs/original-direct7.stderr.log",
+      "sha256": "1f1a5b56c0f597aa3a63d946205ba32a9a3e1ebe472686340932da0f5064024f",
+      "size_bytes": 28,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/original-direct7.stdout.log",
+      "path": "logs/original-direct7.stdout.log",
+      "sha256": "f1ee1e60643d80182684bd6d5bd15b1d16f6aa79bbf0f239c490aca039a9d0d0",
+      "size_bytes": 218,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/original-signal-only.stderr.log",
+      "path": "logs/original-signal-only.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/original-signal-only.stdout.log",
+      "path": "logs/original-signal-only.stdout.log",
+      "sha256": "54db6a91eda04c0192bf118bd24d92ee17758402a2a366d1f8f6aa2cfd762bcc",
+      "size_bytes": 222,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/original-syscall0.stderr.log",
+      "path": "logs/original-syscall0.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/original-syscall0.stdout.log",
+      "path": "logs/original-syscall0.stdout.log",
+      "sha256": "460cd6c9c16bd576c38660a4062dbc2e457a28c09f3974b47550c6fa846ee064",
+      "size_bytes": 219,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/original-syscall7-signal.stderr.log",
+      "path": "logs/original-syscall7-signal.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/original-syscall7-signal.stdout.log",
+      "path": "logs/original-syscall7-signal.stdout.log",
+      "sha256": "70168b615ac5b67a3fcb16163e8dd28ad02ecb8ed1d754063165f1a6b313ed40",
+      "size_bytes": 226,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/original-syscall7.stderr.log",
+      "path": "logs/original-syscall7.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size_bytes": 0,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/original-syscall7.stdout.log",
+      "path": "logs/original-syscall7.stdout.log",
+      "sha256": "34ed25f24415f2e7b95955a22ec2cac6c832bc36505ee1a27c3213035c8429b1",
+      "size_bytes": 219,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/version-ar.stdout.log",
+      "path": "logs/version-ar.stdout.log",
+      "sha256": "aef15107335caff84acdf0ee8d6b3be67cfb486a3351fc0056a91c1a9cd5945d",
+      "size_bytes": 283,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/version-gxx.stdout.log",
+      "path": "logs/version-gxx.stdout.log",
+      "sha256": "5f6798e87440f1e8b88bf6822c33bebe434f83374640a7f8ba967902ee1ea098",
+      "size_bytes": 232,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "14",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a14-native/logs/version-nm.stdout.log",
+      "path": "logs/version-nm.stdout.log",
+      "sha256": "caae48f7aca83bd177c80210e19f2a84f8fb324ea1059c2df326996f5955041e",
+      "size_bytes": 283,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "08",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/results.json",
+      "path": "experiment-08/results.json",
+      "sha256": "f1251ccde54f96cbc4e4e94efaf6445cb843dc6ef4609bfe0df8b23403ba685e",
+      "size_bytes": 13784,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "08",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/commands.json",
+      "path": "experiment-08/commands.json",
+      "sha256": "e960decb0ef31d3e056cffc25d7c4998cf0792921214c2b1c8bfcd7ebc8ec842",
+      "size_bytes": 17014,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "08",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/nova-inputs.json",
+      "path": "experiment-08/nova-inputs.json",
+      "sha256": "7dd4857879b372d4138cf7e0bff1153c3d46ca724114049887b1bc5668e16d1f",
+      "size_bytes": 1125,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "08",
+      "original_path": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/source-manifest.json",
+      "path": "experiment-08/source-manifest.json",
+      "sha256": "cb27a59493a4860ed244459a8ff25b1fb32fb57baa84a60866f0eadb0de2bd43",
+      "size_bytes": 11536,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "18",
+      "original_path": "/tmp/nova-a18-mnepx5_i/summary.json",
+      "path": "experiment-18/summary.json",
+      "sha256": "6a9b93d506ef6a5e7f3733ed3d91b6bed9116967f0f808f7c492abbef5058b84",
+      "size_bytes": 5460,
+      "unchanged_copy": true
+    },
+    {
+      "experiment": "18",
+      "original_path": "/tmp/nova-a18-mnepx5_i/commands.json",
+      "path": "experiment-18/commands.json",
+      "sha256": "f43d58449f8fddf92fffad69ae0c4d969f921961ee160dac24882a696248baa3",
+      "size_bytes": 3292,
+      "unchanged_copy": true
+    }
+  ]
+}

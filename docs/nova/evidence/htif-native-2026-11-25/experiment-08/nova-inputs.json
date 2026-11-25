@@ -1,0 +1,32 @@
+[
+  {
+    "bytes": 5554,
+    "local_path": "inputs/nova/htif_host_probe.cc",
+    "repository_path": "software/nova/observer/htif_host_probe.cc",
+    "sha256": "127b7041bd4322625e63752c8ce15036c24288360c9de9473ba4969dc2728df5"
+  },
+  {
+    "bytes": 8337,
+    "local_path": "inputs/nova/nova_htif_exit.cc",
+    "repository_path": "software/nova/observer/nova_htif_exit.cc",
+    "sha256": "67f50419be6d8e8e0f1845ff68fe9012d2bf44f061d7c432f72c18165191cf3e"
+  },
+  {
+    "bytes": 856,
+    "local_path": "inputs/nova/nova_htif_exit.h",
+    "repository_path": "software/nova/observer/nova_htif_exit.h",
+    "sha256": "6351e13842a4b6a3a98980ef6b8c08cc0c665c1dda5b4da399bc4142db9dcfb9"
+  },
+  {
+    "bytes": 27690,
+    "local_path": "inputs/nova/htif_observer.py",
+    "repository_path": "scripts/nova/htif_observer.py",
+    "sha256": "086c63ed49bac0344c1be75ff3a35ed85017ef97cdd668ed43ba3ab2c973a206"
+  },
+  {
+    "bytes": 11847,
+    "local_path": "inputs/nova/htif_exit_evidence.py",
+    "repository_path": "scripts/nova/htif_exit_evidence.py",
+    "sha256": "8a51c52fbe80f2f7d4461f0e46bb26f5928e6487c3b9f65bb1364aa5e207cfc4"
+  }
+]

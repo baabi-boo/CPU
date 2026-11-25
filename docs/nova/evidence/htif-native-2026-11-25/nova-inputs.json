@@ -1,0 +1,51 @@
+[
+  {
+    "local_path": "inputs/nova/htif_host_probe.cc",
+    "path": "software/nova/observer/htif_host_probe.cc",
+    "scope": "nova",
+    "sha256": "127b7041bd4322625e63752c8ce15036c24288360c9de9473ba4969dc2728df5",
+    "size_bytes": 5554
+  },
+  {
+    "local_path": "inputs/nova/nova_htif_exit.cc",
+    "path": "software/nova/observer/nova_htif_exit.cc",
+    "scope": "nova",
+    "sha256": "67f50419be6d8e8e0f1845ff68fe9012d2bf44f061d7c432f72c18165191cf3e",
+    "size_bytes": 8337
+  },
+  {
+    "local_path": "inputs/nova/nova_htif_exit.h",
+    "path": "software/nova/observer/nova_htif_exit.h",
+    "scope": "nova",
+    "sha256": "6351e13842a4b6a3a98980ef6b8c08cc0c665c1dda5b4da399bc4142db9dcfb9",
+    "size_bytes": 856
+  },
+  {
+    "local_path": "inputs/nova/htif_observer.py",
+    "path": "scripts/nova/htif_observer.py",
+    "scope": "nova",
+    "sha256": "086c63ed49bac0344c1be75ff3a35ed85017ef97cdd668ed43ba3ab2c973a206",
+    "size_bytes": 27690
+  },
+  {
+    "local_path": "inputs/nova/htif_exit_evidence.py",
+    "path": "scripts/nova/htif_exit_evidence.py",
+    "scope": "nova",
+    "sha256": "8a51c52fbe80f2f7d4461f0e46bb26f5928e6487c3b9f65bb1364aa5e207cfc4",
+    "size_bytes": 11847
+  },
+  {
+    "local_path": "inputs/nova/campaign_exec.py",
+    "path": "scripts/nova/campaign_exec.py",
+    "scope": "nova",
+    "sha256": "b642779102b990c76ae691224e591ddc5c151e3bce8df5f546b5c958ff920dd7",
+    "size_bytes": 16706
+  },
+  {
+    "local_path": "inputs/nova/htif_host_probe.py",
+    "path": "scripts/nova/htif_host_probe.py",
+    "scope": "nova",
+    "sha256": "9396e26c79bae06ee5f5b502d97757de2b015c15672b47710f8d7cf2b108d8ff",
+    "size_bytes": 28529
+  }
+]

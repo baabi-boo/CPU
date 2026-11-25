@@ -1,0 +1,2 @@
+000000000001546b T nova_htif_observe_stop(void const*, bool, int, bool)
+000000000000b8ca T htif_t::stop()

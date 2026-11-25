@@ -1,0 +1,1 @@
+{"scope":"native-host-only","mode":"syscall7","run_return":7,"done":true,"exit_code":7,"tohost_after":0,"fromhost_after":1,"idle_calls":0,"tohost_reads":1,"tohost_clears":1,"reset_calls":0,"fixture_checks_passed":true}

@@ -11,7 +11,7 @@ The long-term goal is a verifiable SoC architecture with reproducible simulation
 measured design trade-offs, an FPGA prototype, and a separately reviewed path
 toward physical implementation.
 
-## Current status: G1 preparation implemented; hardware qualification blocked
+## Current status: G1 observer tooling implemented; hardware qualification blocked
 
 This repository contains the engineering foundation and tested tooling for the
 first reproducible single-core campaign. **G1 remains blocked; no NOVA-specific
@@ -21,7 +21,9 @@ RTL build, CPU execution, or hardware qualification is established by this work.
 | --- | --- |
 | Chipyard foundation | Inherited source and pinned dependency references |
 | NOVA documentation and tooling | Implemented foundation with repository-only tests; see the status record |
-| G1 campaign preparation | Pinned-profile/inventory checks, target sources, bounded runner, and evidence comparison implemented; hardware campaign not run |
+| G1 campaign preparation | Pinned-profile/inventory checks, target sources, bounded runner, optional HTIF exit observer, and strict schema-2 comparison implemented; hardware campaign not run |
+| Native HTIF evidence | Twelve bounded native host cases passed; signal-only completion ambiguity reproduced and rejected by the observer assessment; no CPU or RTL execution |
+| Retained evidence verification | Raw log/witness integrity and recorded protocol checks implemented; no execution authentication or hardware qualification |
 | NOVA configuration classes | Source scaffolds; HDL elaboration and execution unverified |
 | Mixed-core correctness and Linux boot | Not yet demonstrated for NOVA |
 | GPU/NPU integration and coherent accelerator memory | Planned, not validated integrations |
@@ -39,15 +41,32 @@ glibc/sysroot selection would regenerate pinned Conda locks; this does not show
 that the newer host glibc is intrinsically incompatible with the preserved
 sysroot. G0 still needs maintainer acceptance, and heavyweight setup requires an
 approved host/resource/network/time/cost budget.
-No Rocket/NOVA CPU execution has been demonstrated by these tooling changes;
-see the [current G1 preparation record](docs/nova/evidence/G1-PREPARATION-2026-11-12.md).
+No Rocket/NOVA CPU execution has been demonstrated by these tooling changes.
+The strict G1 profile still reports 38 blockers; see the
+[preparation record](docs/nova/evidence/G1-PREPARATION-2026-11-12.md) and
+[current observer evidence](docs/nova/evidence/G1-HTIF-OBSERVER-2026-11-25.md).
 
 The implemented campaign declares 15 workloads for each of `RocketConfig` and
 `NovaM1BaselineConfig`: hello, an eight-check NOVA target, its deliberate failure
-control, and 12 ISA tests. These hardware runs remain **not run**. The pinned
-simulator's success signal can also follow HTIF signal-induced shutdown, so
-observing its completion protocol is not independently verified target exit;
-see the [completion-protocol finding](docs/nova/evidence/G1-COMPLETION-PROTOCOL-2026-11-12.md).
+control, and 12 ISA tests. These hardware runs remain **not run**. A native host
+probe of the real pinned HTIF reproduced `done=true` and exit code 0 after
+signal-only shutdown with no target exit. The generated observer overlay
+preserves that behavior and separately records whether the underlying exit
+value is actually present. This extends the
+[completion-protocol finding](docs/nova/evidence/G1-COMPLETION-PROTOCOL-2026-11-12.md)
+with native evidence; it is not a CPU simulation.
+
+The optional `--observe-target-exit` campaign mode now retains dedicated witnesses
+in schema-2 records. Only a matching nested `target_exit.assessment` may set
+`target_completion_verified=true` for a supplied observer event. Legacy protocol
+assessments retain `target_completion_verified=false`; hardware/G1 qualification
+flags stay false. The comparator and retained bundle verifier check agreement
+and integrity, not authenticated execution.
+Observed campaigns require fresh build products; standalone incremental reuse
+through the observer Make fragment is not qualified. After preparing the pinned
+environment, run both fifteen-workload profiles, retain raw evidence, repeat in
+a second independent clean build, and resolve the pinned reference-comparison
+scope before a maintainer gate decision.
 
 ## Architecture direction
 
@@ -107,7 +126,7 @@ installing dependencies or starting a simulation:
 make -f nova.mk preflight
 make -f nova.mk g1-profile
 make -f nova.mk conda-plan
-make -f nova.mk g1-campaign-plan
+make -f nova.mk g1-observed-plan
 ```
 
 These commands report setup risks, known prerequisites, the preserved package
@@ -115,6 +134,8 @@ inventory, and an execution plan only. A ready profile is not complete dependenc
 closure, permission to install, or proof that the hardware builds. The unchanged
 lean lock contains 165 package records; metadata agreement does not authenticate
 installed binaries or supply missing CMake/HTIF/runtime prerequisites.
+`g1-observed-plan` selects optional target-exit observation; the legacy
+protocol-only plan remains available through `g1-campaign-plan`.
 
 For toolchain preparation, diagnostic preflight, source configurations, and
 explicit simulation commands, follow [DEVELOPMENT](docs/nova/DEVELOPMENT.md).

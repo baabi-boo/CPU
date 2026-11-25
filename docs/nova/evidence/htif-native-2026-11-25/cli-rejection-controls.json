@@ -1,0 +1,131 @@
+[
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/1f6d25e13e37/CPU/scripts/nova/htif_host_probe.py",
+      "--execute",
+      "--source-root",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike",
+      "--output",
+      "/tmp/nova-cpu-1f6d25e13e37-a14-run-01",
+      "--total-seconds",
+      "180"
+    ],
+    "label": "existing-output",
+    "result": {
+      "cases": [],
+      "commands": [],
+      "cpu_execution": false,
+      "g1_gate_passed": false,
+      "hardware_qualified": false,
+      "kind": "nova-htif-host-probe-result",
+      "limitations": [
+        "Memory stimuli originate in the native fixture, not a CPU.",
+        "The archive is a native source closure, not installed pinned libfesvr.a.",
+        "Synthetic HAVE_INT128 config does not verify an installed toolchain.",
+        "No ELF loading, TSI, TestChipIP, Verilator, RTL, or campaign execution.",
+        "Nested parser target_completion_verified values describe supplied fixture events only.",
+        "Deadlines reserve process cleanup and evidence capture; disk/log limits are sampled, not OS quotas."
+      ],
+      "limits": {
+        "case_seconds": 5,
+        "command_seconds": 45,
+        "max_log_bytes": 1048576,
+        "min_free_gib": 1,
+        "total_seconds": 180.0
+      },
+      "output": "/tmp/nova-cpu-1f6d25e13e37-a14-run-01",
+      "reasons": [
+        "output already exists; a fresh directory is required"
+      ],
+      "rtl_simulation": false,
+      "schema_version": 1,
+      "scope": "native-host-only real pinned HTIF/FESVR with synthetic memory",
+      "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+      "status": "blocked",
+      "target_completion_verified": false
+    },
+    "returncode": 2,
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/1f6d25e13e37/CPU/scripts/nova/htif_host_probe.py",
+      "--execute",
+      "--source-root",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike",
+      "--output",
+      "/tmp/nova-cpu-1f6d25e13e37-a14-never-created",
+      "--total-seconds",
+      "1"
+    ],
+    "label": "exhausted-total-budget",
+    "result": {
+      "cases": [],
+      "commands": [],
+      "cpu_execution": false,
+      "g1_gate_passed": false,
+      "hardware_qualified": false,
+      "kind": "nova-htif-host-probe-result",
+      "limitations": [
+        "Memory stimuli originate in the native fixture, not a CPU.",
+        "The archive is a native source closure, not installed pinned libfesvr.a.",
+        "Synthetic HAVE_INT128 config does not verify an installed toolchain.",
+        "No ELF loading, TSI, TestChipIP, Verilator, RTL, or campaign execution.",
+        "Nested parser target_completion_verified values describe supplied fixture events only.",
+        "Deadlines reserve process cleanup and evidence capture; disk/log limits are sampled, not OS quotas."
+      ],
+      "limits": {
+        "case_seconds": 5,
+        "command_seconds": 45,
+        "max_log_bytes": 1048576,
+        "min_free_gib": 1,
+        "total_seconds": 1.0
+      },
+      "output": "/tmp/nova-cpu-1f6d25e13e37-a14-never-created",
+      "reasons": [
+        "total native comparison deadline exhausted"
+      ],
+      "rtl_simulation": false,
+      "schema_version": 1,
+      "scope": "native-host-only real pinned HTIF/FESVR with synthetic memory",
+      "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+      "status": "blocked",
+      "target_completion_verified": false
+    },
+    "returncode": 2,
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+      "-B",
+      "/workspace/scratch/1f6d25e13e37/CPU/scripts/nova/htif_host_probe.py",
+      "--execute",
+      "--source-root",
+      "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike",
+      "--output",
+      "/tmp/nova-cpu-1f6d25e13e37-a14-never-created",
+      "--total-seconds",
+      "301"
+    ],
+    "label": "oversized-total-budget",
+    "result": {
+      "cpu_execution": false,
+      "g1_gate_passed": false,
+      "hardware_qualified": false,
+      "output": "/tmp/nova-cpu-1f6d25e13e37-a14-never-created",
+      "reasons": [
+        "invalid total_seconds"
+      ],
+      "rtl_simulation": false,
+      "status": "blocked",
+      "target_completion_verified": false
+    },
+    "returncode": 2,
+    "stderr": ""
+  }
+]

@@ -7,6 +7,11 @@ inspected entry points, **not successful NOVA build or execution evidence**.
 The end-to-end G1 evidence and acceptance checklist is in the
 [single-core baseline runbook](BASELINE_RUNBOOK.md).
 
+The optional HTIF observer and reusable native host probe are implemented; their
+[current evidence](evidence/G1-HTIF-OBSERVER-2026-11-25.md) does not establish a
+CPU or RTL run. **G1 remains blocked pending the prepared environment, two
+independent clean CPU campaign builds, and review.**
+
 ## 1. Work on the repository without a hardware toolchain
 
 Requirements: Git, GNU Make, and Python 3.10 or newer. The NOVA check scripts use
@@ -36,6 +41,7 @@ python3 -B scripts/nova/bootstrap_preflight.py --json
 make -f nova.mk g1-profile
 make -f nova.mk conda-plan
 make -f nova.mk g1-campaign-plan
+make -f nova.mk g1-observed-plan
 ```
 
 `doctor` is a non-mutating diagnostic: it does not install tools, initialize
@@ -68,6 +74,11 @@ linking. `conda-plan` reads the unchanged 165-package lean inventory without
 creating an environment; matching installed `conda-meta` records later is only
 metadata agreement. The [current preparation record](evidence/G1-PREPARATION-2026-11-12.md)
 documents the observed blocked host, not a successful hardware run.
+
+`g1-observed-plan` prints the optional schema-2 campaign with dedicated HTIF
+target-exit observation. `g1-campaign-plan` retains the legacy schema-1
+protocol-only plan. Both are read-only and neither prepares observer outputs
+nor establishes that the full build environment is ready.
 
 ## 2. Prepare an explicitly approved hardware environment
 
@@ -143,6 +154,17 @@ Its explicit Make/sbt builds can nevertheless resolve JVM dependencies, so
 approved network access or a separately verified offline dependency cache is
 still required. The runner does not establish an offline build closure.
 
+The observed campaign also requires exact pinned Spike source/header bytes, a
+matching installed `RISCV/include/fesvr/htif.h`, the installed
+`RISCV/include/fesvr/config.h`, and an ordinary static
+`RISCV/lib/libfesvr.a`. Missing or mismatched inputs block observer preparation;
+shared-only libraries and thin archives are rejected. The generated observer
+uses a source overlay without changing the pinned submodule and links its
+object before the explicit archive. Captured hashes identify these bytes, not
+their ABI compatibility or authenticated provenance. The native host fixture
+below uses a synthetic configuration and its own source-built archive; those
+products cannot satisfy the prepared-toolchain campaign prerequisites.
+
 ## 3. Establish the single-hart baseline
 
 ### Preferred two-configuration G1 campaign
@@ -153,28 +175,36 @@ activated `env.sh`/`RISCV` and `CONDA_PREFIX`, inspect the proposed run
 **without executing it**:
 
 ```bash
-make -f nova.mk g1-campaign-plan
+make -f nova.mk g1-observed-plan
 ```
 
 This read-only mode lists separate `RocketConfig` and `NovaM1BaselineConfig`
 builds and the same 15 declared workloads per configuration: inherited hello,
 the NOVA eight-check target, its deliberate code-7 failure control, and 12 fixed
 ISA binaries. These commands have not been demonstrated on the current host.
-The implementation is tooling, not a new CPU architecture or a completed
-`T-BUILD-001`/`T-ISA-001` campaign.
+The declared execution sequence prepares the observer before the two simulator
+builds. The implementation is tooling, not a new CPU architecture or a completed
+`T-BUILD-001`/`T-ISA-001` campaign. Omit `--observe-target-exit`, or use the legacy
+`g1-campaign-plan` target, only when a protocol-only schema-1 record is intended.
 
 Execution requires the checkout containing the runner and helpers to be clean,
 with no hidden-index flags or known stale build products, a prepared `env.sh`,
 valid `RISCV`/`CONDA_PREFIX`, a ready fixed profile, and matching Conda metadata.
 It rejects enumerated inherited build overrides instead of silently changing the
-profile. It never deletes stale products; use a separate clean checkout and
-review remaining ignored caches. After actual maintainer resource approval and
-successful preflight, the explicit entry point is:
+profile. The running script must belong to that checkout; execution using
+`--root` to point another checkout's helper at it is rejected. It never deletes
+stale products; use a fresh separate checkout and review remaining ignored
+caches. Observed mode rejects existing `nova-out/htif-observer`, generated model
+sources, and selected simulator products. Standalone incremental Make reuse is
+not qualified: the observer fragment can report success while reusing products
+without proving that they were instrumented. After actual maintainer resource
+approval and successful preflight, the explicit entry point is:
 
 ```bash
 python3 -B scripts/nova/g1_profile.py --strict --json
 python3 -B scripts/nova/conda_inventory.py --prefix "$CONDA_PREFIX" --json
-python3 -B scripts/nova/g1_campaign.py --execute --approved-budget
+python3 -B scripts/nova/g1_campaign.py --execute --observe-target-exit --approved-budget \
+  --jobs 2 --java-heap 4G --total-timeout-seconds 7200 --min-free-gib 10
 ```
 
 `--approved-budget` is an acknowledgement of approval already obtained, not a
@@ -190,23 +220,109 @@ retains an interrupted result; it does not promise cleanup after SIGKILL.
 
 The runner retains separate logs and pre/post source, profile, inventory, binary,
 and simulator identities under ignored `nova-out/g1-campaign-*/`. It also binds
-recorded executed commands to the declared plan.
-`workloads_observed` means the declared log protocols were observed, **not** that
-target-originated completion, processor correctness, or G1 is qualified. The
-pinned HTIF path can signal success after a signal-induced shutdown; see the
-[source-level finding](evidence/G1-COMPLETION-PROTOCOL-2026-11-12.md).
-`target_completion_verified`, `hardware_qualified`, and `g1_gate_passed` remain
-false. The reference-model comparison is not run, and the declared ISA subset
-does not qualify excluded extensions or every conditional branch inside upstream
-tests.
+recorded executed commands to the declared plan. In observed mode, schema-2
+records add observer build metadata and a dedicated witness for every workload,
+bound to its unique run ID, source/configuration/workload, binary and simulator
+hashes, observer manifest, cycle limit, and seed. The runner supplies the witness
+environment; inherited `NOVA_HTIF_*` settings block execution.
 
-Repeat the approved campaign from a second clean checkout without sharing
-generated build products. `compare_campaigns.py` compares the two retained
-records, but `consistent` means agreement between unauthenticated metadata—not
-proof of execution, independent caches, or hardware reproduction. Follow the
-[runbook](BASELINE_RUNBOOK.md) for the exact comparison command, unresolved
-target-exit observability, evidence review, and separate gate acceptance. Curate
-raw logs before publication; execution records can contain local paths.
+`workloads_observed` means all declared process, protocol, integrity, and
+mode-specific witness expectations were observed. The ordinary log assessments
+retain `target_completion_verified=false` in both schemas. The pinned HTIF path
+can signal success after a signal-induced shutdown; this has now been reproduced
+in a native host fixture, not a CPU run. See the
+[completion finding](evidence/G1-COMPLETION-PROTOCOL-2026-11-12.md) and
+[observer evidence](evidence/G1-HTIF-OBSERVER-2026-11-25.md).
+
+Only a matching nested `target_exit.assessment` in schema 2 may report
+`target_completion_verified=true`, scoped to the supplied observer event: a
+present, nonsignal target exit with expected code 0 or deliberate code 7.
+Missing, malformed, incorrectly bound, or signal-only witnesses fail; no witness
+overrides process/protocol failure, timeout, cancellation, or input drift.
+Legacy schema 1 cannot make this verified-exit claim. `hardware_qualified` and
+`g1_gate_passed` remain false in all modes. The reference-model comparison is not
+run, and the declared ISA subset does not qualify excluded extensions or every
+conditional branch inside upstream tests.
+
+After each real campaign, preserve `record.json` and every named raw stdout,
+stderr, and witness file together with their original bytes and basenames.
+Retain generated RTL, binaries, and observer manifests/inputs separately as
+build evidence. Repeat the whole approved campaign from a second independent
+clean checkout without sharing generated build products, and record/isolate
+relevant caches. With both retained bundles available, run:
+
+```bash
+python3 -B scripts/nova/verify_campaign_bundle.py \
+  --record /absolute/path/to/first/record.json
+python3 -B scripts/nova/verify_campaign_bundle.py \
+  --record /absolute/path/to/second/record.json
+python3 -B scripts/nova/compare_campaigns.py \
+  /absolute/path/to/first/record.json /absolute/path/to/second/record.json
+```
+
+Inspect both verifier results before comparison. `intact` (exit 0) means the
+bounded retained record/log/witness bytes and reassessed protocols agree;
+`failed` and `blocked` return 1 and 2. The verifier does not open external source,
+toolchain, simulator, workload-binary, or observer-build paths; those identities
+remain metadata. The comparator takes two positional paths and reports
+`consistent`/`different`/`blocked` with exits 0/1/2. It compares record identities
+and stable exit semantics, requires the same schema, and rejects reused
+schema-2 run IDs. Neither tool authenticates execution or proves independent
+builds, trustworthy toolchain provenance, or hardware reproduction. Follow the
+[runbook](BASELINE_RUNBOOK.md) for evidence review, the unresolved pinned
+reference-comparison scope, and separate gate acceptance. Preserve failed and
+blocked runs, and curate raw logs before publication; records can contain local
+paths.
+
+### Optional native HTIF host probe
+
+Use the native probe to inspect the host-side terminal-state behavior separately
+from the CPU campaign. Its default mode and explicit `--plan` only read local
+inputs and print the proposed serial build commands and twelve process cases:
+
+```bash
+python3 -B scripts/nova/htif_host_probe.py --plan
+python3 -B scripts/nova/htif_host_probe.py --plan \
+  --source-root /absolute/path/to/pinned-spike \
+  --output /absolute/path/to/existing-parent/fresh-htif-probe
+```
+
+Provide the exact **24 pinned source/header/license files**, including the
+original `LICENSE`, locally from Spike commit
+`9c190a07c6838f6392bafa4ad83acea462c7f759`; the plan exposes the required hashes.
+Without an explicit source path, planning checks the repository's declared
+Spike directory. Missing or mismatched inputs are blockers, with no download,
+installation, or hash-override fallback. Native `g++`, `ar`, and `nm` must already
+be available. Execution requires explicit `--source-root` and `--output`; the
+output must be a fresh leaf under an existing parent without symlink components.
+After approving this native process budget, the bounded command is:
+
+```bash
+python3 -B scripts/nova/htif_host_probe.py --execute \
+  --source-root /absolute/path/to/pinned-spike \
+  --output /absolute/path/to/existing-parent/fresh-htif-probe \
+  --total-seconds 180 --command-seconds 45 --case-seconds 5 \
+  --max-log-bytes 1048576 --min-free-gib 1
+```
+
+These are the defaults: 180 seconds aggregate, 45 seconds per build command,
+5 seconds per case, 1 MiB per log stream, and a 1 GiB free-space floor. Accepted
+maxima are 300 aggregate seconds, 60 seconds per build command, 30 seconds per
+case, and 4 MiB per stream. Cleanup and final capture reserve time; sampled
+disk/log checks are not OS quotas. Final retention is bounded to 256 files,
+32 MiB per file, and 128 MiB total.
+
+The two native builds cover six modes each: direct exits 0/7, syscall exits 0/7,
+signal-only shutdown, and syscall exit 7 followed by a signal. All **12 cases**
+use synthetic host memory and a synthetic `HAVE_INT128` configuration. They
+perform no RISC-V CPU execution, TSI/TestDriver/Verilator run, or RTL simulation
+and do not qualify the installed pinned toolchain. A successful result describes
+native host observations and link/symbol checks only. Top-level completion, CPU/RTL,
+hardware, and G1 flags stay false; any nested verified-exit flags refer only to
+supplied host-fixture events. Retain the source/license snapshots, manifests,
+commands, logs, maps, witnesses, results, and artifact inventory. The
+[observer evidence](evidence/G1-HTIF-OBSERVER-2026-11-25.md) records the completed
+native probe and its limitations. Both clean CPU campaign builds remain unrun.
 
 ### Legacy single-profile smoke helper
 

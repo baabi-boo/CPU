@@ -1,0 +1,21 @@
+Archive member included to satisfy reference by file (symbol)
+
+/tmp/nova-cpu-1f6d25e13e37-a14-run-01/libfesvr-host-fixture.a(memif.o)
+                              /tmp/nova-cpu-1f6d25e13e37-a14-run-01/objects/nova_htif.o (vtable for memif_t)
+/tmp/nova-cpu-1f6d25e13e37-a14-run-01/libfesvr-host-fixture.a(syscall.o)
+                              /tmp/nova-cpu-1f6d25e13e37-a14-run-01/objects/nova_htif.o (syscall_t::syscall_t(htif_t*))
+/tmp/nova-cpu-1f6d25e13e37-a14-run-01/libfesvr-host-fixture.a(device.o)
+                              /tmp/nova-cpu-1f6d25e13e37-a14-run-01/libfesvr-host-fixture.a(syscall.o) (device_t::device_t())
+/tmp/nova-cpu-1f6d25e13e37-a14-run-01/libfesvr-host-fixture.a(rfb.o)
+                              /tmp/nova-cpu-1f6d25e13e37-a14-run-01/objects/nova_htif.o (rfb_t::rfb_t(int))
+/tmp/nova-cpu-1f6d25e13e37-a14-run-01/libfesvr-host-fixture.a(elfloader.o)
+                              /tmp/nova-cpu-1f6d25e13e37-a14-run-01/objects/nova_htif.o (load_elf[abi:cxx11](char const*, memif_t*, unsigned long*, unsigned long, unsigned int))
+/tmp/nova-cpu-1f6d25e13e37-a14-run-01/libfesvr-host-fixture.a(term.o)
+                              /tmp/nova-cpu-1f6d25e13e37-a14-run-01/libfesvr-host-fixture.a(device.o) (canonical_terminal_t::read())
+
+LOAD /tmp/nova-cpu-1f6d25e13e37-a14-run-01/objects/probe.o
+LOAD /tmp/nova-cpu-1f6d25e13e37-a14-run-01/objects/nova_htif.o
+LOAD /tmp/nova-cpu-1f6d25e13e37-a14-run-01/objects/nova_htif_exit.o
+LOAD /tmp/nova-cpu-1f6d25e13e37-a14-run-01/libfesvr-host-fixture.a
+                0x000000000000b8ca                htif_t::stop()
+                0x000000000001546b                nova_htif_observe_stop(void const*, bool, int, bool)

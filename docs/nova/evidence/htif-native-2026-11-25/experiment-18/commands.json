@@ -1,0 +1,124 @@
+[
+  {
+    "name": "make-parse",
+    "argv": [
+      "make",
+      "--no-print-directory",
+      "-f",
+      "Makefile",
+      "-f",
+      "/tmp/nova-a18-mnepx5_i/repo/software/nova/observer/observer.mk",
+      "CONFIG=RocketConfig",
+      "JAVA_HEAP_SIZE=4G",
+      "-j2",
+      "TIMESCALE_OPTS=",
+      "-f",
+      "/tmp/nova-a18-mnepx5_i/inspect.mk",
+      "-p",
+      "a18-inspect"
+    ],
+    "cwd": "/tmp/nova-a18-mnepx5_i/repo/sims/verilator",
+    "returncode": 0,
+    "stdout": "make-parse.stdout",
+    "stderr": "make-parse.stderr"
+  },
+  {
+    "name": "make-native-flags",
+    "argv": [
+      "make",
+      "--no-print-directory",
+      "-f",
+      "/tmp/nova-a18-mnepx5_i/native.mk"
+    ],
+    "cwd": "/tmp/nova-a18-mnepx5_i",
+    "returncode": 0,
+    "stdout": "make-native-flags.stdout",
+    "stderr": "make-native-flags.stderr"
+  },
+  {
+    "name": "prefix-value",
+    "argv": [
+      "/tmp/nova-a18-mnepx5_i/prefix-probe",
+      "/tmp/nova-a18-mnepx5_i/prefix"
+    ],
+    "cwd": "/tmp/nova-a18-mnepx5_i",
+    "returncode": 0,
+    "stdout": "prefix-value.stdout",
+    "stderr": "prefix-value.stderr"
+  },
+  {
+    "name": "native-link",
+    "argv": [
+      "g++",
+      "-pthread",
+      "-o",
+      "/tmp/nova-a18-mnepx5_i/host-probe",
+      "/tmp/nova-cpu-1f6d25e13e37-a14-run-01/objects/probe.o",
+      "/tmp/nova-a18-mnepx5_i/overlay.o",
+      "/tmp/nova-a18-mnepx5_i/recorder.o",
+      "/tmp/nova-a18-mnepx5_i/prefix/lib/libfesvr.a",
+      "-Wl,-Map,/tmp/nova-a18-mnepx5_i/link.map"
+    ],
+    "cwd": "/tmp/nova-a18-mnepx5_i",
+    "returncode": 0,
+    "stdout": "native-link.stdout",
+    "stderr": "native-link.stderr"
+  },
+  {
+    "name": "native-direct0",
+    "argv": [
+      "/tmp/nova-a18-mnepx5_i/host-probe",
+      "direct0"
+    ],
+    "cwd": "/tmp/nova-a18-mnepx5_i",
+    "returncode": 0,
+    "stdout": "native-direct0.stdout",
+    "stderr": "native-direct0.stderr"
+  },
+  {
+    "name": "existing-products",
+    "argv": [
+      "make",
+      "--no-print-directory",
+      "-f",
+      "Makefile",
+      "-f",
+      "/tmp/nova-a18-mnepx5_i/repo/software/nova/observer/observer.mk",
+      "CONFIG=RocketConfig",
+      "JAVA_HEAP_SIZE=4G",
+      "-j2",
+      "TIMESCALE_OPTS=",
+      "-o",
+      "/tmp/nova-a18-mnepx5_i/repo/sims/verilator/generated-src/chipyard.harness.TestHarness.RocketConfig/sim_files.common.f",
+      "-o",
+      "/tmp/nova-a18-mnepx5_i/repo/tools/DRAMSim2/libdramsim.a"
+    ],
+    "cwd": "/tmp/nova-a18-mnepx5_i/repo/sims/verilator",
+    "returncode": 0,
+    "stdout": "existing-products.stdout",
+    "stderr": "existing-products.stderr"
+  },
+  {
+    "name": "changed-manifest-input",
+    "argv": [
+      "make",
+      "--no-print-directory",
+      "-f",
+      "Makefile",
+      "-f",
+      "/tmp/nova-a18-mnepx5_i/repo/software/nova/observer/observer.mk",
+      "CONFIG=RocketConfig",
+      "JAVA_HEAP_SIZE=4G",
+      "-j2",
+      "TIMESCALE_OPTS=",
+      "-o",
+      "/tmp/nova-a18-mnepx5_i/repo/sims/verilator/generated-src/chipyard.harness.TestHarness.RocketConfig/sim_files.common.f",
+      "-o",
+      "/tmp/nova-a18-mnepx5_i/repo/tools/DRAMSim2/libdramsim.a"
+    ],
+    "cwd": "/tmp/nova-a18-mnepx5_i/repo/sims/verilator",
+    "returncode": 2,
+    "stdout": "changed-manifest-input.stdout",
+    "stderr": "changed-manifest-input.stderr"
+  }
+]

@@ -1,0 +1,439 @@
+{
+  "archive_members": [
+    "htif.o",
+    "memif.o",
+    "syscall.o",
+    "device.o",
+    "rfb.o",
+    "elfloader.o",
+    "term.o"
+  ],
+  "cases": [
+    {
+      "binary": "probe-original",
+      "fixture": {
+        "done": true,
+        "exit_code": 0,
+        "fixture_checks_passed": true,
+        "fromhost_after": 0,
+        "idle_calls": 0,
+        "mode": "direct0",
+        "reset_calls": 0,
+        "run_return": 0,
+        "scope": "native-host-only",
+        "tohost_after": 0,
+        "tohost_clears": 1,
+        "tohost_reads": 1
+      },
+      "host_status": 0,
+      "mode": "direct0",
+      "stderr": ""
+    },
+    {
+      "binary": "probe-original",
+      "fixture": {
+        "done": true,
+        "exit_code": 7,
+        "fixture_checks_passed": true,
+        "fromhost_after": 0,
+        "idle_calls": 0,
+        "mode": "direct7",
+        "reset_calls": 0,
+        "run_return": 7,
+        "scope": "native-host-only",
+        "tohost_after": 0,
+        "tohost_clears": 1,
+        "tohost_reads": 1
+      },
+      "host_status": 7,
+      "mode": "direct7",
+      "stderr": "*** FAILED *** (tohost = 7)\n"
+    },
+    {
+      "binary": "probe-original",
+      "fixture": {
+        "done": true,
+        "exit_code": 0,
+        "fixture_checks_passed": true,
+        "fromhost_after": 1,
+        "idle_calls": 0,
+        "mode": "syscall0",
+        "reset_calls": 0,
+        "run_return": 0,
+        "scope": "native-host-only",
+        "tohost_after": 0,
+        "tohost_clears": 1,
+        "tohost_reads": 1
+      },
+      "host_status": 0,
+      "mode": "syscall0",
+      "stderr": ""
+    },
+    {
+      "binary": "probe-original",
+      "fixture": {
+        "done": true,
+        "exit_code": 7,
+        "fixture_checks_passed": true,
+        "fromhost_after": 1,
+        "idle_calls": 0,
+        "mode": "syscall7",
+        "reset_calls": 0,
+        "run_return": 7,
+        "scope": "native-host-only",
+        "tohost_after": 0,
+        "tohost_clears": 1,
+        "tohost_reads": 1
+      },
+      "host_status": 7,
+      "mode": "syscall7",
+      "stderr": ""
+    },
+    {
+      "binary": "probe-original",
+      "fixture": {
+        "done": true,
+        "exit_code": 0,
+        "fixture_checks_passed": true,
+        "fromhost_after": 0,
+        "idle_calls": 1,
+        "mode": "signal-only",
+        "reset_calls": 0,
+        "run_return": 0,
+        "scope": "native-host-only",
+        "tohost_after": 0,
+        "tohost_clears": 0,
+        "tohost_reads": 1
+      },
+      "host_status": 0,
+      "mode": "signal-only",
+      "stderr": ""
+    },
+    {
+      "binary": "probe-original",
+      "fixture": {
+        "done": true,
+        "exit_code": 7,
+        "fixture_checks_passed": true,
+        "fromhost_after": 1,
+        "idle_calls": 0,
+        "mode": "syscall7-signal",
+        "reset_calls": 0,
+        "run_return": 7,
+        "scope": "native-host-only",
+        "tohost_after": 0,
+        "tohost_clears": 1,
+        "tohost_reads": 1
+      },
+      "host_status": 7,
+      "mode": "syscall7-signal",
+      "stderr": ""
+    },
+    {
+      "assessment": {
+        "event": {
+          "binding_sha256": "66a4ae94bdc6e24cd1bd7943b42ccfd4fdbaf7eadbee68c95ebb39e7e1ed0bff",
+          "kind": "nova-htif-exit",
+          "raw_exit_code": 1,
+          "run_id": "665cfce95625c69b572d0d3ce1ef0199d55a3a26d93d1eea35f282d95006f303",
+          "schema_version": 1,
+          "signal_exit": false,
+          "target_exit_code": 0,
+          "target_exit_present": true
+        },
+        "g1_gate_passed": false,
+        "hardware_qualified": false,
+        "reasons": [],
+        "status": "observed",
+        "target_completion_verified": true,
+        "target_exit_observed": true,
+        "witness_bytes": 291,
+        "witness_sha256": "bb002685d4f544c17bbb9654ac7ddf738a01c9f2fb5a5b2482d99f2356f61042"
+      },
+      "binary": "probe-observed",
+      "fixture": {
+        "done": true,
+        "exit_code": 0,
+        "fixture_checks_passed": true,
+        "fromhost_after": 0,
+        "idle_calls": 0,
+        "mode": "direct0",
+        "reset_calls": 0,
+        "run_return": 0,
+        "scope": "native-host-only",
+        "tohost_after": 0,
+        "tohost_clears": 1,
+        "tohost_reads": 1
+      },
+      "fixture_binding": {
+        "binary_sha256": "314c43b5eb88171be588cf6322e4246a1c57f04bf14e4d2faecc6b29e1428cb2",
+        "mode": "direct0",
+        "run_id": "665cfce95625c69b572d0d3ce1ef0199d55a3a26d93d1eea35f282d95006f303",
+        "scope": "native-host-fixture-only"
+      },
+      "host_status": 0,
+      "mode": "direct0",
+      "stderr": "",
+      "witness": "probe-observed-direct0.json"
+    },
+    {
+      "assessment": {
+        "event": {
+          "binding_sha256": "d8b9035cc65179a905e27ceb1968a9578d12585922f0dc2f211f04ab3e19c41a",
+          "kind": "nova-htif-exit",
+          "raw_exit_code": 15,
+          "run_id": "a58bc5349328bfbf98597317e8468a3557ccd4eb36bd04fb2b2b57c6bcc95e53",
+          "schema_version": 1,
+          "signal_exit": false,
+          "target_exit_code": 7,
+          "target_exit_present": true
+        },
+        "g1_gate_passed": false,
+        "hardware_qualified": false,
+        "reasons": [],
+        "status": "observed",
+        "target_completion_verified": true,
+        "target_exit_observed": true,
+        "witness_bytes": 292,
+        "witness_sha256": "c432791cfd19ca24fc1343ee78da8f95d737ba1a77ae9f73e9d30dd454402dd4"
+      },
+      "binary": "probe-observed",
+      "fixture": {
+        "done": true,
+        "exit_code": 7,
+        "fixture_checks_passed": true,
+        "fromhost_after": 0,
+        "idle_calls": 0,
+        "mode": "direct7",
+        "reset_calls": 0,
+        "run_return": 7,
+        "scope": "native-host-only",
+        "tohost_after": 0,
+        "tohost_clears": 1,
+        "tohost_reads": 1
+      },
+      "fixture_binding": {
+        "binary_sha256": "314c43b5eb88171be588cf6322e4246a1c57f04bf14e4d2faecc6b29e1428cb2",
+        "mode": "direct7",
+        "run_id": "a58bc5349328bfbf98597317e8468a3557ccd4eb36bd04fb2b2b57c6bcc95e53",
+        "scope": "native-host-fixture-only"
+      },
+      "host_status": 7,
+      "mode": "direct7",
+      "stderr": "*** FAILED *** (tohost = 7)\n",
+      "witness": "probe-observed-direct7.json"
+    },
+    {
+      "assessment": {
+        "event": {
+          "binding_sha256": "032a50c2752493ed12305316dc55d8942a0619febbb96a4caa8a7510dc837261",
+          "kind": "nova-htif-exit",
+          "raw_exit_code": 1,
+          "run_id": "e8bf3495e9857f4137d88646998e8e732805dd5e071cd993ba4702fee6d3b497",
+          "schema_version": 1,
+          "signal_exit": false,
+          "target_exit_code": 0,
+          "target_exit_present": true
+        },
+        "g1_gate_passed": false,
+        "hardware_qualified": false,
+        "reasons": [],
+        "status": "observed",
+        "target_completion_verified": true,
+        "target_exit_observed": true,
+        "witness_bytes": 291,
+        "witness_sha256": "a15986f21da1c9d34f76b2fe3e3ea987d767f3ea78586e5db692a90e74a92e39"
+      },
+      "binary": "probe-observed",
+      "fixture": {
+        "done": true,
+        "exit_code": 0,
+        "fixture_checks_passed": true,
+        "fromhost_after": 1,
+        "idle_calls": 0,
+        "mode": "syscall0",
+        "reset_calls": 0,
+        "run_return": 0,
+        "scope": "native-host-only",
+        "tohost_after": 0,
+        "tohost_clears": 1,
+        "tohost_reads": 1
+      },
+      "fixture_binding": {
+        "binary_sha256": "314c43b5eb88171be588cf6322e4246a1c57f04bf14e4d2faecc6b29e1428cb2",
+        "mode": "syscall0",
+        "run_id": "e8bf3495e9857f4137d88646998e8e732805dd5e071cd993ba4702fee6d3b497",
+        "scope": "native-host-fixture-only"
+      },
+      "host_status": 0,
+      "mode": "syscall0",
+      "stderr": "",
+      "witness": "probe-observed-syscall0.json"
+    },
+    {
+      "assessment": {
+        "event": {
+          "binding_sha256": "76095d2ff697fbeb222a7148abbf191b4f1bcaf94f915d445b885a0ed9432fa9",
+          "kind": "nova-htif-exit",
+          "raw_exit_code": 15,
+          "run_id": "2e576eae5a83e3bb69aa67e006fdb9f9ede551b01013626de36c934fc8a6ef59",
+          "schema_version": 1,
+          "signal_exit": false,
+          "target_exit_code": 7,
+          "target_exit_present": true
+        },
+        "g1_gate_passed": false,
+        "hardware_qualified": false,
+        "reasons": [],
+        "status": "observed",
+        "target_completion_verified": true,
+        "target_exit_observed": true,
+        "witness_bytes": 292,
+        "witness_sha256": "fac675f06585d8906485ff04c2c03c9781340d56c31db47bf2d225cc724083ef"
+      },
+      "binary": "probe-observed",
+      "fixture": {
+        "done": true,
+        "exit_code": 7,
+        "fixture_checks_passed": true,
+        "fromhost_after": 1,
+        "idle_calls": 0,
+        "mode": "syscall7",
+        "reset_calls": 0,
+        "run_return": 7,
+        "scope": "native-host-only",
+        "tohost_after": 0,
+        "tohost_clears": 1,
+        "tohost_reads": 1
+      },
+      "fixture_binding": {
+        "binary_sha256": "314c43b5eb88171be588cf6322e4246a1c57f04bf14e4d2faecc6b29e1428cb2",
+        "mode": "syscall7",
+        "run_id": "2e576eae5a83e3bb69aa67e006fdb9f9ede551b01013626de36c934fc8a6ef59",
+        "scope": "native-host-fixture-only"
+      },
+      "host_status": 7,
+      "mode": "syscall7",
+      "stderr": "",
+      "witness": "probe-observed-syscall7.json"
+    },
+    {
+      "assessment": {
+        "event": {
+          "binding_sha256": "d7b9721bba535ae7771c058a4184c923936e3c339860db51f6f04e9d6dd89ac9",
+          "kind": "nova-htif-exit",
+          "raw_exit_code": null,
+          "run_id": "ac13879c476dc971fa8f7810e6182e6fdbd70e69a7404b72cc5a82cab194fc11",
+          "schema_version": 1,
+          "signal_exit": true,
+          "target_exit_code": null,
+          "target_exit_present": false
+        },
+        "g1_gate_passed": false,
+        "hardware_qualified": false,
+        "reasons": [
+          "witness must not report a signal exit",
+          "witness does not report a present target exit"
+        ],
+        "status": "failed",
+        "target_completion_verified": false,
+        "target_exit_observed": false,
+        "witness_bytes": 297,
+        "witness_sha256": "c6c45d51f638934d907528f4f2283900f1b8b175038966e155725d8f94806683"
+      },
+      "binary": "probe-observed",
+      "fixture": {
+        "done": true,
+        "exit_code": 0,
+        "fixture_checks_passed": true,
+        "fromhost_after": 0,
+        "idle_calls": 1,
+        "mode": "signal-only",
+        "reset_calls": 0,
+        "run_return": 0,
+        "scope": "native-host-only",
+        "tohost_after": 0,
+        "tohost_clears": 0,
+        "tohost_reads": 1
+      },
+      "fixture_binding": {
+        "binary_sha256": "314c43b5eb88171be588cf6322e4246a1c57f04bf14e4d2faecc6b29e1428cb2",
+        "mode": "signal-only",
+        "run_id": "ac13879c476dc971fa8f7810e6182e6fdbd70e69a7404b72cc5a82cab194fc11",
+        "scope": "native-host-fixture-only"
+      },
+      "host_status": 0,
+      "mode": "signal-only",
+      "stderr": "",
+      "witness": "probe-observed-signal-only.json"
+    },
+    {
+      "assessment": {
+        "event": {
+          "binding_sha256": "cbbb6429efebb3f1218e336233585197bfe6324eaada3851ae1761f3775bd9de",
+          "kind": "nova-htif-exit",
+          "raw_exit_code": 15,
+          "run_id": "0cf687d60c52001449c6c16f91d7adc7ba6b9462fcb42df23479b15fd3b6c059",
+          "schema_version": 1,
+          "signal_exit": true,
+          "target_exit_code": 7,
+          "target_exit_present": true
+        },
+        "g1_gate_passed": false,
+        "hardware_qualified": false,
+        "reasons": [
+          "witness must not report a signal exit"
+        ],
+        "status": "failed",
+        "target_completion_verified": false,
+        "target_exit_observed": false,
+        "witness_bytes": 291,
+        "witness_sha256": "738527be47d82310f3a631349d48f32570cebd21fb661ac3221719f6799802f8"
+      },
+      "binary": "probe-observed",
+      "fixture": {
+        "done": true,
+        "exit_code": 7,
+        "fixture_checks_passed": true,
+        "fromhost_after": 1,
+        "idle_calls": 0,
+        "mode": "syscall7-signal",
+        "reset_calls": 0,
+        "run_return": 7,
+        "scope": "native-host-only",
+        "tohost_after": 0,
+        "tohost_clears": 1,
+        "tohost_reads": 1
+      },
+      "fixture_binding": {
+        "binary_sha256": "314c43b5eb88171be588cf6322e4246a1c57f04bf14e4d2faecc6b29e1428cb2",
+        "mode": "syscall7-signal",
+        "run_id": "0cf687d60c52001449c6c16f91d7adc7ba6b9462fcb42df23479b15fd3b6c059",
+        "scope": "native-host-fixture-only"
+      },
+      "host_status": 7,
+      "mode": "syscall7-signal",
+      "stderr": "",
+      "witness": "probe-observed-syscall7-signal.json"
+    }
+  ],
+  "compiler": "g++ (Debian 14.2.0-19) 14.2.0",
+  "cpu_execution": false,
+  "g1_gate_passed": false,
+  "hardware_qualified": false,
+  "limits": [
+    "Memory stimuli originate in the native fixture, not a CPU.",
+    "The archive is a native FESVR source closure, not installed pinned libfesvr.a.",
+    "Synthetic HAVE_INT128 config does not verify an installed toolchain.",
+    "No ELF loading, TSI, TestChipIP, Verilator, RTL, or campaign execution.",
+    "Parser target_completion_verified values apply only to supplied fixture events."
+  ],
+  "original_htif_member_extracted_in_observed": false,
+  "original_htif_member_extracted_in_original": true,
+  "overlay_precedes_archive": true,
+  "rtl_simulation": false,
+  "scope": "native-host-only real pinned HTIF/FESVR with synthetic memory",
+  "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+  "status": "passed",
+  "synthetic_config": "synthetic-config/config.h"
+}

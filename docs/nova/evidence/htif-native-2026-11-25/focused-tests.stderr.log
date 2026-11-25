@@ -1,0 +1,19 @@
+test_default_plan_is_read_only_and_absence_is_explicit (test_htif_host_probe.HostProbeTests.test_default_plan_is_read_only_and_absence_is_explicit) ... ok
+test_exclusive_evidence_write_refuses_existing_file (test_htif_host_probe.HostProbeTests.test_exclusive_evidence_write_refuses_existing_file) ... ok
+test_execution_requires_explicit_source_and_output (test_htif_host_probe.HostProbeTests.test_execution_requires_explicit_source_and_output) ... ok
+test_existing_output_and_symlink_parent_are_never_overwritten (test_htif_host_probe.HostProbeTests.test_existing_output_and_symlink_parent_are_never_overwritten) ... ok
+test_expected_exit_seven_preserves_failed_record_and_rejects_other_failure_causes (test_htif_host_probe.HostProbeTests.test_expected_exit_seven_preserves_failed_record_and_rejects_other_failure_causes) ... ok
+test_limits_reject_nonfinite_bool_and_out_of_range_values (test_htif_host_probe.HostProbeTests.test_limits_reject_nonfinite_bool_and_out_of_range_values) ... ok
+test_link_map_and_symbols_require_original_only_baseline_extraction (test_htif_host_probe.HostProbeTests.test_link_map_and_symbols_require_original_only_baseline_extraction) ... ok
+test_missing_native_tools_are_reported_without_launch (test_htif_host_probe.HostProbeTests.test_missing_native_tools_are_reported_without_launch) ... ok
+test_missing_source_and_unknown_source_are_rejected (test_htif_host_probe.HostProbeTests.test_missing_source_and_unknown_source_are_rejected) ... ok
+test_pinned_closure_has_all_real_units_headers_and_license (test_htif_host_probe.HostProbeTests.test_pinned_closure_has_all_real_units_headers_and_license) ... ok
+test_real_plan_uses_serial_native_commands_and_twelve_fresh_processes (test_htif_host_probe.HostProbeTests.test_real_plan_uses_serial_native_commands_and_twelve_fresh_processes) ... ok
+test_symlink_and_oversized_source_are_rejected (test_htif_host_probe.HostProbeTests.test_symlink_and_oversized_source_are_rejected) ... ok
+test_unavailable_inputs_block_execution_before_creating_any_output (test_htif_host_probe.HostProbeTests.test_unavailable_inputs_block_execution_before_creating_any_output) ... ok
+test_unpinned_source_is_rejected_without_pin_override (test_htif_host_probe.HostProbeTests.test_unpinned_source_is_rejected_without_pin_override) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.009s
+
+OK

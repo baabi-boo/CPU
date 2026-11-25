@@ -9,9 +9,10 @@ Start with the [project charter](CHARTER.md), [current status](STATUS.md), and
 2. Follow [DEVELOPMENT](DEVELOPMENT.md) for offline checks, preflight diagnostics,
    and the separately approved hardware-toolchain workflow.
    Use the non-mutating `make -f nova.mk preflight`, `g1-profile`, `conda-plan`,
-   and `g1-campaign-plan` targets to inspect setup risks, known prerequisites,
+   and `g1-observed-plan` targets to inspect setup risks, known prerequisites,
    the preserved inventory, and the proposed campaign. They do not install
-   dependencies or verify a processor.
+   dependencies or verify a processor. `g1-observed-plan` selects the optional
+   target-exit observer; `g1-campaign-plan` retains the legacy protocol-only plan.
 3. Check [CONFIGURATIONS](CONFIGURATIONS.md) before selecting a source profile;
    both NOVA profiles still require elaboration and execution evidence.
 4. Start with NOVA-001 in the [actionable backlog](BACKLOG.md). Its prerequisite
@@ -22,16 +23,31 @@ Start with the [project charter](CHARTER.md), [current status](STATUS.md), and
 ## Current G1 preparation checkpoint
 
 The profile/inventory inspectors, RV64 target sources, two-configuration campaign
-runner, and record comparator are implemented and covered by offline tooling
-tests. Their 15 workloads per configuration have not run on NOVA hardware or its
-simulator. G1 is blocked, and both named NOVA configurations remain unverified.
+runner, optional HTIF target-exit observer, retained-bundle verifier, and record
+comparator are implemented and covered by offline tooling tests. Their 15
+workloads per configuration have not run on NOVA hardware or its simulator.
+G1 is blocked, and both named NOVA configurations remain unverified.
 
 Read the [current preparation evidence](evidence/G1-PREPARATION-2026-11-12.md)
 for observed host blockers and preserved pins. The
 [completion-protocol investigation](evidence/G1-COMPLETION-PROTOCOL-2026-11-12.md)
 explains why an observed simulator success signal is not independent proof of
-target-originated completion. Matching campaign JSON is likewise not proof of
-execution or independent build reproduction.
+target-originated completion. The
+[current observer source and native evidence](evidence/G1-HTIF-OBSERVER-2026-11-25.md)
+records the implemented schema-2 observer and reproduces the signal-only
+ambiguity using pinned HTIF/FESVR code in a native host fixture, with no CPU or
+RTL execution. Ordinary protocol assessments retain
+`target_completion_verified: false`; only a matching nested
+`target_exit.assessment` in schema 2 may set it true for the supplied observer
+event. `hardware_qualified` and `g1_gate_passed` stay false.
+
+Retain raw logs and witnesses alongside each campaign record, run the
+[bundle verifier](../../scripts/nova/verify_campaign_bundle.py) on each bundle,
+then use the [record comparator](../../scripts/nova/compare_campaigns.py).
+`intact` and `consistent` establish agreement with retained bytes and between
+recorded identities, respectively, not authenticated execution or independent
+build reproduction. Follow the [runbook](BASELINE_RUNBOOK.md) for the exact
+commands and remaining hardware campaign.
 
 The [automated review ledger](evidence/G1-60-AGENT-REVIEW-2026-11-12.md)
 records the ten-wave development/review sequence and clean-checkout tooling

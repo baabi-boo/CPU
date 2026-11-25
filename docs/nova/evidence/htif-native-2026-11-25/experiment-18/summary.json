@@ -1,0 +1,45 @@
+{
+  "scope": "copied actual upstream make parse plus native host probes; no Verilator or CPU",
+  "root": "/tmp/nova-a18-mnepx5_i",
+  "original_sha256": "c669e8352c6e21d61118849b0b969d291b84100e83343659f3d08979ae89a11d",
+  "generated_sha256": "1a6383e8d9b7bfc4d44c2e674fafe1d8067d826c3c2cd0dae7e20a27e08aef84",
+  "default_goal": "default",
+  "make_values": {
+    ".DEFAULT_GOAL": "default",
+    "model_mk": "/tmp/nova-a18-mnepx5_i/repo/sims/verilator/generated-src/chipyard.harness.TestHarness.RocketConfig/chipyard.harness.TestHarness.RocketConfig/VTestDriver.mk",
+    "model_mk_debug": "/tmp/nova-a18-mnepx5_i/repo/sims/verilator/generated-src/chipyard.harness.TestHarness.RocketConfig/chipyard.harness.TestHarness.RocketConfig.debug/VTestDriver.mk",
+    "sim": "/tmp/nova-a18-mnepx5_i/repo/sims/verilator/simulator-chipyard.harness-RocketConfig",
+    "sim_debug": "/tmp/nova-a18-mnepx5_i/repo/sims/verilator/simulator-chipyard.harness-RocketConfig-debug",
+    "sim_common_files": "/tmp/nova-a18-mnepx5_i/repo/sims/verilator/generated-src/chipyard.harness.TestHarness.RocketConfig/sim_files.common.f",
+    "dramsim_lib": "/tmp/nova-a18-mnepx5_i/repo/tools/DRAMSim2/libdramsim.a",
+    "EXTRA_SIM_SOURCES": "/tmp/nova-a18-mnepx5_i/repo/nova-out/htif-observer/htif.cc /tmp/nova-a18-mnepx5_i/repo/software/nova/observer/nova_htif_exit.cc",
+    "EXTRA_SIM_CXXFLAGS": "-iquote /tmp/nova-a18-mnepx5_i/repo/toolchains/riscv-tools/riscv-isa-sim/fesvr -iquote /tmp/nova-a18-mnepx5_i/repo/toolchains/riscv-tools/riscv-isa-sim/riscv -iquote /tmp/nova-a18-mnepx5_i/repo/toolchains/riscv-tools/riscv-isa-sim/softfloat -iquote /tmp/nova-a18-mnepx5_i/prefix/include/fesvr -iquote /tmp/nova-a18-mnepx5_i/repo/software/nova/observer -DPREFIX=\\\\\\\"/tmp/nova-a18-mnepx5_i/prefix\\\\\\\"",
+    "SIM_CXXFLAGS": "-O3 -std=c++17 -I/tmp/nova-a18-mnepx5_i/prefix/include -I/tmp/nova-a18-mnepx5_i/repo/tools/DRAMSim2 -I/tmp/nova-a18-mnepx5_i/repo/sims/verilator/generated-src/chipyard.harness.TestHarness.RocketConfig/gen-collateral -iquote /tmp/nova-a18-mnepx5_i/repo/toolchains/riscv-tools/riscv-isa-sim/fesvr -iquote /tmp/nova-a18-mnepx5_i/repo/toolchains/riscv-tools/riscv-isa-sim/riscv -iquote /tmp/nova-a18-mnepx5_i/repo/toolchains/riscv-tools/riscv-isa-sim/softfloat -iquote /tmp/nova-a18-mnepx5_i/prefix/include/fesvr -iquote /tmp/nova-a18-mnepx5_i/repo/software/nova/observer -DPREFIX=\\\\\\\"/tmp/nova-a18-mnepx5_i/prefix\\\\\\\"",
+    "SIM_LDFLAGS": "-L/tmp/nova-a18-mnepx5_i/prefix/lib -Wl,-rpath,/tmp/nova-a18-mnepx5_i/prefix/lib -L/tmp/nova-a18-mnepx5_i/repo/sims/verilator -L/tmp/nova-a18-mnepx5_i/repo/tools/DRAMSim2 -lriscv /tmp/nova-a18-mnepx5_i/prefix/lib/libfesvr.a -ldramsim"
+  },
+  "target_rules": {
+    "model_mk": "/tmp/nova-a18-mnepx5_i/repo/sims/verilator/generated-src/chipyard.harness.TestHarness.RocketConfig/chipyard.harness.TestHarness.RocketConfig/VTestDriver.mk: /tmp/nova-a18-mnepx5_i/repo/sims/verilator/generated-src/chipyard.harness.TestHarness.RocketConfig/sim_files.common.f /tmp/nova-a18-mnepx5_i/repo/nova-out/htif-observer/htif.cc /tmp/nova-a18-mnepx5_i/repo/nova-out/htif-observer/manifest.json /tmp/nova-a18-mnepx5_i/repo/software/nova/observer/nova_htif_exit.cc /tmp/nova-a18-mnepx5_i/repo/software/nova/observer/nova_htif_exit.h /tmp/nova-a18-mnepx5_i/repo/software/nova/observer/observer.mk | nova-htif-observer-check",
+    "model_mk_debug": "/tmp/nova-a18-mnepx5_i/repo/sims/verilator/generated-src/chipyard.harness.TestHarness.RocketConfig/chipyard.harness.TestHarness.RocketConfig.debug/VTestDriver.mk: /tmp/nova-a18-mnepx5_i/repo/sims/verilator/generated-src/chipyard.harness.TestHarness.RocketConfig/sim_files.common.f /tmp/nova-a18-mnepx5_i/repo/nova-out/htif-observer/htif.cc /tmp/nova-a18-mnepx5_i/repo/nova-out/htif-observer/manifest.json /tmp/nova-a18-mnepx5_i/repo/software/nova/observer/nova_htif_exit.cc /tmp/nova-a18-mnepx5_i/repo/software/nova/observer/nova_htif_exit.h /tmp/nova-a18-mnepx5_i/repo/software/nova/observer/observer.mk | nova-htif-observer-check",
+    "sim": "/tmp/nova-a18-mnepx5_i/repo/sims/verilator/simulator-chipyard.harness-RocketConfig: /tmp/nova-a18-mnepx5_i/repo/sims/verilator/generated-src/chipyard.harness.TestHarness.RocketConfig/chipyard.harness.TestHarness.RocketConfig/VTestDriver.mk /tmp/nova-a18-mnepx5_i/repo/tools/DRAMSim2/libdramsim.a | nova-htif-observer-check",
+    "sim_debug": "/tmp/nova-a18-mnepx5_i/repo/sims/verilator/simulator-chipyard.harness-RocketConfig-debug: /tmp/nova-a18-mnepx5_i/repo/sims/verilator/generated-src/chipyard.harness.TestHarness.RocketConfig/chipyard.harness.TestHarness.RocketConfig.debug/VTestDriver.mk /tmp/nova-a18-mnepx5_i/repo/tools/DRAMSim2/libdramsim.a | nova-htif-observer-check"
+  },
+  "quoted_header_count": 17,
+  "prefix_two_shells_passed": true,
+  "native_link_excludes_original_htif_o": true,
+  "native_direct0_witness": {
+    "schema_version": 1,
+    "kind": "nova-htif-exit",
+    "run_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "binding_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "target_exit_present": true,
+    "raw_exit_code": 1,
+    "target_exit_code": 0,
+    "signal_exit": false
+  },
+  "existing_products_rebuilt": false,
+  "existing_products_manifest_revalidated": true,
+  "shadow_rejection": "unexpected include shadows the recorded input: platform.h",
+  "changed_manifest_rejected": true,
+  "synthetic_config": true,
+  "reused_a14_native_probe_object": true
+}

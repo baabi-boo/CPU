@@ -1,0 +1,7 @@
+htif.o
+memif.o
+syscall.o
+device.o
+rfb.o
+elfloader.o
+term.o

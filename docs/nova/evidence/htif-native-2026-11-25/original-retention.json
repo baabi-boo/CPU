@@ -1,0 +1,14 @@
+{
+  "copied_bytes": 3407986,
+  "copied_files": 140,
+  "full_run": "/tmp/nova-cpu-1f6d25e13e37-a14-run-01",
+  "not_copied": [
+    "objects/*.o",
+    "libfesvr-host-fixture.a",
+    "probe-original",
+    "probe-observed"
+  ],
+  "note": "artifacts.json is the original complete run inventory; compiled products remain only at full_run.",
+  "original_artifacts_verified": 152,
+  "retained_compact_evidence": "/workspace/scratch/1f6d25e13e37/coordination/a14-native"
+}
