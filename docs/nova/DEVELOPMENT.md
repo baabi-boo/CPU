@@ -80,6 +80,11 @@ target-exit observation. `g1-campaign-plan` retains the legacy schema-1
 protocol-only plan. Both are read-only and neither prepares observer outputs
 nor establishes that the full build environment is ready.
 
+The campaign, comparator, retained-bundle verifier, and native-probe CLI
+entrypoints disable bytecode writing before sibling imports, so their read-only
+routes avoid import-cache writes even without `-B`. The examples keep `-B` as
+an explicit invocation setting.
+
 ## 2. Prepare an explicitly approved hardware environment
 
 Use a Linux development environment with maintainer-approved host, RAM, disk,
@@ -205,6 +210,12 @@ their ABI compatibility or authenticated provenance. The native host fixture
 below uses a synthetic configuration and its own source-built archive; those
 products cannot satisfy the prepared-toolchain campaign prerequisites.
 
+Pure observer metadata validation rejects a `manifest_bytes` count smaller than
+the complete reconstructed manifest's compact ASCII JSON size, retaining the
+65,536-byte maximum. It preserves the actual raw hash and permits different JSON
+formatting; this is consistency checking, not authentication of manifest bytes
+or a build.
+
 ## 3. Establish the single-hart baseline
 
 ### Preferred two-configuration G1 campaign
@@ -230,8 +241,11 @@ builds. The implementation is tooling, not a new CPU architecture or a completed
 Execution requires the checkout containing the runner and helpers to be clean,
 with no hidden-index flags or known stale build products, a prepared `env.sh`,
 valid `RISCV`/`CONDA_PREFIX`, a ready fixed profile, and matching Conda metadata.
-It rejects enumerated inherited build overrides instead of silently changing the
-profile. The running script must belong to that checkout; execution using
+It rejects enumerated inherited build overrides, including `ASPECTS`,
+`ASPECT_ARGS`, and `MAKE` even when empty, before profile/provenance checks or
+commands in both modes. Those settings can alter generator aspects or recursive
+Make behavior; retained rejection reasons name the setting without its value.
+The running script must belong to that checkout; execution using
 `--root` to point another checkout's helper at it is rejected. It never deletes
 stale products; use a fresh separate checkout and review remaining ignored
 caches. Observed mode rejects existing `nova-out/htif-observer`, generated model
@@ -284,6 +298,15 @@ Legacy schema 1 cannot make this verified-exit claim. `hardware_qualified` and
 run, and the declared ISA subset does not qualify excluded extensions or every
 conditional branch inside upstream tests.
 
+Host status 125 from the recorder remains a failure even when retained witness
+bytes look complete and valid. Cleanup only attempts to truncate the exclusively
+created descriptor still owned by the recorder and never unlinks a pathname; filesystem
+or close errors can leave empty, partial, or intact bytes. Fatal stderr output
+uses bounded nonblocking retries and is best effort, so no diagnostic may appear
+on a full pipe. Preserve the host status with the witness. Parser cleanup also
+tracks descriptor ownership, attempts each independent close once, preserves
+earlier errors, and rejects a witness that could not be safely read and closed.
+
 After each real campaign, preserve `record.json` and every named raw stdout,
 stderr, and witness file together with their original bytes and basenames.
 Retain generated RTL, binaries, and observer manifests/inputs separately as
@@ -313,6 +336,12 @@ builds, trustworthy toolchain provenance, or hardware reproduction. Follow the
 reference-comparison scope, and separate gate acceptance. Preserve failed and
 blocked runs, and curate raw logs before publication; records can contain local
 paths.
+
+Checkout-relative metadata does not establish identical build bytes across
+checkout or `RISCV` paths: `PREFIX` and absolute runtime library search paths
+(`rpath`) are embedded by the build recipes. Preserve exact artifact and manifest hashes
+and investigate a `different` result. A fixed-path or prefix-remapping procedure
+requires separate review and build evidence; do not weaken hash comparison.
 
 ### Optional native HTIF host probe
 
@@ -349,8 +378,13 @@ These are the defaults: 180 seconds aggregate, 45 seconds per build command,
 5 seconds per case, 1 MiB per log stream, and a 1 GiB free-space floor. Accepted
 maxima are 300 aggregate seconds, 60 seconds per build command, 30 seconds per
 case, and 4 MiB per stream. Cleanup and final capture reserve time; sampled
-disk/log checks are not OS quotas. Final retention is bounded to 256 files,
-32 MiB per file, and 128 MiB total.
+disk/log checks are not OS quotas. Enumeration is bounded to 512 entries,
+including directories; capture is bounded to 256 files, 32 MiB per file, and
+128 MiB total. Cancellation/deadline checks run during enumeration, around
+capture, and before and after each 64 KiB read; reads also respect the remaining
+aggregate byte allowance. Exclusively created result/inventory descriptors
+retain late interruption, deadline, and persistence failures. Synchronous I/O,
+final writes, close, and return are not given a hard wall-clock guarantee.
 
 The two native builds cover six modes each: direct exits 0/7, syscall exits 0/7,
 signal-only shutdown, and syscall exit 7 followed by a signal. All **12 cases**
@@ -361,8 +395,10 @@ native host observations and link/symbol checks only. Top-level completion, CPU/
 hardware, and G1 flags stay false; any nested verified-exit flags refer only to
 supplied host-fixture events. Retain the source/license snapshots, manifests,
 commands, logs, maps, witnesses, results, and artifact inventory. The
-[observer evidence](evidence/G1-HTIF-OBSERVER-2026-11-25.md) records the completed
-native probe and its limitations. Both clean CPU campaign builds remain unrun.
+[observer evidence](evidence/G1-HTIF-OBSERVER-2026-11-25.md) records the
+historical native probes, their input snapshots, and the later repairs
+separately. Current-code replay needs its own result and hashes. Both clean CPU
+campaign builds remain unrun.
 
 ### Legacy single-profile smoke helper
 

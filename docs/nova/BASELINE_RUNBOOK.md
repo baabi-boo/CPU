@@ -115,6 +115,11 @@ The legacy schema-1 protocol-only plan remains available through
 `make -f nova.mk g1-campaign-plan`. A plan does not establish that observer or
 hardware prerequisites are present.
 
+The campaign, comparator, retained-bundle verifier, and native-probe CLI
+entrypoints disable bytecode writing before sibling imports. Their read-only
+routes do not need `-B` to avoid creating import caches; the examples retain it
+as an explicit invocation setting.
+
 ## 3. Qualify the prepared environment
 
 After a separately approved, pinned setup, activate the recorded environment
@@ -149,6 +154,12 @@ Do not unset a required environment setting merely to bypass a rejection: the
 runner rejects enumerated profile/build overrides, not every possible influence
 of an arbitrary local environment.
 
+Inherited `ASPECTS`, `ASPECT_ARGS`, and `MAKE` are among the rejected overrides,
+even when empty, in both campaign modes. They can change generator arguments or
+recursive Make behavior. Rejection precedes profile/provenance checks and build
+commands; the record names the setting without retaining its value. Resolve the
+intended prepared environment before execution rather than hiding an override.
+
 Observed mode additionally requires the exact pinned Spike source and source
 headers, a matching installed `RISCV/include/fesvr/htif.h`, the installed
 `RISCV/include/fesvr/config.h`, and an ordinary static
@@ -159,6 +170,11 @@ object is linked before the explicit static archive. The source/build hashes
 identify captured inputs and do not qualify the installed toolchain's ABI or
 authenticate its provenance. The native fixture described below does not supply
 these installed hardware-campaign prerequisites.
+
+Observer metadata also requires `manifest_bytes` to cover at least the compact
+ASCII JSON representation of the complete reconstructed manifest, up to the
+existing 65,536-byte maximum. This pure consistency check preserves actual raw
+hashes and accepts different JSON formatting; it is not file or build verification.
 
 ## 4. Review the exact workload contract
 
@@ -276,6 +292,16 @@ or incorrectly bound witnesses fail. A witness cannot override an ordinary
 process/protocol failure, runner-owned interruption, timeout, or changed input.
 Legacy schema-1 mode cannot make this nested verified-exit claim.
 
+An observer failure with host status 125 remains disqualifying even if its
+retained witness contains complete, valid JSON. Failure cleanup only attempts
+to truncate the exclusively created descriptor still owned by the recorder;
+it never unlinks a pathname. Empty, partial, or intact bytes may remain after
+filesystem or close errors. The fixed stderr diagnostic is best effort with
+bounded nonblocking retries, so a full pipe may contain no diagnostic. Preserve
+the actual process status and raw files together. A witness read or close
+failure also clears its observation and qualification flags; the parser never
+retries a failed close against a potentially reused descriptor number.
+
 `hardware_qualified` and `g1_gate_passed` stay false. Neither a native host probe,
 a synthetic unit-test fixture, nor an observer-event assessment closes
 `T-BUILD-001`, `T-ISA-001`, or G1. The prepared-toolchain CPU campaign and its
@@ -333,6 +359,15 @@ validated internally; reused run IDs across records are blocked. A legacy
 schema-1 record and an observed schema-2 record are not comparable. Neither
 verification tool awards G1 acceptance or resolves the still-unrun pinned
 reference comparison.
+
+Checkout-relative metadata does not promise identical binaries across different
+checkout or `RISCV` paths. The observer build embeds the actual prefix through
+`PREFIX` and an absolute runtime library search path (`rpath`); simulator linking
+also retains that runtime path. Such builds can legitimately compare as `different`.
+Keep the exact binary, simulator, archive, generated-artifact, and manifest hash
+comparisons and investigate the bytes. A fixed-path or prefix-remapping build
+procedure needs separate review and evidence; do not normalize artifacts into
+agreement.
 
 For a G1 review, retain and independently inspect:
 
@@ -398,8 +433,14 @@ The example uses serial compilation, a 180-second aggregate deadline,
 and a 1 GiB free-space floor. The accepted maxima are 300 aggregate seconds,
 60 seconds per build command, 30 seconds per case, and 4 MiB per stream. Cleanup
 and final capture reserve time from the budget; disk/log checks are sampled,
-not OS quotas. Retained artifacts are bounded to 256 files, 32 MiB per file,
-and 128 MiB in total.
+not OS quotas. Enumeration is bounded to 512 entries including directories;
+retained artifacts are bounded to 256 files, 32 MiB per file, and 128 MiB in
+total. Cancellation/deadline checks run during enumeration, around capture,
+and before and after each 64 KiB read, with reads also limited by the remaining
+aggregate byte allowance. Terminal results and inventory use their exclusively
+created descriptors to retain late interruption, deadline, and persistence
+failures. Synchronous filesystem calls, final writes, close, and return are not
+a hard wall-clock guarantee; an incomplete inventory remains incomplete evidence.
 
 The probe builds original and observed native variants from seven pinned FESVR
 translation units and runs **12 fresh processes**: direct exits 0/7, syscall
@@ -414,8 +455,9 @@ false; nested parser flags describe supplied host-fixture events only.
 Retain the source/license snapshots, manifests, command records, logs, maps,
 witnesses, results, and artifact inventory from both successful and failed
 attempts. The [observer evidence](evidence/G1-HTIF-OBSERVER-2026-11-25.md) records
-the completed native experiment and its limits. This probe cannot replace either
-of G1's two clean CPU campaign builds.
+the historical native experiments and their exact input snapshots separately
+from later repairs. A replay of current code needs its own result and hashes.
+This probe cannot replace either of G1's two clean CPU campaign builds.
 
 ## Legacy single-profile helper
 

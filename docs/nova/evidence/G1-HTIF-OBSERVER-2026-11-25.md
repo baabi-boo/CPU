@@ -11,10 +11,11 @@ TestDriver, RTL, FPGA, or silicon execution is established by this record.
 | Requirement scope | `REQ-CPU-001`, `T-BUILD-001`, and `T-ISA-001` preparation; no hardware test acceptance |
 | Original Spike pin | `9c190a07c6838f6392bafa4ad83acea462c7f759` |
 | Native experiment 08 | Six modes in original and observed builds: twelve bounded native processes passed |
-| Native experiment 14 | Reusable CLI: nineteen build/inspection commands and twelve bounded native processes passed |
+| Native experiment 14 | Historical CLI snapshot: nineteen build/inspection commands and twelve bounded native processes passed; later repairs require separate replay evidence |
 | Make/native experiment 18 | Actual copied upstream Makefiles parsed; quoting, header closure, static archive order, and one native `direct0` case checked |
 | First committed observer integration | Fresh-checkout repository-only check: 752 tests passed; later integration results must be recorded separately |
 | Subsequent committed checkpoint | Fresh-checkout repository-only check: 801 tests passed; this is a checkpoint, not the final evolving suite total |
+| Recorder/parser/manifest repair checkpoint | Published `3520f99a`: fresh-checkout repository-only check passed 822 tests in 39.673 seconds; later repairs are outside this checkpoint |
 | Hardware environment | Strict G1 profile blocked with 38 reported blockers; hardware campaign not run |
 | Foundation preservation | Fifty-seven gitlink pins and nine imported Conda inputs unchanged |
 | Gate decision | None; hardware and G1 qualification remain false |
@@ -54,7 +55,7 @@ No experiment here executed those bridges or TestDriver. The earlier
 [completion finding](G1-COMPLETION-PROTOCOL-2026-11-12.md) records the connected
 source path and its conditional nature.
 
-### Frozen transform and native input identity
+### Frozen transform and historical native input identity
 
 The generator verifies the original source hash before exactly three edits:
 rewrite the source-relative `common.h` include for the recorded include search
@@ -77,14 +78,16 @@ The original submodule source is never edited.
 | `scripts/nova/campaign_exec.py` | `b642779102b990c76ae691224e591ddc5c151e3bce8df5f546b5c958ff920dd7` |
 | `scripts/nova/htif_host_probe.py` | `9396e26c79bae06ee5f5b502d97757de2b015c15672b47710f8d7cf2b108d8ff` |
 
-These are executed native input identities from
+These are the historical experiment-14 executed native input identities from
 [nova-inputs.json](htif-native-2026-11-25/nova-inputs.json), the original source
 manifest, and the unchanged original
 [artifact inventory](htif-native-2026-11-25/artifacts.json). They are not a
-promise that every later repository revision has identical bytes. The complete
-overlay is recorded as `nova_htif.cc` in the native experiment; campaign
-preparation writes its corresponding overlay as `htif.cc` under the observer
-output directory.
+promise that every later repository revision has identical bytes. Later recorder,
+parser, manifest-validator, and native-finalization repairs are not retroactively
+covered by this run; a replay of those bytes needs its own recorded identities
+and results. The complete overlay is recorded as `nova_htif.cc` in the native
+experiment; campaign preparation writes its corresponding overlay as `htif.cc`
+under the observer output directory.
 
 ## Implemented observation and its boundary
 
@@ -104,9 +107,16 @@ lowercase hexadecimal `NOVA_HTIF_RUN_ID` and `NOVA_HTIF_BINDING_SHA256` values.
 The recorder walks parent directories with no-follow descriptors, creates the
 leaf exclusively with mode 0600, writes one newline-terminated JSON object,
 syncs/checks it, and checks close errors. It never overwrites an existing leaf.
-Missing/invalid environment, a second callback, or recording failure produces
-the fixed fatal diagnostic and status 125. A matching witness cannot convert
-that host failure into an accepted negative test.
+Missing/invalid environment, a second callback, or recording failure terminates
+with status 125 and attempts the fixed fatal diagnostic. Diagnostic delivery is
+best effort: stderr is temporarily nonblocking, SIGPIPE is blocked, and write
+retries are bounded. A full pipe can receive no diagnostic. Cleanup attempts
+truncation only through the exclusively created descriptor still owned by the
+recorder; it never unlinks any pathname, reopens a failed witness, or retries a
+failed close. An empty file may remain, and truncation or close errors can leave
+partial or complete bytes. **Host status 125 is authoritative even if retained
+bytes form a valid witness**; they cannot make that failure an accepted negative
+test.
 
 The eight exact witness fields are `schema_version`, `kind`, `run_id`,
 `binding_sha256`, `target_exit_present`, `raw_exit_code`, `target_exit_code`, and
@@ -137,7 +147,7 @@ full pinned
 also has host-driven termination uses of HTIF, so the observer is not a general
 proof of target instruction execution in arbitrary Spike configurations.
 
-## Native result
+## Historical native results
 
 The exact original HTIF implementation received a real `SIGTERM` from the host
 fixture without receiving a target-exit command. It returned `done=true`,
@@ -249,10 +259,10 @@ initialize submodules, or cross-compile target software. The second experiment
 reused the audited source collection from the first; neither is an independent
 clean hardware campaign.
 
-The CLI runs nineteen serial build/inspection commands and twelve fresh host
-fixture processes, with these resource guards:
+At the experiment-14 snapshot, the CLI ran nineteen serial build/inspection
+commands and twelve fresh host fixture processes with these configured guards:
 
-| Bound | Executed default | Maximum accepted by CLI |
+| Bound | Experiment-14 default | Maximum accepted at that snapshot |
 | --- | --- | --- |
 | Aggregate time | 180 seconds | 300 seconds |
 | Each build/inspection command | 45 seconds | 60 seconds |
@@ -261,7 +271,9 @@ fixture processes, with these resource guards:
 | Required free space | 1 GiB | Configurable positive floor, checked at bounded sampling points |
 | Final artifact capture | 256 files, 32 MiB per file, 128 MiB total | Fixed limits |
 
-The CLI reserves runner cleanup and final-capture time before launch. These are
+The CLI reserves runner cleanup and final-capture time before launch. The current
+enumeration and finalization controls are described separately below; this
+historical table does not establish their execution. These are
 trusted-process guards, not OS quotas, a sandbox, or a hard wall-clock guarantee.
 Actual code-7 child returns remain `status=failed`/exit 7 in engine records; the
 higher-level expected-exit interpretation never changes the observed status or
@@ -314,6 +326,52 @@ before it can be qualified.
 
 ## Audit findings incorporated into the tooling
 
+### Recorder cleanup and bounded fatal output
+
+The current [recorder](../../../software/nova/observer/nova_htif_exit.cc) removes
+the identity-check-then-unlink cleanup path: a pathname can change after its
+identity check. Descriptor-only truncation preserves foreign replacements while
+invalidating the owned inode when the filesystem permits it. The
+[native regressions](../../../tests/nova/test_htif_native.py) include replacement
+at the former unlink race and immediately before truncation, real full stderr
+pipes in blocking and nonblocking modes, and retained complete bytes after a
+close error. The pre-repair controls reproduced deletion of a foreign file and
+a five-second timeout on a full blocking pipe; the repaired controls returned
+125 without those outcomes.
+
+Fatal diagnostic short-write/EINTR handling has a finite 64-attempt budget;
+stderr flag-setting retries are also bounded. Ordinary writable streams retain
+the exact diagnostic and their original flags. Because `O_NONBLOCK` belongs to
+the shared open-file description, the temporary change can affect inherited
+descriptors. Concurrent flag mutation or a permanent restoration error is outside
+the tested restoration guarantee. The witness write loop and synchronous device
+or filesystem calls do not acquire a general signal-storm or wall-clock bound.
+
+### Witness descriptor ownership and complete manifest bounds
+
+The [witness reader](../../../scripts/nova/htif_exit_evidence.py) transfers
+directory ownership before closing the prior directory and retains an opened
+leaf while its parent is closed. Cleanup attempts to close each independently
+owned descriptor once; a failed close is never retried against a possibly reused
+descriptor number. Cleanup preserves an earlier read, validation, or interruption failure
+and attempts the remaining independent closes. An otherwise successful read
+with a close failure returns the sanitized safe-read failure with all observation
+and qualification flags false and null witness metadata. The
+[parser regressions](../../../tests/nova/test_htif_exit_evidence.py) exercise real
+kernel closes followed by injected errors and descriptor-number reuse. The
+existing no-follow traversal and inclusive 4096-byte witness limit remain.
+
+Pure [observer metadata validation](../../../scripts/nova/htif_observer.py) now
+reconstructs the complete manifest, checks its strict shape, and rejects
+`manifest_bytes` below that object's compact ASCII JSON length. This minimum
+depends on the supplied paths and integer widths; the existing 65,536-byte
+maximum remains. Validation does not open files or infer a raw manifest digest
+from a canonical serialization. Different key order, whitespace, and omission
+of a trailing newline remain valid when the actual raw size and hash are retained.
+The [manifest regressions](../../../tests/nova/test_htif_observer.py) cover those
+boundaries. This rejects impossible metadata without authenticating a build or
+execution.
+
 ### Cancellation and final evidence
 
 [campaign_exec.py](../../../scripts/nova/campaign_exec.py) now reconciles
@@ -340,6 +398,54 @@ cancellation. The last deadline check precedes close/teardown/return; the
 record writer is not a transactional publisher, crash/SIGKILL recovery system,
 or hard deadline mechanism. Concurrent readers must not treat an in-progress
 record write as a committed result.
+
+### Native probe enumeration and terminal persistence
+
+Current [native probe finalization](../../../scripts/nova/htif_host_probe.py)
+streams directory entries and stops at the first excess file or entry. The
+bounds are **512 entries including directories**, **256 captured files**,
+32 MiB per file, and 128 MiB total. Only captured rows are sorted. Directory
+access is no-follow; regular-file validation rejects symlinks and special files.
+Cancellation/deadline checks run during enumeration, around artifact
+capture, and before and after every 64 KiB read; executable, log, and linkage-map
+reads use the same checks. Each read is further capped by the remaining aggregate
+capture allowance. Previously retained raw files and rows survive a later stop.
+
+`results.json` and `artifacts.json` are each created exclusively once. Their
+owned descriptors remain open through initial persistence and handler restoration
+so late interruption, deadline crossing, and metadata time can be reconciled
+without reopening a pathname. Corrections refresh the result hash in the
+inventory; each metadata file's first write error is retained. A previous failure
+stays failed while interruption/deadline facts are added. The
+[native finalization regressions](../../../tests/nova/test_htif_host_probe.py)
+cover actual SIGTERM, virtual deadlines, bounded enumeration/read controls,
+descriptor closure, and saved-byte/hash agreement. Those controls executed no
+native cases and do not replace a current twelve-case replay.
+
+Synchronous filesystem calls can still exceed the sampled deadline. Essential
+terminal metadata is attempted after optional capture stops; the last successful
+corrective write, close, and return can follow the last elapsed-time sample.
+Persistence is not transactional or crash/SIGKILL recovery, and persistent I/O
+failure can prevent complete evidence retention.
+
+### Inherited build overrides and read-only CLI imports
+
+Both campaign modes reject inherited `ASPECTS`, `ASPECT_ARGS`, and `MAKE`, even
+when empty, before profile/provenance checks or commands. They can change the
+generator aspects or recursive Make invocation. The retained rejection names
+the setting without copying its value, and all unstarted rows remain `not_run`.
+Read-only plans remain unchanged by those settings. The
+[campaign regressions](../../../tests/nova/test_g1_campaign.py) also retain
+ordinary `PATH`, `RISCV`, and `CONDA_PREFIX` forwarding; this enumerated policy
+does not authenticate arbitrary environment influences.
+
+The campaign, comparator, and retained-bundle CLI entrypoints now disable Python
+bytecode writing before sibling imports, matching the native probe convention.
+Their read-only routes remain free of sibling `__pycache__` writes even when
+called without `-B`. Isolated cold-cache controls exercised the default campaign
+plan and missing-record comparator/verifier routes with and without `-B`: patched
+routes created no files or child executions and preserved complete stdout and
+exit codes. This establishes the audited CLI behavior, not execution provenance.
 
 ### Pinned code-seven and crash diagnostics
 
@@ -376,6 +482,17 @@ witness differences from cross-run equality. Mixed schemas and retained
 downgrade extensions fail closed. A `consistent` result still describes supplied
 records; it does not verify independent execution, actual ELF contents, or
 hardware/reference-comparison qualification.
+
+Checkout-relative metadata does not establish binary determinism across checkout
+or installation paths. The [observer recipe](../../../software/nova/observer/observer.mk)
+embeds the actual `RISCV` prefix through `PREFIX` and an absolute runtime library
+search path (`rpath`); the
+[simulator link recipe](../../../sims/common-sim-flags.mk) also retains that
+runtime path. Different paths can therefore produce `different`.
+Exact ELF, simulator, generated-artifact, archive, and manifest hashes remain in
+comparison; preserve and investigate differences rather than normalize their
+bytes or weaken hash equality. A fixed-path or prefix-remapping procedure still
+needs its own review and real build evidence.
 
 ### Retained-file and parser fixes
 
@@ -429,6 +546,14 @@ fresh output, expected nonzero status, and map/symbol checks. These counts overl
 the full suite; they must not be added to produce an invented aggregate total.
 No total-worker completion or human gate acceptance is claimed here.
 
+The later published checkpoint
+[3520f99a4939ed97fb002ec4c91debb8e7d7b06a](https://github.com/baabi-boo/CPU/commit/3520f99a4939ed97fb002ec4c91debb8e7d7b06a)
+includes the documentation integration and the recorder, witness-parser, and
+complete-manifest size repairs described above. Its fresh-checkout
+`make -f nova.mk check` passed **822 tests in 39.673 seconds**. Later native
+finalization, inherited-override, and read-only CLI repairs require their own
+integration checkpoint; 822 is not asserted as the final suite total.
+
 ### Observed CI portability failure and repair
 
 The [GitHub Actions run for `66f3eb1e`](https://github.com/baabi-boo/CPU/actions/runs/45699683466)
@@ -449,6 +574,17 @@ levels, and all 24 native fixture tests passed. The repaired recorder SHA256 is
 The earlier native input table and retained observations continue to identify
 their original executed snapshot. Later remote results must be recorded against
 their actual tested commit.
+
+The subsequent
+[run 45701410807](https://github.com/baabi-boo/CPU/actions/runs/45701410807)
+passed for the fortify repair at
+[24d00430796e3dd09a31af6f91364056edda0137](https://github.com/baabi-boo/CPU/commit/24d00430796e3dd09a31af6f91364056edda0137).
+The [run for `3520f99a`, 45703875662](https://github.com/baabi-boo/CPU/actions/runs/45703875662)
+also completed successfully, checked at 21:41 UTC on 2026-11-25. These remote
+results apply to their named commits; no later-commit CI result is asserted here.
+The fortify-repair hash above is also historical: the later descriptor-only
+cleanup changes the recorder again, without changing experiment 14's retained
+inputs or results.
 
 ## Remaining G1 work
 
