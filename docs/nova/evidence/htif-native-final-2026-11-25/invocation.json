@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "scripts/nova/htif_host_probe.py",
+    "--execute",
+    "--source-root",
+    "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike",
+    "--output",
+    "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01"
+  ],
+  "cwd": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/CPU",
+  "default_limits_unmodified": true,
+  "executed_commit": "52161a0b395f0644d693c132433ea9246deab712",
+  "executed_tree": "609d280a87e6b14d1c01c934d74f8fe51a9a8f3e",
+  "exit_code": 0,
+  "finished_utc": "2026-11-25T21:40:31.362472+00:00",
+  "free_bytes_after_execution": 1391030272,
+  "free_bytes_before_execution": 1407537152,
+  "native_probe_invocations": 1,
+  "outer_wall_elapsed_seconds": 6.359713,
+  "output": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01",
+  "started_utc": "2026-11-25T21:40:25.002684+00:00",
+  "stderr": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/execute.stderr.log",
+  "stdout": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/execute.stdout.json"
+}

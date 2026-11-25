@@ -1,0 +1,218 @@
+[
+  {
+    "local_path": "inputs/spike/LICENSE",
+    "path": "LICENSE",
+    "scope": "spike",
+    "sha256": "c65e436d18972c9c4bd192494fe4870bd2e158179474975b80a3559f27631632",
+    "size_bytes": 1403,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/LICENSE"
+  },
+  {
+    "local_path": "inputs/spike/fesvr/byteorder.h",
+    "path": "fesvr/byteorder.h",
+    "scope": "spike",
+    "sha256": "af2a8f9dbbbbcfe892bfe464a7b21d34894ae303dbccc2caa1c06b7fac449492",
+    "size_bytes": 3598,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/fesvr/byteorder.h"
+  },
+  {
+    "local_path": "inputs/spike/fesvr/device.cc",
+    "path": "fesvr/device.cc",
+    "scope": "spike",
+    "sha256": "3feee8c3fb6d8cb29beb79840f2b5be3166b0211977eeb61317c5dbaa67a83cd",
+    "size_bytes": 3723,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/fesvr/device.cc"
+  },
+  {
+    "local_path": "inputs/spike/fesvr/device.h",
+    "path": "fesvr/device.h",
+    "scope": "spike",
+    "sha256": "14bef783e6b9f8b403bfa91410b6e3250ffd766332d46da47738cb5436ef989e",
+    "size_bytes": 2332,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/fesvr/device.h"
+  },
+  {
+    "local_path": "inputs/spike/fesvr/elf.h",
+    "path": "fesvr/elf.h",
+    "scope": "spike",
+    "sha256": "13e82d26bad50fe0fde7e3d999a3d569faa480f9f8c21cb94905b5dfb53c42ca",
+    "size_bytes": 2962,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/fesvr/elf.h"
+  },
+  {
+    "local_path": "inputs/spike/fesvr/elfloader.cc",
+    "path": "fesvr/elfloader.cc",
+    "scope": "spike",
+    "sha256": "29e021317fb8ffe90c68e56a107bfd80bf1b24a059bb48c34b98b075319efa7b",
+    "size_bytes": 6764,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/fesvr/elfloader.cc"
+  },
+  {
+    "local_path": "inputs/spike/fesvr/elfloader.h",
+    "path": "fesvr/elfloader.h",
+    "scope": "spike",
+    "sha256": "abbdad19a0a0e9375848e82db9c5a8149dbea48c897934197cad5087c16d4ce0",
+    "size_bytes": 349,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/fesvr/elfloader.h"
+  },
+  {
+    "local_path": "inputs/spike/fesvr/htif.cc",
+    "path": "fesvr/htif.cc",
+    "scope": "spike",
+    "sha256": "c669e8352c6e21d61118849b0b969d291b84100e83343659f3d08979ae89a11d",
+    "size_bytes": 12925,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/fesvr/htif.cc"
+  },
+  {
+    "local_path": "inputs/spike/fesvr/htif.h",
+    "path": "fesvr/htif.h",
+    "scope": "spike",
+    "sha256": "5aec4e8516d1ccc72941af7a728556027a9da88d199978c9434e0996e55be608",
+    "size_bytes": 5965,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/fesvr/htif.h"
+  },
+  {
+    "local_path": "inputs/spike/fesvr/memif.cc",
+    "path": "fesvr/memif.cc",
+    "scope": "spike",
+    "sha256": "6cced20eb732a438a907ec2070e4f2be478f415e1427e6f25cbc64c2450c33ab",
+    "size_bytes": 4259,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/fesvr/memif.cc"
+  },
+  {
+    "local_path": "inputs/spike/fesvr/memif.h",
+    "path": "fesvr/memif.h",
+    "scope": "spike",
+    "sha256": "483a03f681fa03d43afc28c15b6f3c75be444463fd1efcc1980334ab81546461",
+    "size_bytes": 2550,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/fesvr/memif.h"
+  },
+  {
+    "local_path": "inputs/spike/fesvr/rfb.cc",
+    "path": "fesvr/rfb.cc",
+    "scope": "spike",
+    "sha256": "10fc8b6215c382728f6cb871367b13aa05f678168e62e62d40bb83719895a02d",
+    "size_bytes": 5726,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/fesvr/rfb.cc"
+  },
+  {
+    "local_path": "inputs/spike/fesvr/rfb.h",
+    "path": "fesvr/rfb.h",
+    "scope": "spike",
+    "sha256": "63e1a1ab02d8085e37856c44adc121d4e27f4775faaa7cffa9342bdf17c1f73b",
+    "size_bytes": 1109,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/fesvr/rfb.h"
+  },
+  {
+    "local_path": "inputs/spike/fesvr/syscall.cc",
+    "path": "fesvr/syscall.cc",
+    "scope": "spike",
+    "sha256": "371639953ee8edf0bed1e57e5ed894f99948886b9cac63931398aea2b512a78a",
+    "size_bytes": 16574,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/fesvr/syscall.cc"
+  },
+  {
+    "local_path": "inputs/spike/fesvr/syscall.h",
+    "path": "fesvr/syscall.h",
+    "scope": "spike",
+    "sha256": "ef19c0fb7f9f59f99002e267bb545fab682926eadfc2b9ac1727922df67e689b",
+    "size_bytes": 2515,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/fesvr/syscall.h"
+  },
+  {
+    "local_path": "inputs/spike/fesvr/term.cc",
+    "path": "fesvr/term.cc",
+    "scope": "spike",
+    "sha256": "ed9bf6a4b7d00262b9cfcce63e6e26b724f48abaf1dc1ca7390d22a895c390c8",
+    "size_bytes": 1000,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/fesvr/term.cc"
+  },
+  {
+    "local_path": "inputs/spike/fesvr/term.h",
+    "path": "fesvr/term.h",
+    "scope": "spike",
+    "sha256": "7f8758b6f20f75f37be3f293fdffecc017f88c141203265e1af54ae815d4776a",
+    "size_bytes": 130,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/fesvr/term.h"
+  },
+  {
+    "local_path": "inputs/spike/riscv/cfg.h",
+    "path": "riscv/cfg.h",
+    "scope": "spike",
+    "sha256": "a0ea7f5348484f6684f8144ac0cd336ff1ea154a02de60618b15fb4665693427",
+    "size_bytes": 1747,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/riscv/cfg.h"
+  },
+  {
+    "local_path": "inputs/spike/riscv/common.h",
+    "path": "riscv/common.h",
+    "scope": "spike",
+    "sha256": "0290c94d4315ba6b256b474d64c812f93028b68600bb49916f84ad2f4e5995c1",
+    "size_bytes": 522,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/riscv/common.h"
+  },
+  {
+    "local_path": "inputs/spike/riscv/decode.h",
+    "path": "riscv/decode.h",
+    "scope": "spike",
+    "sha256": "463d860f0617520c0d725d2fe18f65388de4d5d942a28a776e1a03d7c90696a1",
+    "size_bytes": 7582,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/riscv/decode.h"
+  },
+  {
+    "local_path": "inputs/spike/riscv/encoding.h",
+    "path": "riscv/encoding.h",
+    "scope": "spike",
+    "sha256": "0b1cab26010ad4de8791aa7ac9eea0aae54dc1abe62640c4e242e2d3ca9228e5",
+    "size_bytes": 168441,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/riscv/encoding.h"
+  },
+  {
+    "local_path": "inputs/spike/riscv/platform.h",
+    "path": "riscv/platform.h",
+    "scope": "spike",
+    "sha256": "91d623c9cafdd44c5883cc06dc6b1904508b05db1bd9518c7c02ede8a5405d1a",
+    "size_bytes": 727,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/riscv/platform.h"
+  },
+  {
+    "local_path": "inputs/spike/riscv/trap.h",
+    "path": "riscv/trap.h",
+    "scope": "spike",
+    "sha256": "7f9e68be8a51994b5d2d76d39b4457f40c683a61706bea410769b68e868abccd",
+    "size_bytes": 4128,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/riscv/trap.h"
+  },
+  {
+    "local_path": "inputs/spike/softfloat/softfloat_types.h",
+    "path": "softfloat/softfloat_types.h",
+    "scope": "spike",
+    "sha256": "b7daff9a2a5d82a569d6cc37ae52231bd20a4b3fc53e7dc24db4d51de23138cc",
+    "size_bytes": 4076,
+    "source_pin": "9c190a07c6838f6392bafa4ad83acea462c7f759",
+    "url": "https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/softfloat/softfloat_types.h"
+  }
+]

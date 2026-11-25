@@ -1,0 +1,1274 @@
+{
+  "all_excerpt_bytes_reconstructed_from_declared_source_ranges": true,
+  "all_full_copies_byte_compared_to_sources": true,
+  "all_selected_file_hashes_rechecked_after_copy": true,
+  "byte_for_byte_copies": 50,
+  "created_utc": "2026-11-25T21:44:11.766570+00:00",
+  "executed_commit": "52161a0b395f0644d693c132433ea9246deab712",
+  "executed_tree": "609d280a87e6b14d1c01c934d74f8fe51a9a8f3e",
+  "files": [
+    {
+      "bytes": 23087,
+      "kind": "byte-for-byte-copy",
+      "path": "artifacts.json",
+      "sha256": "f87321c38476ac12a75bbadb008fd92e19f4120d79b92742fe37b2e99d5b5af5",
+      "source_bytes": 23087,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/artifacts.json",
+      "source_relative_path": "artifacts.json",
+      "source_sha256": "f87321c38476ac12a75bbadb008fd92e19f4120d79b92742fe37b2e99d5b5af5"
+    },
+    {
+      "bytes": 3130,
+      "kind": "byte-for-byte-copy",
+      "path": "checkout-provenance.json",
+      "sha256": "84994c12d3e303afb3eb0cbd7d8310ef19f5700acaf0658ec8d8989730f181ac",
+      "source_bytes": 3130,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/checkout-provenance.json",
+      "source_sha256": "84994c12d3e303afb3eb0cbd7d8310ef19f5700acaf0658ec8d8989730f181ac"
+    },
+    {
+      "bytes": 38515,
+      "kind": "byte-for-byte-copy",
+      "path": "commands.json",
+      "sha256": "39a94deb3f92e6135a219a22fb760cebbb76b74f13f33d3620b268d7131a50cb",
+      "source_bytes": 38515,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/commands.json",
+      "source_relative_path": "commands.json",
+      "source_sha256": "39a94deb3f92e6135a219a22fb760cebbb76b74f13f33d3620b268d7131a50cb"
+    },
+    {
+      "bytes": 2243,
+      "header_format": "Source, Source SHA256, Source bytes, Source lines, Selection; per-range markers precede exact original bytes",
+      "kind": "line-excerpt",
+      "path": "excerpts/observed.map.excerpt.txt",
+      "sha256": "2493182b35bde6fb3c061e3f483ab5fb2f8bf9cfaa11bf5df141fa89914471d4",
+      "source_bytes": 1079309,
+      "source_line_ranges_inclusive": [
+        [
+          1,
+          14
+        ],
+        [
+          3151,
+          3154
+        ],
+        [
+          4091,
+          4091
+        ],
+        [
+          5821,
+          5821
+        ]
+      ],
+      "source_lines": 8739,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/observed.map",
+      "source_relative_path": "observed.map",
+      "source_sha256": "a4407ae3115cad81d66aad92a83f3319dd0c06fe7f1c2998e78564e04bb6240e"
+    },
+    {
+      "bytes": 467,
+      "header_format": "Source, Source SHA256, Source bytes, Source lines, Selection; per-range markers precede exact original bytes",
+      "kind": "line-excerpt",
+      "path": "excerpts/observed.symbols.excerpt.txt",
+      "sha256": "8b1d66a2c1f231d4c11677bad38b751cce84dafc1c8c373f38de5b2426d21a82",
+      "source_bytes": 370583,
+      "source_line_ranges_inclusive": [
+        [
+          13,
+          13
+        ],
+        [
+          251,
+          251
+        ]
+      ],
+      "source_lines": 1905,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/symbols-observed.stdout.log",
+      "source_relative_path": "logs/symbols-observed.stdout.log",
+      "source_sha256": "3554ad13b110f77c3760b201b8d8183c2876f21e16ecd3494f18e253dcfa6149"
+    },
+    {
+      "bytes": 2396,
+      "header_format": "Source, Source SHA256, Source bytes, Source lines, Selection; per-range markers precede exact original bytes",
+      "kind": "line-excerpt",
+      "path": "excerpts/original.map.excerpt.txt",
+      "sha256": "86b857f5f1ca03aba41651a94fb2e1a09445c0561a01e497f5c09088e6030616",
+      "source_bytes": 1091515,
+      "source_line_ranges_inclusive": [
+        [
+          1,
+          16
+        ],
+        [
+          3153,
+          3154
+        ],
+        [
+          4082,
+          4082
+        ]
+      ],
+      "source_lines": 8711,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/original.map",
+      "source_relative_path": "original.map",
+      "source_sha256": "c339696fc372af41618861dc61ba011c12c319bf8cd88b024ac30a3daa5328c5"
+    },
+    {
+      "bytes": 367,
+      "header_format": "Source, Source SHA256, Source bytes, Source lines, Selection; per-range markers precede exact original bytes",
+      "kind": "line-excerpt",
+      "path": "excerpts/original.symbols.excerpt.txt",
+      "sha256": "f781e7854e192752ccd7b255d0aa696b7159cf5709b21a23beb95d962d7ba3f7",
+      "source_bytes": 369548,
+      "source_line_ranges_inclusive": [
+        [
+          236,
+          236
+        ]
+      ],
+      "source_lines": 1890,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/symbols-original.stdout.log",
+      "source_relative_path": "logs/symbols-original.stdout.log",
+      "source_sha256": "1347f803b6d37f7735b336d94f214d016528cfe57cb43a4b34b59953b0b29974"
+    },
+    {
+      "bytes": 995,
+      "kind": "byte-for-byte-copy",
+      "path": "invocation.json",
+      "sha256": "f84d61db93b16edfc965440e8c8f95ace2b1cabb0d4f5bf4b03a3ebc2fe7b662",
+      "source_bytes": 995,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/invocation.json",
+      "source_sha256": "f84d61db93b16edfc965440e8c8f95ace2b1cabb0d4f5bf4b03a3ebc2fe7b662"
+    },
+    {
+      "bytes": 0,
+      "kind": "byte-for-byte-copy",
+      "path": "invocation.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_bytes": 0,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/execute.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 55751,
+      "kind": "byte-for-byte-copy",
+      "path": "invocation.stdout.json",
+      "sha256": "340d08929c6da51720311291a7ffd2c3b5266483c3b8aa4365440b6da943665d",
+      "source_bytes": 55751,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/execute.stdout.json",
+      "source_sha256": "340d08929c6da51720311291a7ffd2c3b5266483c3b8aa4365440b6da943665d"
+    },
+    {
+      "bytes": 0,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/archive-members.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_bytes": 0,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/archive-members.stderr.log",
+      "source_relative_path": "logs/archive-members.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 59,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/archive-members.stdout.log",
+      "sha256": "30a413c45b009a34dfa1814339f1ebe42914e67c42ff6ba9118d210f5bf4ec2c",
+      "source_bytes": 59,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/archive-members.stdout.log",
+      "source_relative_path": "logs/archive-members.stdout.log",
+      "source_sha256": "30a413c45b009a34dfa1814339f1ebe42914e67c42ff6ba9118d210f5bf4ec2c"
+    },
+    {
+      "bytes": 0,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/observed-direct0.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_bytes": 0,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/observed-direct0.stderr.log",
+      "source_relative_path": "logs/observed-direct0.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 218,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/observed-direct0.stdout.log",
+      "sha256": "b5e407c26fe354d50c642bc239b8bef5e837864dce09af5acf1da9e4d691e5a9",
+      "source_bytes": 218,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/observed-direct0.stdout.log",
+      "source_relative_path": "logs/observed-direct0.stdout.log",
+      "source_sha256": "b5e407c26fe354d50c642bc239b8bef5e837864dce09af5acf1da9e4d691e5a9"
+    },
+    {
+      "bytes": 28,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/observed-direct7.stderr.log",
+      "sha256": "1f1a5b56c0f597aa3a63d946205ba32a9a3e1ebe472686340932da0f5064024f",
+      "source_bytes": 28,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/observed-direct7.stderr.log",
+      "source_relative_path": "logs/observed-direct7.stderr.log",
+      "source_sha256": "1f1a5b56c0f597aa3a63d946205ba32a9a3e1ebe472686340932da0f5064024f"
+    },
+    {
+      "bytes": 218,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/observed-direct7.stdout.log",
+      "sha256": "f1ee1e60643d80182684bd6d5bd15b1d16f6aa79bbf0f239c490aca039a9d0d0",
+      "source_bytes": 218,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/observed-direct7.stdout.log",
+      "source_relative_path": "logs/observed-direct7.stdout.log",
+      "source_sha256": "f1ee1e60643d80182684bd6d5bd15b1d16f6aa79bbf0f239c490aca039a9d0d0"
+    },
+    {
+      "bytes": 0,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/observed-signal-only.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_bytes": 0,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/observed-signal-only.stderr.log",
+      "source_relative_path": "logs/observed-signal-only.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 222,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/observed-signal-only.stdout.log",
+      "sha256": "54db6a91eda04c0192bf118bd24d92ee17758402a2a366d1f8f6aa2cfd762bcc",
+      "source_bytes": 222,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/observed-signal-only.stdout.log",
+      "source_relative_path": "logs/observed-signal-only.stdout.log",
+      "source_sha256": "54db6a91eda04c0192bf118bd24d92ee17758402a2a366d1f8f6aa2cfd762bcc"
+    },
+    {
+      "bytes": 0,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/observed-syscall0.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_bytes": 0,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/observed-syscall0.stderr.log",
+      "source_relative_path": "logs/observed-syscall0.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 219,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/observed-syscall0.stdout.log",
+      "sha256": "460cd6c9c16bd576c38660a4062dbc2e457a28c09f3974b47550c6fa846ee064",
+      "source_bytes": 219,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/observed-syscall0.stdout.log",
+      "source_relative_path": "logs/observed-syscall0.stdout.log",
+      "source_sha256": "460cd6c9c16bd576c38660a4062dbc2e457a28c09f3974b47550c6fa846ee064"
+    },
+    {
+      "bytes": 0,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/observed-syscall7-signal.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_bytes": 0,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/observed-syscall7-signal.stderr.log",
+      "source_relative_path": "logs/observed-syscall7-signal.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 226,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/observed-syscall7-signal.stdout.log",
+      "sha256": "70168b615ac5b67a3fcb16163e8dd28ad02ecb8ed1d754063165f1a6b313ed40",
+      "source_bytes": 226,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/observed-syscall7-signal.stdout.log",
+      "source_relative_path": "logs/observed-syscall7-signal.stdout.log",
+      "source_sha256": "70168b615ac5b67a3fcb16163e8dd28ad02ecb8ed1d754063165f1a6b313ed40"
+    },
+    {
+      "bytes": 0,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/observed-syscall7.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_bytes": 0,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/observed-syscall7.stderr.log",
+      "source_relative_path": "logs/observed-syscall7.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 219,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/observed-syscall7.stdout.log",
+      "sha256": "34ed25f24415f2e7b95955a22ec2cac6c832bc36505ee1a27c3213035c8429b1",
+      "source_bytes": 219,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/observed-syscall7.stdout.log",
+      "source_relative_path": "logs/observed-syscall7.stdout.log",
+      "source_sha256": "34ed25f24415f2e7b95955a22ec2cac6c832bc36505ee1a27c3213035c8429b1"
+    },
+    {
+      "bytes": 0,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/original-direct0.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_bytes": 0,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/original-direct0.stderr.log",
+      "source_relative_path": "logs/original-direct0.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 218,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/original-direct0.stdout.log",
+      "sha256": "b5e407c26fe354d50c642bc239b8bef5e837864dce09af5acf1da9e4d691e5a9",
+      "source_bytes": 218,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/original-direct0.stdout.log",
+      "source_relative_path": "logs/original-direct0.stdout.log",
+      "source_sha256": "b5e407c26fe354d50c642bc239b8bef5e837864dce09af5acf1da9e4d691e5a9"
+    },
+    {
+      "bytes": 28,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/original-direct7.stderr.log",
+      "sha256": "1f1a5b56c0f597aa3a63d946205ba32a9a3e1ebe472686340932da0f5064024f",
+      "source_bytes": 28,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/original-direct7.stderr.log",
+      "source_relative_path": "logs/original-direct7.stderr.log",
+      "source_sha256": "1f1a5b56c0f597aa3a63d946205ba32a9a3e1ebe472686340932da0f5064024f"
+    },
+    {
+      "bytes": 218,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/original-direct7.stdout.log",
+      "sha256": "f1ee1e60643d80182684bd6d5bd15b1d16f6aa79bbf0f239c490aca039a9d0d0",
+      "source_bytes": 218,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/original-direct7.stdout.log",
+      "source_relative_path": "logs/original-direct7.stdout.log",
+      "source_sha256": "f1ee1e60643d80182684bd6d5bd15b1d16f6aa79bbf0f239c490aca039a9d0d0"
+    },
+    {
+      "bytes": 0,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/original-signal-only.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_bytes": 0,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/original-signal-only.stderr.log",
+      "source_relative_path": "logs/original-signal-only.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 222,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/original-signal-only.stdout.log",
+      "sha256": "54db6a91eda04c0192bf118bd24d92ee17758402a2a366d1f8f6aa2cfd762bcc",
+      "source_bytes": 222,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/original-signal-only.stdout.log",
+      "source_relative_path": "logs/original-signal-only.stdout.log",
+      "source_sha256": "54db6a91eda04c0192bf118bd24d92ee17758402a2a366d1f8f6aa2cfd762bcc"
+    },
+    {
+      "bytes": 0,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/original-syscall0.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_bytes": 0,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/original-syscall0.stderr.log",
+      "source_relative_path": "logs/original-syscall0.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 219,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/original-syscall0.stdout.log",
+      "sha256": "460cd6c9c16bd576c38660a4062dbc2e457a28c09f3974b47550c6fa846ee064",
+      "source_bytes": 219,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/original-syscall0.stdout.log",
+      "source_relative_path": "logs/original-syscall0.stdout.log",
+      "source_sha256": "460cd6c9c16bd576c38660a4062dbc2e457a28c09f3974b47550c6fa846ee064"
+    },
+    {
+      "bytes": 0,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/original-syscall7-signal.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_bytes": 0,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/original-syscall7-signal.stderr.log",
+      "source_relative_path": "logs/original-syscall7-signal.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 226,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/original-syscall7-signal.stdout.log",
+      "sha256": "70168b615ac5b67a3fcb16163e8dd28ad02ecb8ed1d754063165f1a6b313ed40",
+      "source_bytes": 226,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/original-syscall7-signal.stdout.log",
+      "source_relative_path": "logs/original-syscall7-signal.stdout.log",
+      "source_sha256": "70168b615ac5b67a3fcb16163e8dd28ad02ecb8ed1d754063165f1a6b313ed40"
+    },
+    {
+      "bytes": 0,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/original-syscall7.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_bytes": 0,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/original-syscall7.stderr.log",
+      "source_relative_path": "logs/original-syscall7.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 219,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/original-syscall7.stdout.log",
+      "sha256": "34ed25f24415f2e7b95955a22ec2cac6c832bc36505ee1a27c3213035c8429b1",
+      "source_bytes": 219,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/original-syscall7.stdout.log",
+      "source_relative_path": "logs/original-syscall7.stdout.log",
+      "source_sha256": "34ed25f24415f2e7b95955a22ec2cac6c832bc36505ee1a27c3213035c8429b1"
+    },
+    {
+      "bytes": 0,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/version-ar.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_bytes": 0,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/version-ar.stderr.log",
+      "source_relative_path": "logs/version-ar.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 283,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/version-ar.stdout.log",
+      "sha256": "aef15107335caff84acdf0ee8d6b3be67cfb486a3351fc0056a91c1a9cd5945d",
+      "source_bytes": 283,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/version-ar.stdout.log",
+      "source_relative_path": "logs/version-ar.stdout.log",
+      "source_sha256": "aef15107335caff84acdf0ee8d6b3be67cfb486a3351fc0056a91c1a9cd5945d"
+    },
+    {
+      "bytes": 0,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/version-gxx.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_bytes": 0,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/version-gxx.stderr.log",
+      "source_relative_path": "logs/version-gxx.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 232,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/version-gxx.stdout.log",
+      "sha256": "5f6798e87440f1e8b88bf6822c33bebe434f83374640a7f8ba967902ee1ea098",
+      "source_bytes": 232,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/version-gxx.stdout.log",
+      "source_relative_path": "logs/version-gxx.stdout.log",
+      "source_sha256": "5f6798e87440f1e8b88bf6822c33bebe434f83374640a7f8ba967902ee1ea098"
+    },
+    {
+      "bytes": 0,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/version-nm.stderr.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_bytes": 0,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/version-nm.stderr.log",
+      "source_relative_path": "logs/version-nm.stderr.log",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 283,
+      "kind": "byte-for-byte-copy",
+      "path": "logs/version-nm.stdout.log",
+      "sha256": "caae48f7aca83bd177c80210e19f2a84f8fb324ea1059c2df326996f5955041e",
+      "source_bytes": 283,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/version-nm.stdout.log",
+      "source_relative_path": "logs/version-nm.stdout.log",
+      "source_sha256": "caae48f7aca83bd177c80210e19f2a84f8fb324ea1059c2df326996f5955041e"
+    },
+    {
+      "bytes": 1666,
+      "kind": "byte-for-byte-copy",
+      "path": "nova-inputs.json",
+      "sha256": "f4df35c6cec90c0e36946341042d357386a4518119eb157ea2366a1dc19739b4",
+      "source_bytes": 1666,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/nova-inputs.json",
+      "source_relative_path": "nova-inputs.json",
+      "source_sha256": "f4df35c6cec90c0e36946341042d357386a4518119eb157ea2366a1dc19739b4"
+    },
+    {
+      "bytes": 28119,
+      "kind": "byte-for-byte-copy",
+      "path": "plan.json",
+      "sha256": "c7f913e7b16c3e905396c1910f6f998e44a504b7748bf17617f09a9f15a5b111",
+      "source_bytes": 28119,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/plan.json",
+      "source_relative_path": "plan.json",
+      "source_sha256": "c7f913e7b16c3e905396c1910f6f998e44a504b7748bf17617f09a9f15a5b111"
+    },
+    {
+      "bytes": 291,
+      "kind": "byte-for-byte-copy",
+      "path": "probe-observed-direct0.json",
+      "sha256": "5be192999a0d4f192726bff141e9b1a59d3d87fa92f82518344560fdb75c167f",
+      "source_bytes": 291,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/probe-observed-direct0.json",
+      "source_relative_path": "probe-observed-direct0.json",
+      "source_sha256": "5be192999a0d4f192726bff141e9b1a59d3d87fa92f82518344560fdb75c167f"
+    },
+    {
+      "bytes": 292,
+      "kind": "byte-for-byte-copy",
+      "path": "probe-observed-direct7.json",
+      "sha256": "9fb8505ce6dae21d1b0898733916c27ae0da6bedab8ec95d2fe11e9ed16e4d3f",
+      "source_bytes": 292,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/probe-observed-direct7.json",
+      "source_relative_path": "probe-observed-direct7.json",
+      "source_sha256": "9fb8505ce6dae21d1b0898733916c27ae0da6bedab8ec95d2fe11e9ed16e4d3f"
+    },
+    {
+      "bytes": 297,
+      "kind": "byte-for-byte-copy",
+      "path": "probe-observed-signal-only.json",
+      "sha256": "61da8ee3fd0f3a1667cc2834d3bd102ce28b0a7ac874a9986e84465ba9cba5d9",
+      "source_bytes": 297,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/probe-observed-signal-only.json",
+      "source_relative_path": "probe-observed-signal-only.json",
+      "source_sha256": "61da8ee3fd0f3a1667cc2834d3bd102ce28b0a7ac874a9986e84465ba9cba5d9"
+    },
+    {
+      "bytes": 291,
+      "kind": "byte-for-byte-copy",
+      "path": "probe-observed-syscall0.json",
+      "sha256": "cfa1987a13161eb9ca97cf5c00b3e301617d30e43832363e42df04004fd94776",
+      "source_bytes": 291,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/probe-observed-syscall0.json",
+      "source_relative_path": "probe-observed-syscall0.json",
+      "source_sha256": "cfa1987a13161eb9ca97cf5c00b3e301617d30e43832363e42df04004fd94776"
+    },
+    {
+      "bytes": 291,
+      "kind": "byte-for-byte-copy",
+      "path": "probe-observed-syscall7-signal.json",
+      "sha256": "be064a2319f08803a5fd1957cb5a9df5987b28fa94e133241863a7d7f7fd7287",
+      "source_bytes": 291,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/probe-observed-syscall7-signal.json",
+      "source_relative_path": "probe-observed-syscall7-signal.json",
+      "source_sha256": "be064a2319f08803a5fd1957cb5a9df5987b28fa94e133241863a7d7f7fd7287"
+    },
+    {
+      "bytes": 292,
+      "kind": "byte-for-byte-copy",
+      "path": "probe-observed-syscall7.json",
+      "sha256": "7b741e5a5dfc604d19d582b517f0ba08d8a2d6be88df971a5e776e6a1f8811b5",
+      "source_bytes": 292,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/probe-observed-syscall7.json",
+      "source_relative_path": "probe-observed-syscall7.json",
+      "source_sha256": "7b741e5a5dfc604d19d582b517f0ba08d8a2d6be88df971a5e776e6a1f8811b5"
+    },
+    {
+      "bytes": 55689,
+      "kind": "byte-for-byte-copy",
+      "path": "results.json",
+      "sha256": "b270d7c0c36a2644194e823ce74f8936638e77a7a776b848f3e28319b0a3217c",
+      "source_bytes": 55689,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/results.json",
+      "source_relative_path": "results.json",
+      "source_sha256": "b270d7c0c36a2644194e823ce74f8936638e77a7a776b848f3e28319b0a3217c"
+    },
+    {
+      "bytes": 9711,
+      "kind": "byte-for-byte-copy",
+      "path": "source-manifest.json",
+      "sha256": "32fbd35bf25625fcb786ef892b5db1ea03a0888e0c61721df2a5d9210562483b",
+      "source_bytes": 9711,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/source-manifest.json",
+      "source_relative_path": "source-manifest.json",
+      "source_sha256": "32fbd35bf25625fcb786ef892b5db1ea03a0888e0c61721df2a5d9210562483b"
+    },
+    {
+      "bytes": 105,
+      "kind": "byte-for-byte-copy",
+      "path": "synthetic-config/config.h",
+      "sha256": "06f3444b152095135a72e025245f54466d46bfc27f6fe7b90e82d5be2531362f",
+      "source_bytes": 105,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/synthetic-config/config.h",
+      "source_relative_path": "synthetic-config/config.h",
+      "source_sha256": "06f3444b152095135a72e025245f54466d46bfc27f6fe7b90e82d5be2531362f"
+    },
+    {
+      "bytes": 20405,
+      "kind": "byte-for-byte-copy",
+      "path": "verification.json",
+      "sha256": "29fb7e4011c4cf6a62b546a107ada64227af0a8912dc473a3b519203cececb58",
+      "source_bytes": 20405,
+      "source_path": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/verification.json",
+      "source_sha256": "29fb7e4011c4cf6a62b546a107ada64227af0a8912dc473a3b519203cececb58"
+    }
+  ],
+  "full_run_files_omitted": 108,
+  "full_run_inventory_entries_independently_rehashed": 152,
+  "full_run_omitted_bytes": 15869518,
+  "kind": "nova-worker50-compact-native-retention",
+  "limitations": [
+    "No binaries, objects, archive, source/header/license snapshots, or full link maps/symbol dumps are copied into this selection.",
+    "The synthetic config is the sole retained source-like file; it explicitly identifies synthetic HAVE_INT128 host-fixture configuration.",
+    "The unchanged original artifacts.json identifies full-run artifacts, including omitted files; inventory presence does not mean those files are included.",
+    "Absolute execution paths, nonces and bindings are preserved without rewriting.",
+    "Source manifests retain Spike revision, upstream source URLs, and the original LICENSE identity; upstream source/license bytes remain only in the full temporary run.",
+    "No CPU, RISC-V instruction execution, RTL simulation, installed pinned-toolchain qualification, hardware qualification, or G1 acceptance was performed.",
+    "This manifest does not hash itself; its exact hash is reported in a50.md."
+  ],
+  "line_excerpts": 4,
+  "omitted_full_run_files": [
+    {
+      "bytes": 16706,
+      "path": "inputs/nova/campaign_exec.py",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "b642779102b990c76ae691224e591ddc5c151e3bce8df5f546b5c958ff920dd7"
+    },
+    {
+      "bytes": 12716,
+      "path": "inputs/nova/htif_exit_evidence.py",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "7b459fad18df011fca37dcf8e949f601f71de34d98b3e129e51d4e2274732ab8"
+    },
+    {
+      "bytes": 5554,
+      "path": "inputs/nova/htif_host_probe.cc",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "127b7041bd4322625e63752c8ce15036c24288360c9de9473ba4969dc2728df5"
+    },
+    {
+      "bytes": 35537,
+      "path": "inputs/nova/htif_host_probe.py",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "40a669624f038f4e8dec645a8a5eb7b02e05839b9de5c9e230f9b112ecbfab6a"
+    },
+    {
+      "bytes": 28365,
+      "path": "inputs/nova/htif_observer.py",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "c7c660c24e7c201638ebf2398625837eb1ca124d897af398ba75ff94662e0967"
+    },
+    {
+      "bytes": 9204,
+      "path": "inputs/nova/nova_htif_exit.cc",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "d10369310beea25776a22f6df472b30f35f13f3440b75d3659f73649b00b71f7"
+    },
+    {
+      "bytes": 856,
+      "path": "inputs/nova/nova_htif_exit.h",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "6351e13842a4b6a3a98980ef6b8c08cc0c665c1dda5b4da399bc4142db9dcfb9"
+    },
+    {
+      "bytes": 1403,
+      "path": "inputs/spike/LICENSE",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "c65e436d18972c9c4bd192494fe4870bd2e158179474975b80a3559f27631632"
+    },
+    {
+      "bytes": 3598,
+      "path": "inputs/spike/fesvr/byteorder.h",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "af2a8f9dbbbbcfe892bfe464a7b21d34894ae303dbccc2caa1c06b7fac449492"
+    },
+    {
+      "bytes": 3723,
+      "path": "inputs/spike/fesvr/device.cc",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "3feee8c3fb6d8cb29beb79840f2b5be3166b0211977eeb61317c5dbaa67a83cd"
+    },
+    {
+      "bytes": 2332,
+      "path": "inputs/spike/fesvr/device.h",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "14bef783e6b9f8b403bfa91410b6e3250ffd766332d46da47738cb5436ef989e"
+    },
+    {
+      "bytes": 2962,
+      "path": "inputs/spike/fesvr/elf.h",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "13e82d26bad50fe0fde7e3d999a3d569faa480f9f8c21cb94905b5dfb53c42ca"
+    },
+    {
+      "bytes": 6764,
+      "path": "inputs/spike/fesvr/elfloader.cc",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "29e021317fb8ffe90c68e56a107bfd80bf1b24a059bb48c34b98b075319efa7b"
+    },
+    {
+      "bytes": 349,
+      "path": "inputs/spike/fesvr/elfloader.h",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "abbdad19a0a0e9375848e82db9c5a8149dbea48c897934197cad5087c16d4ce0"
+    },
+    {
+      "bytes": 12925,
+      "path": "inputs/spike/fesvr/htif.cc",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "c669e8352c6e21d61118849b0b969d291b84100e83343659f3d08979ae89a11d"
+    },
+    {
+      "bytes": 5965,
+      "path": "inputs/spike/fesvr/htif.h",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "5aec4e8516d1ccc72941af7a728556027a9da88d199978c9434e0996e55be608"
+    },
+    {
+      "bytes": 4259,
+      "path": "inputs/spike/fesvr/memif.cc",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "6cced20eb732a438a907ec2070e4f2be478f415e1427e6f25cbc64c2450c33ab"
+    },
+    {
+      "bytes": 2550,
+      "path": "inputs/spike/fesvr/memif.h",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "483a03f681fa03d43afc28c15b6f3c75be444463fd1efcc1980334ab81546461"
+    },
+    {
+      "bytes": 5726,
+      "path": "inputs/spike/fesvr/rfb.cc",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "10fc8b6215c382728f6cb871367b13aa05f678168e62e62d40bb83719895a02d"
+    },
+    {
+      "bytes": 1109,
+      "path": "inputs/spike/fesvr/rfb.h",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "63e1a1ab02d8085e37856c44adc121d4e27f4775faaa7cffa9342bdf17c1f73b"
+    },
+    {
+      "bytes": 16574,
+      "path": "inputs/spike/fesvr/syscall.cc",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "371639953ee8edf0bed1e57e5ed894f99948886b9cac63931398aea2b512a78a"
+    },
+    {
+      "bytes": 2515,
+      "path": "inputs/spike/fesvr/syscall.h",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "ef19c0fb7f9f59f99002e267bb545fab682926eadfc2b9ac1727922df67e689b"
+    },
+    {
+      "bytes": 1000,
+      "path": "inputs/spike/fesvr/term.cc",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "ed9bf6a4b7d00262b9cfcce63e6e26b724f48abaf1dc1ca7390d22a895c390c8"
+    },
+    {
+      "bytes": 130,
+      "path": "inputs/spike/fesvr/term.h",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "7f8758b6f20f75f37be3f293fdffecc017f88c141203265e1af54ae815d4776a"
+    },
+    {
+      "bytes": 1747,
+      "path": "inputs/spike/riscv/cfg.h",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "a0ea7f5348484f6684f8144ac0cd336ff1ea154a02de60618b15fb4665693427"
+    },
+    {
+      "bytes": 522,
+      "path": "inputs/spike/riscv/common.h",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "0290c94d4315ba6b256b474d64c812f93028b68600bb49916f84ad2f4e5995c1"
+    },
+    {
+      "bytes": 7582,
+      "path": "inputs/spike/riscv/decode.h",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "463d860f0617520c0d725d2fe18f65388de4d5d942a28a776e1a03d7c90696a1"
+    },
+    {
+      "bytes": 168441,
+      "path": "inputs/spike/riscv/encoding.h",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "0b1cab26010ad4de8791aa7ac9eea0aae54dc1abe62640c4e242e2d3ca9228e5"
+    },
+    {
+      "bytes": 727,
+      "path": "inputs/spike/riscv/platform.h",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "91d623c9cafdd44c5883cc06dc6b1904508b05db1bd9518c7c02ede8a5405d1a"
+    },
+    {
+      "bytes": 4128,
+      "path": "inputs/spike/riscv/trap.h",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "7f9e68be8a51994b5d2d76d39b4457f40c683a61706bea410769b68e868abccd"
+    },
+    {
+      "bytes": 4076,
+      "path": "inputs/spike/softfloat/softfloat_types.h",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "b7daff9a2a5d82a569d6cc37ae52231bd20a4b3fc53e7dc24db4d51de23138cc"
+    },
+    {
+      "bytes": 3825446,
+      "path": "libfesvr-host-fixture.a",
+      "reason": "Compiled object, archive, or executable omitted; unchanged full-run artifact inventory retains its recorded identity",
+      "sha256": "2162664b81e8b00fa76a48c03cf8f0c311cb763762172772a9f4efbbaf4cad88"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/archive.stderr.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/archive.stdout.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-device.stderr.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-device.stdout.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-elfloader.stderr.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-elfloader.stdout.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-htif.stderr.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-htif.stdout.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-memif.stderr.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-memif.stdout.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-nova_htif.stderr.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-nova_htif.stdout.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-nova_htif_exit.stderr.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-nova_htif_exit.stdout.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-probe.stderr.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-probe.stdout.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-rfb.stderr.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-rfb.stdout.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-syscall.stderr.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-syscall.stdout.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-term.stderr.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/compile-term.stdout.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/link-observed.stderr.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/link-observed.stdout.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/link-original.stderr.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/link-original.stdout.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/symbols-observed.stderr.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 370583,
+      "path": "logs/symbols-observed.stdout.log",
+      "reason": "Full map or symbol log omitted; exact selected source lines retained in excerpts/observed.symbols.excerpt.txt",
+      "sha256": "3554ad13b110f77c3760b201b8d8183c2876f21e16ecd3494f18e253dcfa6149"
+    },
+    {
+      "bytes": 0,
+      "path": "logs/symbols-original.stderr.log",
+      "reason": "Build/inspection log omitted; command result and exact log byte count/hash remain in commands.json and results.json",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "bytes": 369548,
+      "path": "logs/symbols-original.stdout.log",
+      "reason": "Full map or symbol log omitted; exact selected source lines retained in excerpts/original.symbols.excerpt.txt",
+      "sha256": "1347f803b6d37f7735b336d94f214d016528cfe57cb43a4b34b59953b0b29974"
+    },
+    {
+      "bytes": 13033,
+      "path": "nova_htif.cc",
+      "reason": "Source/header/license or generated-source snapshot omitted; source identities remain in the unchanged manifests and original inventory",
+      "sha256": "1a6383e8d9b7bfc4d44c2e674fafe1d8067d826c3c2cd0dae7e20a27e08aef84"
+    },
+    {
+      "bytes": 742088,
+      "path": "objects/device.o",
+      "reason": "Compiled object, archive, or executable omitted; unchanged full-run artifact inventory retains its recorded identity",
+      "sha256": "5d5225d5f117c690543de04c87c5923e1b8d5af1896e911ce05e258448880bf3"
+    },
+    {
+      "bytes": 393888,
+      "path": "objects/elfloader.o",
+      "reason": "Compiled object, archive, or executable omitted; unchanged full-run artifact inventory retains its recorded identity",
+      "sha256": "c6cb0db1efc85c7bb1314eb37f9af9473e6d85721f2bf9ea1aca3fe29fe6afcb"
+    },
+    {
+      "bytes": 1200816,
+      "path": "objects/htif.o",
+      "reason": "Compiled object, archive, or executable omitted; unchanged full-run artifact inventory retains its recorded identity",
+      "sha256": "85d13f378489bdb61634009f8efc345513f85f20761a4523ac091f1a776e95cc"
+    },
+    {
+      "bytes": 188984,
+      "path": "objects/memif.o",
+      "reason": "Compiled object, archive, or executable omitted; unchanged full-run artifact inventory retains its recorded identity",
+      "sha256": "c481f7dc990660a394e7e53fe58b1f0eb254914d3e3d8976d81ea6c2a21e31b5"
+    },
+    {
+      "bytes": 1201440,
+      "path": "objects/nova_htif.o",
+      "reason": "Compiled object, archive, or executable omitted; unchanged full-run artifact inventory retains its recorded identity",
+      "sha256": "c43ccc0b9513cd532383202a8d786bf7dbe36428893bcd99b2133a2ee4b55cf6"
+    },
+    {
+      "bytes": 43432,
+      "path": "objects/nova_htif_exit.o",
+      "reason": "Compiled object, archive, or executable omitted; unchanged full-run artifact inventory retains its recorded identity",
+      "sha256": "8bafe665fc3e76cba28267feabdb6b700995d445710eabe204e07cff89753e1d"
+    },
+    {
+      "bytes": 399376,
+      "path": "objects/probe.o",
+      "reason": "Compiled object, archive, or executable omitted; unchanged full-run artifact inventory retains its recorded identity",
+      "sha256": "a2595c244dbe1832fe138dc2b439cbfad47a6fe8f7b9baf0140d6a60e092ccb8"
+    },
+    {
+      "bytes": 359272,
+      "path": "objects/rfb.o",
+      "reason": "Compiled object, archive, or executable omitted; unchanged full-run artifact inventory retains its recorded identity",
+      "sha256": "868564792f652c16bec1ae197b6d5938a22b2c240052b006c83bb543df506705"
+    },
+    {
+      "bytes": 753184,
+      "path": "objects/syscall.o",
+      "reason": "Compiled object, archive, or executable omitted; unchanged full-run artifact inventory retains its recorded identity",
+      "sha256": "f4aa4d19545507a084891b063ae2394eccdd688207cfaf031c5a5e228f2f94cb"
+    },
+    {
+      "bytes": 25128,
+      "path": "objects/term.o",
+      "reason": "Compiled object, archive, or executable omitted; unchanged full-run artifact inventory retains its recorded identity",
+      "sha256": "432b91ed96d8b63525ae61aff704dfb4028bab2d534cb24d260c183d5544d40b"
+    },
+    {
+      "bytes": 1079309,
+      "path": "observed.map",
+      "reason": "Full map or symbol log omitted; exact selected source lines retained in excerpts/observed.map.excerpt.txt",
+      "sha256": "a4407ae3115cad81d66aad92a83f3319dd0c06fe7f1c2998e78564e04bb6240e"
+    },
+    {
+      "bytes": 1091515,
+      "path": "original.map",
+      "reason": "Full map or symbol log omitted; exact selected source lines retained in excerpts/original.map.excerpt.txt",
+      "sha256": "c339696fc372af41618861dc61ba011c12c319bf8cd88b024ac30a3daa5328c5"
+    },
+    {
+      "bytes": 1712272,
+      "path": "probe-observed",
+      "reason": "Compiled object, archive, or executable omitted; unchanged full-run artifact inventory retains its recorded identity",
+      "sha256": "98a3e692ba32c662deccc6ded851c945a213b21288c2268a2cb6fc4c92be58ea"
+    },
+    {
+      "bytes": 1693736,
+      "path": "probe-original",
+      "reason": "Compiled object, archive, or executable omitted; unchanged full-run artifact inventory retains its recorded identity",
+      "sha256": "b5854368d9b7b3053faddfe5aa385e209aabe8d055accd4c4821324e2a78b257"
+    },
+    {
+      "bytes": 954,
+      "path": "records/archive-members.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "c876be0d055b1f29b8019a1a06ffbf6f146bf46b4bdf00697267ca4c1d94f9ab"
+    },
+    {
+      "bytes": 1425,
+      "path": "records/archive.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "24943a652e67b4d63cb2e9f9c64b290e2385412e3d8df76585ce643ecc3c19ae"
+    },
+    {
+      "bytes": 1536,
+      "path": "records/compile-device.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "29426bbb1eda01eea8d97c4f393a31618d971906e33db1e1ba7adef636c5bf08"
+    },
+    {
+      "bytes": 1548,
+      "path": "records/compile-elfloader.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "3bcb55548fd6696ecc517bf6a01c465fcfa61fad43c2bbf8f0a905a1df283c54"
+    },
+    {
+      "bytes": 1526,
+      "path": "records/compile-htif.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "435449eaee3fc9581f6c834b10d3736b9302ce095b166b307c14cb581e784f91"
+    },
+    {
+      "bytes": 1531,
+      "path": "records/compile-memif.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "a4ddb17a90da6ed9d75a53f5f259d380715ba72af509d3bd9fb59a6f74425892"
+    },
+    {
+      "bytes": 1532,
+      "path": "records/compile-nova_htif.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "6d8df5b5dfa3095a970f93e3a220b67f4cbd424ac8569ae5442b67c9226bdd96"
+    },
+    {
+      "bytes": 1569,
+      "path": "records/compile-nova_htif_exit.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "d1e73352e25de33e897fb7ae8d499876e93c002e8525fbfcb246429ea67f6ff3"
+    },
+    {
+      "bytes": 1534,
+      "path": "records/compile-probe.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "4886c0d429709c654a55a80212da64102119ef9a1235903ddc157acfc2230ab9"
+    },
+    {
+      "bytes": 1521,
+      "path": "records/compile-rfb.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "5421a69be014db0b78a175a0d617c480ed0e5cb7ff759eca37625e0c94610ccc"
+    },
+    {
+      "bytes": 1541,
+      "path": "records/compile-syscall.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "54c417d040bea0ed3a0d9826d49aea382c4eabaf3e6aea33a69ea0275c646d39"
+    },
+    {
+      "bytes": 1526,
+      "path": "records/compile-term.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "2fe7e69277021e1c9a6cb28fa689ce5281cc8ef16549d55851100d1d7fc5eb69"
+    },
+    {
+      "bytes": 1333,
+      "path": "records/link-observed.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "0c6655c6367fc10841970ad0e8a5faa56073b12a00610090ba869ed4c37d3611"
+    },
+    {
+      "bytes": 1180,
+      "path": "records/link-original.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "668773e13cd7dada43b5e2517d981811526197df7cf9ffbf2f8988cb72dc0a9b"
+    },
+    {
+      "bytes": 935,
+      "path": "records/observed-direct0.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "a63ffc94a31dc74028266c9060b246388948fb04bb739ab43519e07e420522bd"
+    },
+    {
+      "bytes": 981,
+      "path": "records/observed-direct7.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "64f158f716b7239debaadfb003bb44276a5d4b2e2394609992bfb95946cca54e"
+    },
+    {
+      "bytes": 951,
+      "path": "records/observed-signal-only.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "defc000ba0d76efc319a43c58447a543cf2727dcd5d6a9033763a0434e23c5ed"
+    },
+    {
+      "bytes": 939,
+      "path": "records/observed-syscall0.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "811898f397e0ad4b592731f252077316f198a1e0b757206c571e7ca3c706307f"
+    },
+    {
+      "bytes": 1012,
+      "path": "records/observed-syscall7-signal.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "722c0223c382f9687405a61cea787b554d030523c921e8cd8f8f30634956238e"
+    },
+    {
+      "bytes": 984,
+      "path": "records/observed-syscall7.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "49e17482d04623133d09a97aea5b550020499cf42cdc97a1e09bf6aa1e664ed1"
+    },
+    {
+      "bytes": 935,
+      "path": "records/original-direct0.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "6b61b4949849facb81e4d21330abca9923c736bd5a881878f1a97895c2c89adf"
+    },
+    {
+      "bytes": 981,
+      "path": "records/original-direct7.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "fa4344e3893361767ea17ac762c3a1f796dd9859cacb8e74346626d02cdfbd8e"
+    },
+    {
+      "bytes": 951,
+      "path": "records/original-signal-only.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "23314249298ad11c01d7994a754ba52429fe02bc0289f8b716c7696bb30d731f"
+    },
+    {
+      "bytes": 939,
+      "path": "records/original-syscall0.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "b246d0ccf33fd961f7b22b622c0b9219680ee2bf8bd91e39b6923244cb65a826"
+    },
+    {
+      "bytes": 1012,
+      "path": "records/original-syscall7-signal.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "94b2aa66cc8cc0d509d9b84eaa3d8cc0a3f07534babf6056590d3ace2fe53d32"
+    },
+    {
+      "bytes": 984,
+      "path": "records/original-syscall7.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "a7e4a1270c7fd033b131471075b47105e93539aef1af7b52b0875f4a3e9b4f8f"
+    },
+    {
+      "bytes": 974,
+      "path": "records/symbols-observed.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "2a7787adab689e2c14f3f274544847648a1e083f6a6625f373ab444a1a2aa733"
+    },
+    {
+      "bytes": 975,
+      "path": "records/symbols-original.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "5e5ec4d909f83490ee4f0005c1985dd85c86119d54a9decfddf71f92a00934db"
+    },
+    {
+      "bytes": 870,
+      "path": "records/version-ar.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "ff275f41b18afb873e925ec58cd4e68c344aeeb45aa21c76a09a697356f2816c"
+    },
+    {
+      "bytes": 874,
+      "path": "records/version-gxx.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "b628a81023fdbe1feaceecdb6b9761aedb05431a2b1a949507ba1b7c9e739d30"
+    },
+    {
+      "bytes": 870,
+      "path": "records/version-nm.json",
+      "reason": "Individual command JSON omitted as redundant; the complete record is retained in commands.json and results.json",
+      "sha256": "807911d731c762c31095c92f3facff2f48f973099406c91b639d6e5d41c94d04"
+    }
+  ],
+  "original_artifacts_json_unchanged": true,
+  "schema_version": 1,
+  "selected_bytes_excluding_this_manifest": 247957,
+  "selected_files_excluding_this_manifest": 54,
+  "selection": "/workspace/scratch/1f6d25e13e37/coordination/a50-native",
+  "selection_is_complete_replay_bundle": false,
+  "source_checkout": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/CPU",
+  "source_output": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01"
+}

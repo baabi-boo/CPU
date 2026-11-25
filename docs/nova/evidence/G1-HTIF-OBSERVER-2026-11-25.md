@@ -11,11 +11,13 @@ TestDriver, RTL, FPGA, or silicon execution is established by this record.
 | Requirement scope | `REQ-CPU-001`, `T-BUILD-001`, and `T-ISA-001` preparation; no hardware test acceptance |
 | Original Spike pin | `9c190a07c6838f6392bafa4ad83acea462c7f759` |
 | Native experiment 08 | Six modes in original and observed builds: twelve bounded native processes passed |
-| Native experiment 14 | Historical CLI snapshot: nineteen build/inspection commands and twelve bounded native processes passed; later repairs require separate replay evidence |
+| Native experiment 14 | Historical CLI snapshot: nineteen build/inspection commands and twelve bounded native processes passed; original identities and results retained below |
+| Latest native experiment 50 | Frozen final implementation: 31 commands, including twelve native cases, assessed as expected in 6.281061 seconds; six actual code-seven command failures remain recorded |
 | Make/native experiment 18 | Actual copied upstream Makefiles parsed; quoting, header closure, static archive order, and one native `direct0` case checked |
 | First committed observer integration | Fresh-checkout repository-only check: 752 tests passed; later integration results must be recorded separately |
 | Subsequent committed checkpoint | Fresh-checkout repository-only check: 801 tests passed; this is a checkpoint, not the final evolving suite total |
 | Recorder/parser/manifest repair checkpoint | Published `3520f99a`: fresh-checkout repository-only check passed 822 tests in 39.673 seconds; later repairs are outside this checkpoint |
+| Current source integration checkpoint 05 | Local `52161a0b`, byte-identical published `0e471171`: fresh-checkout repository-only check passed 836 tests in 40.355 seconds |
 | Hardware environment | Strict G1 profile blocked with 38 reported blockers; hardware campaign not run |
 | Foundation preservation | Fifty-seven gitlink pins and nine imported Conda inputs unchanged |
 | Gate decision | None; hardware and G1 qualification remain false |
@@ -84,8 +86,9 @@ manifest, and the unchanged original
 [artifact inventory](htif-native-2026-11-25/artifacts.json). They are not a
 promise that every later repository revision has identical bytes. Later recorder,
 parser, manifest-validator, and native-finalization repairs are not retroactively
-covered by this run; a replay of those bytes needs its own recorded identities
-and results. The complete overlay is recorded as `nova_htif.cc` in the native
+covered by this run. The separately retained latest native replay below records
+the current executed identities and results. The complete overlay is recorded
+as `nova_htif.cc` in the native
 experiment; campaign preparation writes its corresponding overlay as `htif.cc`
 under the observer output directory.
 
@@ -146,6 +149,169 @@ full pinned
 [Spike simulator](https://github.com/riscv-software-src/riscv-isa-sim/blob/9c190a07c6838f6392bafa4ad83acea462c7f759/riscv/sim.cc)
 also has host-driven termination uses of HTIF, so the observer is not a general
 proof of target instruction execution in arbitrary Spike configurations.
+
+## Latest native replay (experiment 50)
+
+The final native replay invoked the delivered
+[native CLI](../../../scripts/nova/htif_host_probe.py) exactly once from a clean,
+isolated checkout of local commit
+`52161a0b395f0644d693c132433ea9246deab712`. Its exact source tree is
+`609d280a87e6b14d1c01c934d74f8fe51a9a8f3e`, independently matched to published
+commit
+[0e4711713ca82da8d55ee03f742a91d6f5db116e](https://github.com/baabi-boo/CPU/commit/0e4711713ca82da8d55ee03f742a91d6f5db116e).
+The retained [checkout provenance](htif-native-final-2026-11-25/checkout-provenance.json)
+identifies the isolated checkout and exact input hashes. Concurrent documentation
+edits in the shared checkout did not alter the frozen execution inputs.
+
+From `/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/CPU`, the exact invocation was:
+
+```bash
+python3 -B scripts/nova/htif_host_probe.py --execute \
+  --source-root /workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike \
+  --output /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01
+```
+
+The [invocation record](htif-native-final-2026-11-25/invocation.json) reports
+exit 0, empty stderr, and an outer wall time of 6.359713 seconds, from
+`2026-11-25T21:40:25.002684+00:00` to `2026-11-25T21:40:31.362472+00:00`.
+The persisted [results](htif-native-final-2026-11-25/results.json) report
+**status `passed`, 31 commands, twelve fresh native processes, and 6.281061
+seconds**. CLI stdout matches the persisted result after removing only its
+added absolute `output` field. No timeout, interruption, incomplete-artifact
+flag, or failure reason occurs in that aggregate result.
+
+The original and observed builds each ran the same six modes. Fixture stdout
+facts, ordinary stderr, and actual host status matched within every pair.
+
+| Mode | Host exit, original / observed | Seconds, original / observed | Exit present | Raw / decoded | Signal | Overlay parser |
+| --- | --- | --- | --- | --- | --- | --- |
+| `direct0` | 0 / 0 | 0.003789 / 0.003835 | true | 1 / 0 | false | observed |
+| `direct7` | 7 / 7 | 0.003788 / 0.003742 | true | 15 / 7 | false | observed |
+| `syscall0` | 0 / 0 | 0.003633 / 0.003772 | true | 1 / 0 | false | observed |
+| `syscall7` | 7 / 7 | 0.003656 / 0.003857 | true | 15 / 7 | false | observed |
+| `signal-only` | 0 / 0 | 0.003655 / 0.003783 | false | null / null | true | failed |
+| `syscall7-signal` | 7 / 7 | 0.003835 / 0.003805 | true | 15 / 7 | true | failed |
+
+The signal-only processes again returned `done=true` and host exit zero without
+an exit value. The observer parser rejected both signal-bearing modes, including
+the mixed mode with raw 15 / decoded 7. The only nonempty runtime stderr was the
+unchanged `*** FAILED *** (tohost = 7)` line in both `direct7` cases.
+The [raw command records](htif-native-final-2026-11-25/commands.json) preserve
+all six code-seven processes as engine **`status=failed`, actual exit 7, and
+reason `command exited unsuccessfully`**, with `expected_exit_observed=true`.
+The expected native-case assessment does not normalize those command facts or
+make the rejected signal witnesses successful completion evidence.
+
+### Applied guards and native scope
+
+The retained [plan](htif-native-final-2026-11-25/plan.json) and invocation apply
+the delivered defaults without limit overrides:
+
+| Guard | Applied value |
+| --- | --- |
+| Aggregate deadline | 180 seconds |
+| Each build/inspection command | 45 seconds |
+| Each fresh native process | 5 seconds |
+| Each stdout/stderr stream | 1 MiB |
+| Sampled free-space floor | 1 GiB |
+| Parallel jobs | One; command timestamps independently verified as serial |
+| Cleanup / final capture reserve | 2 seconds per command / 3 seconds before launch |
+| Optional artifact capture | 256 files, 512 entries including directories, 32 MiB per file, 128 MiB total |
+
+Free space was 1,407,537,152 bytes immediately before execution and
+1,391,030,272 bytes afterward. No command was blocked by the unchanged floor.
+These remain cooperative/sampled trusted-process guards, not OS quotas or a
+hard bound on synchronous filesystem calls.
+
+The tools were native
+[g++ 14.2.0](htif-native-final-2026-11-25/logs/version-gxx.stdout.log),
+[GNU ar 2.44](htif-native-final-2026-11-25/logs/version-ar.stdout.log), and
+[GNU nm 2.44](htif-native-final-2026-11-25/logs/version-nm.stdout.log).
+The retained [synthetic config](htif-native-final-2026-11-25/synthetic-config/config.h)
+contains only its identifying host-fixture comment and `#define HAVE_INT128 1`.
+The real pinned FESVR code receives synthetic native host-memory stimuli.
+No ELF loading, RISC-V instruction execution, TSI, TestChipIP, TestDriver,
+Verilator, processor campaign, RTL, or installed pinned-toolchain qualification
+was performed. All top-level `cpu_execution`, `rtl_simulation`,
+`target_completion_verified`, `hardware_qualified`, and `g1_gate_passed` flags
+remain **false**. Nested completion flags describe supplied host fixture events.
+
+### Independent verification and current source identity
+
+The [independent verification](htif-native-final-2026-11-25/verification.json)
+records the following post-run checks, separately from the CLI's assessment:
+
+| Material checked | Independently verified result |
+| --- | --- |
+| Command records | 31/31 matched the aggregate and individual raw records, exact planned argv/order, and serial timestamps; nineteen build/inspection commands returned zero |
+| Command log streams | 62/62 byte counts and SHA256 hashes matched; all streams remained within 1 MiB; runtime JSON and stderr matched their result rows |
+| Pinned source closure | 24/24 source/header/LICENSE inputs, totaling 261,107 bytes, matched original and captured inputs at the unchanged Spike pin |
+| Observer witnesses | 6/6 byte counts, hashes, unique 64-character run IDs, modes, native binary identities, and recomputed bindings matched; no original-build witness exists |
+| Original artifact inventory | 152/152 entries, totaling 16,008,634 bytes, rehashed with zero mismatches; every full-output file except the inventory itself is covered |
+
+The ten native compile commands shared identical flags. Seven real FESVR units
+formed the archive, in the order shown by the retained
+[archive member log](htif-native-final-2026-11-25/logs/archive-members.stdout.log).
+Both links used the same fixture object. Full-map inspection found original
+archive `htif.o` in the original link and excluded it from the observed link;
+the overlay and recorder preceded the archive. Each full symbol log defined
+exactly one `htif_t::stop()`, and only the observed binary defined exactly one
+`nova_htif_observe_stop(...)`. No duplicate-definition or interposition allowance
+appears in the actual link argv. The
+[original map excerpt](htif-native-final-2026-11-25/excerpts/original.map.excerpt.txt),
+[observed map excerpt](htif-native-final-2026-11-25/excerpts/observed.map.excerpt.txt),
+[original symbol excerpt](htif-native-final-2026-11-25/excerpts/original.symbols.excerpt.txt),
+and [observed symbol excerpt](htif-native-final-2026-11-25/excerpts/observed.symbols.excerpt.txt)
+preserve exact selected line ranges and full-source hashes. Excerpts alone do
+not establish the full-map absence check; that check is recorded in the
+independent verification.
+
+All seven executed NOVA inputs matched their exact commit blobs, isolated
+checkout, captured execution inputs, and current repository bytes when this
+record was integrated. Their separate
+[input manifest](htif-native-final-2026-11-25/nova-inputs.json) preserves the
+executed identities; the experiment-14 table above remains historical.
+
+| Current code / executed input | Executed SHA256 |
+| --- | --- |
+| [Host fixture](../../../software/nova/observer/htif_host_probe.cc) | `127b7041bd4322625e63752c8ce15036c24288360c9de9473ba4969dc2728df5` |
+| [Recorder](../../../software/nova/observer/nova_htif_exit.cc) | `d10369310beea25776a22f6df472b30f35f13f3440b75d3659f73649b00b71f7` |
+| [Recorder header](../../../software/nova/observer/nova_htif_exit.h) | `6351e13842a4b6a3a98980ef6b8c08cc0c665c1dda5b4da399bc4142db9dcfb9` |
+| [Overlay generator](../../../scripts/nova/htif_observer.py) | `c7c660c24e7c201638ebf2398625837eb1ca124d897af398ba75ff94662e0967` |
+| [Witness parser](../../../scripts/nova/htif_exit_evidence.py) | `7b459fad18df011fca37dcf8e949f601f71de34d98b3e129e51d4e2274732ab8` |
+| [Command engine](../../../scripts/nova/campaign_exec.py) | `b642779102b990c76ae691224e591ddc5c151e3bce8df5f546b5c958ff920dd7` |
+| [Native CLI](../../../scripts/nova/htif_host_probe.py) | `40a669624f038f4e8dec645a8a5eb7b02e05839b9de5c9e230f9b112ecbfab6a` |
+
+### Latest replay retention
+
+The separate `htif-native-final-2026-11-25` selection contains **55 files /
+309,321 bytes**: fifty full-file copies, four declared line excerpts, and its
+[retention manifest](htif-native-final-2026-11-25/retention-manifest.json).
+All 55 selected files were copied byte for byte from the verified compact
+handoff and rehashed after repository retention. The manifest retains its
+original selection/output paths, nonces, bindings, JSON, and log bytes; its
+absolute `selection` field describes the handoff location, not this repository
+directory. It hashes the other 54 files, not itself.
+
+**108 full-run files / 15,869,518 bytes are explicitly omitted**, including
+binaries, ten objects, the archive, source/header/LICENSE snapshots, generated
+overlay source, full maps/symbol dumps, redundant per-command JSON, and other
+build logs. The full temporary output comprised 153 regular files totaling
+16,031,721 bytes. This compact selection is not a complete replay bundle. The
+unchanged [original inventory](htif-native-final-2026-11-25/artifacts.json)
+records omitted identities without asserting those files are retained here.
+The [pinned source manifest](htif-native-final-2026-11-25/source-manifest.json)
+preserves revision and upstream URLs; the original LICENSE SHA256 remains
+`c65e436d18972c9c4bd192494fe4870bd2e158179474975b80a3559f27631632`.
+The explicitly synthetic config is the only retained source-like file.
+
+| Latest retained artifact | SHA256 |
+| --- | --- |
+| [results.json](htif-native-final-2026-11-25/results.json) | `b270d7c0c36a2644194e823ce74f8936638e77a7a776b848f3e28319b0a3217c` |
+| [commands.json](htif-native-final-2026-11-25/commands.json) | `39a94deb3f92e6135a219a22fb760cebbb76b74f13f33d3620b268d7131a50cb` |
+| [artifacts.json](htif-native-final-2026-11-25/artifacts.json) | `f87321c38476ac12a75bbadb008fd92e19f4120d79b92742fe37b2e99d5b5af5` |
+| [verification.json](htif-native-final-2026-11-25/verification.json) | `29fb7e4011c4cf6a62b546a107ada64227af0a8912dc473a3b519203cececb58` |
+| [retention-manifest.json](htif-native-final-2026-11-25/retention-manifest.json) | `fa47392bf0702654258b47075262084746d90cae19d3122e9d709768a5e155f9` |
 
 ## Historical native results
 
@@ -420,7 +586,8 @@ stays failed while interruption/deadline facts are added. The
 [native finalization regressions](../../../tests/nova/test_htif_host_probe.py)
 cover actual SIGTERM, virtual deadlines, bounded enumeration/read controls,
 descriptor closure, and saved-byte/hash agreement. Those controls executed no
-native cases and do not replace a current twelve-case replay.
+native cases. The separately retained experiment-50 replay above exercised the
+current native CLI in twelve fresh processes.
 
 Synchronous filesystem calls can still exceed the sampled deadline. Essential
 terminal metadata is attempted after optional capture stops; the last successful
@@ -550,9 +717,23 @@ The later published checkpoint
 [3520f99a4939ed97fb002ec4c91debb8e7d7b06a](https://github.com/baabi-boo/CPU/commit/3520f99a4939ed97fb002ec4c91debb8e7d7b06a)
 includes the documentation integration and the recorder, witness-parser, and
 complete-manifest size repairs described above. Its fresh-checkout
-`make -f nova.mk check` passed **822 tests in 39.673 seconds**. Later native
-finalization, inherited-override, and read-only CLI repairs require their own
-integration checkpoint; 822 is not asserted as the final suite total.
+`make -f nova.mk check` passed **822 tests in 39.673 seconds**. The later native
+finalization, inherited-override, and read-only CLI repairs have the separately
+recorded checkpoint below; 822 remains the earlier checkpoint's total.
+
+The integrating agent's **checkpoint 05** ran `make -f nova.mk check` from fresh
+checkout `/tmp/nova-cpu-1f6d25e13e37-checkpoint-05`, at local commit
+`52161a0b395f0644d693c132433ea9246deab712`, tree
+`609d280a87e6b14d1c01c934d74f8fe51a9a8f3e`. The byte-identical published commit
+is [0e4711713ca82da8d55ee03f742a91d6f5db116e](https://github.com/baabi-boo/CPU/commit/0e4711713ca82da8d55ee03f742a91d6f5db116e).
+The repository metadata check, **836 tests in 40.355 seconds**, managed-text
+whitespace check, and `git diff --check` passed. The observed original log is
+`/workspace/scratch/1f6d25e13e37/coordination/checkpoint-05-check.log`, SHA256
+`71b5e110ec7573ff7bab85e5f57a71080e164639e1c5a75e30ea988f457a6387`;
+its exact lines 848 and 850 are `Ran 836 tests in 40.355s` and `OK`.
+This is repository-only verification of that source snapshot, separate from
+experiment 50's twelve native cases. The test and native counts are not added,
+and this record claims no completed worker total or human gate acceptance.
 
 ### Observed CI portability failure and repair
 
@@ -581,10 +762,19 @@ passed for the fortify repair at
 [24d00430796e3dd09a31af6f91364056edda0137](https://github.com/baabi-boo/CPU/commit/24d00430796e3dd09a31af6f91364056edda0137).
 The [run for `3520f99a`, 45703875662](https://github.com/baabi-boo/CPU/actions/runs/45703875662)
 also completed successfully, checked at 21:41 UTC on 2026-11-25. These remote
-results apply to their named commits; no later-commit CI result is asserted here.
+results apply to their named commits.
 The fortify-repair hash above is also historical: the later descriptor-only
 cleanup changes the recorder again, without changing experiment 14's retained
 inputs or results.
+
+The integrating agent also observed the source-complete published commit
+[0e4711713ca82da8d55ee03f742a91d6f5db116e](https://github.com/baabi-boo/CPU/commit/0e4711713ca82da8d55ee03f742a91d6f5db116e)
+complete successfully in
+[GitHub Actions run 45706964047](https://github.com/baabi-boo/CPU/actions/runs/45706964047),
+checked at **21:50 UTC on 2026-11-25**. This remote result applies to that exact
+published source commit, alongside the separate local 836-test checkpoint.
+Subsequent documentation-only commits require their own validation; no later
+remote result is asserted here.
 
 ## Remaining G1 work
 
@@ -605,9 +795,10 @@ pinned-reference comparison scope and obtain a maintainer's evidence-based
 decision. None of the native or repository checks in this record accepts G1,
 `T-BUILD-001`, or `T-ISA-001`.
 
-## Evidence retention
+## Historical evidence retention
 
-The compact directory contains 55 files totaling 237,313 bytes: selected
+The earlier `htif-native-2026-11-25` compact directory contains 55 files totaling
+237,313 bytes: selected
 original observations, copied byte for byte, explicitly identified excerpts,
 and the selection's retention manifest. Its
 [retention manifest](htif-native-2026-11-25/retention-manifest.json) gives original

@@ -1,0 +1,1 @@
+{"schema_version":1,"kind":"nova-htif-exit","run_id":"c55595bf933519aa890020e258a541678c97c90f7ca789a261ac397c81f8ac72","binding_sha256":"5f3c33fa2c48a7cbd3997f063dfc1d85460e3f5b8feec86d3a1eb3b1b08ecac3","target_exit_present":true,"raw_exit_code":15,"target_exit_code":7,"signal_exit":false}

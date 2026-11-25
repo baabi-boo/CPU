@@ -1,0 +1,33 @@
+Source: /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/observed.map
+Source SHA256: a4407ae3115cad81d66aad92a83f3319dd0c06fe7f1c2998e78564e04bb6240e
+Source bytes: 1079309
+Source lines: 8739
+Selection: exact original source lines in the inclusive ranges below; all other lines omitted.
+
+--- source lines 1-14 ---
+Archive member included to satisfy reference by file (symbol)
+
+/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/libfesvr-host-fixture.a(memif.o)
+                              /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/objects/nova_htif.o (vtable for memif_t)
+/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/libfesvr-host-fixture.a(syscall.o)
+                              /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/objects/nova_htif.o (syscall_t::syscall_t(htif_t*))
+/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/libfesvr-host-fixture.a(device.o)
+                              /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/libfesvr-host-fixture.a(syscall.o) (device_t::device_t())
+/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/libfesvr-host-fixture.a(rfb.o)
+                              /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/objects/nova_htif.o (rfb_t::rfb_t(int))
+/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/libfesvr-host-fixture.a(elfloader.o)
+                              /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/objects/nova_htif.o (load_elf[abi:cxx11](char const*, memif_t*, unsigned long*, unsigned long, unsigned int))
+/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/libfesvr-host-fixture.a(term.o)
+                              /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/libfesvr-host-fixture.a(device.o) (canonical_terminal_t::read())
+
+--- source lines 3151-3154 ---
+LOAD /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/objects/probe.o
+LOAD /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/objects/nova_htif.o
+LOAD /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/objects/nova_htif_exit.o
+LOAD /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/libfesvr-host-fixture.a
+
+--- source lines 4091-4091 ---
+                0x000000000000b8ca                htif_t::stop()
+
+--- source lines 5821-5821 ---
+                0x000000000001547b                nova_htif_observe_stop(void const*, bool, int, bool)

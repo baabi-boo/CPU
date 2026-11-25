@@ -1,0 +1,8 @@
+Source: /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/symbols-original.stdout.log
+Source SHA256: 1347f803b6d37f7735b336d94f214d016528cfe57cb43a4b34b59953b0b29974
+Source bytes: 369548
+Source lines: 1890
+Selection: exact original source lines in the inclusive ranges below; all other lines omitted.
+
+--- source lines 236-236 ---
+000000000000b83a T htif_t::stop()

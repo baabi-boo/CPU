@@ -1,0 +1,89 @@
+{
+  "checkout": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/CPU",
+  "commit": "52161a0b395f0644d693c132433ea9246deab712",
+  "files": [
+    {
+      "bytes": 2146,
+      "path": "AGENTS.md",
+      "sha256": "750603be1d944e97800c15bbc2a3a90c112793e5c07820933eb743d97d5b8432"
+    },
+    {
+      "bytes": 1566,
+      "path": "LICENSE",
+      "sha256": "c36c8dd92ba95a48aaed1b89de09a636d5a4e1dd2e726428d0c0b3644a267cd5"
+    },
+    {
+      "bytes": 11348,
+      "path": "LICENSE.SiFive",
+      "sha256": "63b453c2c3f5e5d31007f55eaacc2b72e8b7a40e6ab33eae6972ba010fa7acc4"
+    },
+    {
+      "bytes": 4117,
+      "path": "THIRD_PARTY_NOTICES.md",
+      "sha256": "9532967361e70f7056467ef7f482dfbc9a6418f800cbeffbb91d6df80929c872"
+    },
+    {
+      "bytes": 11277,
+      "path": "README.md",
+      "sha256": "92f1643fecbd48d3138d41d591801f8a2b477a005e9fd3a82b12701672231d6f"
+    },
+    {
+      "bytes": 11579,
+      "path": "docs/nova/STATUS.md",
+      "sha256": "325191202c2ddd4aa1392fe581ebb7f8e2dec9f9f086f338bd9899c5656c30bf"
+    },
+    {
+      "bytes": 33895,
+      "path": "docs/nova/evidence/G1-HTIF-OBSERVER-2026-11-25.md",
+      "sha256": "8cbcb1c30686a297dcdbe3ffdb20c759c04dd7f6f4cf621f89ceb2c21b8cfed8"
+    },
+    {
+      "bytes": 5554,
+      "path": "software/nova/observer/htif_host_probe.cc",
+      "sha256": "127b7041bd4322625e63752c8ce15036c24288360c9de9473ba4969dc2728df5"
+    },
+    {
+      "bytes": 9204,
+      "path": "software/nova/observer/nova_htif_exit.cc",
+      "sha256": "d10369310beea25776a22f6df472b30f35f13f3440b75d3659f73649b00b71f7"
+    },
+    {
+      "bytes": 856,
+      "path": "software/nova/observer/nova_htif_exit.h",
+      "sha256": "6351e13842a4b6a3a98980ef6b8c08cc0c665c1dda5b4da399bc4142db9dcfb9"
+    },
+    {
+      "bytes": 28365,
+      "path": "scripts/nova/htif_observer.py",
+      "sha256": "c7c660c24e7c201638ebf2398625837eb1ca124d897af398ba75ff94662e0967"
+    },
+    {
+      "bytes": 12716,
+      "path": "scripts/nova/htif_exit_evidence.py",
+      "sha256": "7b459fad18df011fca37dcf8e949f601f71de34d98b3e129e51d4e2274732ab8"
+    },
+    {
+      "bytes": 16706,
+      "path": "scripts/nova/campaign_exec.py",
+      "sha256": "b642779102b990c76ae691224e591ddc5c151e3bce8df5f546b5c958ff920dd7"
+    },
+    {
+      "bytes": 35537,
+      "path": "scripts/nova/htif_host_probe.py",
+      "sha256": "40a669624f038f4e8dec645a8a5eb7b02e05839b9de5c9e230f9b112ecbfab6a"
+    },
+    {
+      "bytes": 27858,
+      "path": "tests/nova/test_htif_host_probe.py",
+      "sha256": "86056289e3780515dda0008859e8527409f76ea0c825c594491fbb18ce0b6eba"
+    }
+  ],
+  "free_bytes_after_checkout": 1408647168,
+  "invocation_stderr": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/execute.stderr.log",
+  "invocation_stdout": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/execute.stdout.json",
+  "output": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01",
+  "shared_repo_head_before_execution": "52161a0b395f0644d693c132433ea9246deab712",
+  "shared_repo_status_before_execution": "",
+  "source_root": "/workspace/scratch/1f6d25e13e37/coordination/a08-native/run-01/inputs/spike",
+  "tree": "609d280a87e6b14d1c01c934d74f8fe51a9a8f3e"
+}

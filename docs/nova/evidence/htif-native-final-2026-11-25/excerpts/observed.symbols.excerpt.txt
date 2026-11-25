@@ -1,0 +1,11 @@
+Source: /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/logs/symbols-observed.stdout.log
+Source SHA256: 3554ad13b110f77c3760b201b8d8183c2876f21e16ecd3494f18e253dcfa6149
+Source bytes: 370583
+Source lines: 1905
+Selection: exact original source lines in the inclusive ranges below; all other lines omitted.
+
+--- source lines 13-13 ---
+000000000001547b T nova_htif_observe_stop(void const*, bool, int, bool)
+
+--- source lines 251-251 ---
+000000000000b8ca T htif_t::stop()

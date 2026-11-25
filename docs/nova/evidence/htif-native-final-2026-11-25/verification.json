@@ -1,0 +1,621 @@
+{
+  "build_or_inspection_commands": 19,
+  "cases": [
+    {
+      "fixture_event_completion_verified": true,
+      "fixture_stdout_and_stderr_equal": true,
+      "mode": "direct0",
+      "observed_host_status": 0,
+      "original_host_status": 0,
+      "parser_status": "observed",
+      "raw_exit_code": 1,
+      "signal_exit": false,
+      "target_exit_code": 0,
+      "target_exit_present": true
+    },
+    {
+      "fixture_event_completion_verified": true,
+      "fixture_stdout_and_stderr_equal": true,
+      "mode": "direct7",
+      "observed_host_status": 7,
+      "original_host_status": 7,
+      "parser_status": "observed",
+      "raw_exit_code": 15,
+      "signal_exit": false,
+      "target_exit_code": 7,
+      "target_exit_present": true
+    },
+    {
+      "fixture_event_completion_verified": true,
+      "fixture_stdout_and_stderr_equal": true,
+      "mode": "syscall0",
+      "observed_host_status": 0,
+      "original_host_status": 0,
+      "parser_status": "observed",
+      "raw_exit_code": 1,
+      "signal_exit": false,
+      "target_exit_code": 0,
+      "target_exit_present": true
+    },
+    {
+      "fixture_event_completion_verified": true,
+      "fixture_stdout_and_stderr_equal": true,
+      "mode": "syscall7",
+      "observed_host_status": 7,
+      "original_host_status": 7,
+      "parser_status": "observed",
+      "raw_exit_code": 15,
+      "signal_exit": false,
+      "target_exit_code": 7,
+      "target_exit_present": true
+    },
+    {
+      "fixture_event_completion_verified": false,
+      "fixture_stdout_and_stderr_equal": true,
+      "mode": "signal-only",
+      "observed_host_status": 0,
+      "original_host_status": 0,
+      "parser_status": "failed",
+      "raw_exit_code": null,
+      "signal_exit": true,
+      "target_exit_code": null,
+      "target_exit_present": false
+    },
+    {
+      "fixture_event_completion_verified": false,
+      "fixture_stdout_and_stderr_equal": true,
+      "mode": "syscall7-signal",
+      "observed_host_status": 7,
+      "original_host_status": 7,
+      "parser_status": "failed",
+      "raw_exit_code": 15,
+      "signal_exit": true,
+      "target_exit_code": 7,
+      "target_exit_present": true
+    }
+  ],
+  "checkout": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/CPU",
+  "command_checks": [
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.001998,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "version-gxx",
+      "stderr_bytes": 0,
+      "stdout_bytes": 232
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.003879,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "version-ar",
+      "stderr_bytes": 0,
+      "stdout_bytes": 283
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.003888,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "version-nm",
+      "stderr_bytes": 0,
+      "stdout_bytes": 283
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 1.137228,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "compile-htif",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.333955,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "compile-memif",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.870548,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "compile-syscall",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.812479,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "compile-device",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.456321,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "compile-rfb",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.386,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "compile-elfloader",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.035963,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "compile-term",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.016102,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "archive",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.003815,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "archive-members",
+      "stderr_bytes": 0,
+      "stdout_bytes": 59
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.694166,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "compile-probe",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.101605,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "compile-nova_htif_exit",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 1.136879,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "compile-nova_htif",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.082382,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "link-original",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.008248,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "symbols-original",
+      "stderr_bytes": 0,
+      "stdout_bytes": 369548
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.082528,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "link-observed",
+      "stderr_bytes": 0,
+      "stdout_bytes": 0
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.00818,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "symbols-observed",
+      "stderr_bytes": 0,
+      "stdout_bytes": 370583
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.003789,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "original-direct0",
+      "stderr_bytes": 0,
+      "stdout_bytes": 218
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.003788,
+      "engine_status": "failed",
+      "exit_code": 7,
+      "expected_exit_observed": true,
+      "name": "original-direct7",
+      "stderr_bytes": 28,
+      "stdout_bytes": 218
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.003633,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "original-syscall0",
+      "stderr_bytes": 0,
+      "stdout_bytes": 219
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.003656,
+      "engine_status": "failed",
+      "exit_code": 7,
+      "expected_exit_observed": true,
+      "name": "original-syscall7",
+      "stderr_bytes": 0,
+      "stdout_bytes": 219
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.003655,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "original-signal-only",
+      "stderr_bytes": 0,
+      "stdout_bytes": 222
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.003835,
+      "engine_status": "failed",
+      "exit_code": 7,
+      "expected_exit_observed": true,
+      "name": "original-syscall7-signal",
+      "stderr_bytes": 0,
+      "stdout_bytes": 226
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.003835,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "observed-direct0",
+      "stderr_bytes": 0,
+      "stdout_bytes": 218
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.003742,
+      "engine_status": "failed",
+      "exit_code": 7,
+      "expected_exit_observed": true,
+      "name": "observed-direct7",
+      "stderr_bytes": 28,
+      "stdout_bytes": 218
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.003772,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "observed-syscall0",
+      "stderr_bytes": 0,
+      "stdout_bytes": 219
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.003857,
+      "engine_status": "failed",
+      "exit_code": 7,
+      "expected_exit_observed": true,
+      "name": "observed-syscall7",
+      "stderr_bytes": 0,
+      "stdout_bytes": 219
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.003783,
+      "engine_status": "passed",
+      "exit_code": 0,
+      "expected_exit_observed": true,
+      "name": "observed-signal-only",
+      "stderr_bytes": 0,
+      "stdout_bytes": 222
+    },
+    {
+      "argv_and_individual_record_match": true,
+      "both_logs_rehashed": true,
+      "elapsed_seconds": 0.003805,
+      "engine_status": "failed",
+      "exit_code": 7,
+      "expected_exit_observed": true,
+      "name": "observed-syscall7-signal",
+      "stderr_bytes": 0,
+      "stdout_bytes": 226
+    }
+  ],
+  "command_count": 31,
+  "command_logs_rehashed": 62,
+  "command_records_checked": 31,
+  "cpu_execution": false,
+  "executed_and_current_code": [
+    {
+      "current_shared_matches_executed": true,
+      "current_shared_sha256": "127b7041bd4322625e63752c8ce15036c24288360c9de9473ba4969dc2728df5",
+      "exact_commit_blob_matches": true,
+      "executed_bytes": 5554,
+      "executed_sha256": "127b7041bd4322625e63752c8ce15036c24288360c9de9473ba4969dc2728df5",
+      "path": "software/nova/observer/htif_host_probe.cc"
+    },
+    {
+      "current_shared_matches_executed": true,
+      "current_shared_sha256": "d10369310beea25776a22f6df472b30f35f13f3440b75d3659f73649b00b71f7",
+      "exact_commit_blob_matches": true,
+      "executed_bytes": 9204,
+      "executed_sha256": "d10369310beea25776a22f6df472b30f35f13f3440b75d3659f73649b00b71f7",
+      "path": "software/nova/observer/nova_htif_exit.cc"
+    },
+    {
+      "current_shared_matches_executed": true,
+      "current_shared_sha256": "6351e13842a4b6a3a98980ef6b8c08cc0c665c1dda5b4da399bc4142db9dcfb9",
+      "exact_commit_blob_matches": true,
+      "executed_bytes": 856,
+      "executed_sha256": "6351e13842a4b6a3a98980ef6b8c08cc0c665c1dda5b4da399bc4142db9dcfb9",
+      "path": "software/nova/observer/nova_htif_exit.h"
+    },
+    {
+      "current_shared_matches_executed": true,
+      "current_shared_sha256": "c7c660c24e7c201638ebf2398625837eb1ca124d897af398ba75ff94662e0967",
+      "exact_commit_blob_matches": true,
+      "executed_bytes": 28365,
+      "executed_sha256": "c7c660c24e7c201638ebf2398625837eb1ca124d897af398ba75ff94662e0967",
+      "path": "scripts/nova/htif_observer.py"
+    },
+    {
+      "current_shared_matches_executed": true,
+      "current_shared_sha256": "7b459fad18df011fca37dcf8e949f601f71de34d98b3e129e51d4e2274732ab8",
+      "exact_commit_blob_matches": true,
+      "executed_bytes": 12716,
+      "executed_sha256": "7b459fad18df011fca37dcf8e949f601f71de34d98b3e129e51d4e2274732ab8",
+      "path": "scripts/nova/htif_exit_evidence.py"
+    },
+    {
+      "current_shared_matches_executed": true,
+      "current_shared_sha256": "b642779102b990c76ae691224e591ddc5c151e3bce8df5f546b5c958ff920dd7",
+      "exact_commit_blob_matches": true,
+      "executed_bytes": 16706,
+      "executed_sha256": "b642779102b990c76ae691224e591ddc5c151e3bce8df5f546b5c958ff920dd7",
+      "path": "scripts/nova/campaign_exec.py"
+    },
+    {
+      "current_shared_matches_executed": true,
+      "current_shared_sha256": "40a669624f038f4e8dec645a8a5eb7b02e05839b9de5c9e230f9b112ecbfab6a",
+      "exact_commit_blob_matches": true,
+      "executed_bytes": 35537,
+      "executed_sha256": "40a669624f038f4e8dec645a8a5eb7b02e05839b9de5c9e230f9b112ecbfab6a",
+      "path": "scripts/nova/htif_host_probe.py"
+    }
+  ],
+  "executed_commit": "52161a0b395f0644d693c132433ea9246deab712",
+  "executed_tree": "609d280a87e6b14d1c01c934d74f8fe51a9a8f3e",
+  "expected_code7_engine_failures_preserved": 6,
+  "g1_gate_passed": false,
+  "hardware_qualified": false,
+  "inventory_rehash": {
+    "all_output_files_covered_except_inventory_self": true,
+    "bytes": 16008634,
+    "entries": 152,
+    "inventory_sha256": "f87321c38476ac12a75bbadb008fd92e19f4120d79b92742fe37b2e99d5b5af5",
+    "matched_entries": 152,
+    "mismatches": []
+  },
+  "invocation_exit_code": 0,
+  "isolated_checkout_clean": true,
+  "kind": "nova-worker50-independent-native-verification",
+  "limitations": [
+    "Memory stimuli originate in the native fixture, not a CPU.",
+    "The archive is a native source closure, not installed pinned libfesvr.a.",
+    "Synthetic HAVE_INT128 config does not verify an installed toolchain.",
+    "No ELF loading, TSI, TestChipIP, Verilator, RTL, or campaign execution.",
+    "Nested parser target_completion_verified values describe supplied fixture events only.",
+    "Deadlines reserve process cleanup and evidence capture; disk/log limits are sampled, not OS quotas.",
+    "Artifact traversal and reads check time/cancellation cooperatively; blocking filesystem calls have no hard time quota.",
+    "Elapsed time includes initial metadata writes and handler restoration; final corrective writes, close and return may follow its last sample."
+  ],
+  "limits": {
+    "case_seconds": 5,
+    "command_seconds": 45,
+    "max_log_bytes": 1048576,
+    "min_free_gib": 1,
+    "total_seconds": 180
+  },
+  "linkage": {
+    "observed": {
+      "binary_sha256": "98a3e692ba32c662deccc6ded851c945a213b21288c2268a2cb6fc4c92be58ea",
+      "htif_archive_member_present": false,
+      "map_bytes": 1079309,
+      "map_sha256": "a4407ae3115cad81d66aad92a83f3319dd0c06fe7f1c2998e78564e04bb6240e",
+      "map_total_lines": 8739,
+      "recorder_definitions": [
+        "000000000001547b T nova_htif_observe_stop(void const*, bool, int, bool)"
+      ],
+      "selected_load_lines": [
+        "LOAD /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/objects/probe.o",
+        "LOAD /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/objects/nova_htif.o",
+        "LOAD /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/objects/nova_htif_exit.o",
+        "LOAD /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/libfesvr-host-fixture.a"
+      ],
+      "stop_definitions": [
+        "000000000000b8ca T htif_t::stop()"
+      ],
+      "symbols_bytes": 370583,
+      "symbols_sha256": "3554ad13b110f77c3760b201b8d8183c2876f21e16ecd3494f18e253dcfa6149",
+      "symbols_total_lines": 1905
+    },
+    "original": {
+      "binary_sha256": "b5854368d9b7b3053faddfe5aa385e209aabe8d055accd4c4821324e2a78b257",
+      "htif_archive_member_present": true,
+      "map_bytes": 1091515,
+      "map_sha256": "c339696fc372af41618861dc61ba011c12c319bf8cd88b024ac30a3daa5328c5",
+      "map_total_lines": 8711,
+      "recorder_definitions": [],
+      "selected_load_lines": [
+        "LOAD /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/objects/probe.o",
+        "LOAD /tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01/libfesvr-host-fixture.a"
+      ],
+      "stop_definitions": [
+        "000000000000b83a T htif_t::stop()"
+      ],
+      "symbols_bytes": 369548,
+      "symbols_sha256": "1347f803b6d37f7735b336d94f214d016528cfe57cb43a4b34b59953b0b29974",
+      "symbols_total_lines": 1890
+    }
+  },
+  "native_case_count": 12,
+  "native_probe_invocations": 1,
+  "outer_wall_elapsed_seconds": 6.359713,
+  "output": "/tmp/nova-cpu-1f6d25e13e37-a50-mxjy7xht/run-01",
+  "reported_elapsed_seconds": 6.281061,
+  "rtl_simulation": false,
+  "schema_version": 1,
+  "scope": "native-host-only pinned FESVR, synthetic configuration and host memory",
+  "serial_command_timestamps_verified": true,
+  "shared_repo_head_at_post_run_check": "52161a0b395f0644d693c132433ea9246deab712",
+  "shared_repo_status_at_post_run_check": " M docs/nova/BASELINE_RUNBOOK.md\n M docs/nova/DEVELOPMENT.md\n M docs/nova/evidence/G1-HTIF-OBSERVER-2026-11-25.md\n",
+  "source_closure": {
+    "all_original_and_captured_files_match_pins": true,
+    "license_sha256": "c65e436d18972c9c4bd192494fe4870bd2e158179474975b80a3559f27631632",
+    "pinned_bytes": 261107,
+    "pinned_files": 24
+  },
+  "status": "passed",
+  "synthetic_config": {
+    "bytes": 105,
+    "path": "synthetic-config/config.h",
+    "sha256": "06f3444b152095135a72e025245f54466d46bfc27f6fe7b90e82d5be2531362f"
+  },
+  "target_completion_verified": false,
+  "verified_utc": "2026-11-25T21:42:50.223563+00:00",
+  "witnesses": [
+    {
+      "bytes": 291,
+      "path": "probe-observed-direct0.json",
+      "run_and_binary_binding_verified": true,
+      "sha256": "5be192999a0d4f192726bff141e9b1a59d3d87fa92f82518344560fdb75c167f"
+    },
+    {
+      "bytes": 292,
+      "path": "probe-observed-direct7.json",
+      "run_and_binary_binding_verified": true,
+      "sha256": "9fb8505ce6dae21d1b0898733916c27ae0da6bedab8ec95d2fe11e9ed16e4d3f"
+    },
+    {
+      "bytes": 291,
+      "path": "probe-observed-syscall0.json",
+      "run_and_binary_binding_verified": true,
+      "sha256": "cfa1987a13161eb9ca97cf5c00b3e301617d30e43832363e42df04004fd94776"
+    },
+    {
+      "bytes": 292,
+      "path": "probe-observed-syscall7.json",
+      "run_and_binary_binding_verified": true,
+      "sha256": "7b741e5a5dfc604d19d582b517f0ba08d8a2d6be88df971a5e776e6a1f8811b5"
+    },
+    {
+      "bytes": 297,
+      "path": "probe-observed-signal-only.json",
+      "run_and_binary_binding_verified": true,
+      "sha256": "61da8ee3fd0f3a1667cc2834d3bd102ce28b0a7ac874a9986e84465ba9cba5d9"
+    },
+    {
+      "bytes": 291,
+      "path": "probe-observed-syscall7-signal.json",
+      "run_and_binary_binding_verified": true,
+      "sha256": "be064a2319f08803a5fd1957cb5a9df5987b28fa94e133241863a7d7f7fd7287"
+    }
+  ]
+}
