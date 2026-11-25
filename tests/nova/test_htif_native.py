@@ -11,6 +11,7 @@ from pathlib import Path
 import shutil
 import stat
 import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -35,7 +36,12 @@ class NativeHtifObserverFixtureTests(unittest.TestCase):
         cls.build_root = Path(temporary.name).resolve()
         cls.executable = cls.build_root / "native-observer-fixture"
         wrappers = ("openat", "write", "fsync", "fstat", "fchmod", "close")
+        # Exercise fortified libc declarations in this same build on Linux.
+        # Clear any compiler default first to avoid macro-redefinition warnings.
+        fortify = (["-U_FORTIFY_SOURCE", "-D_FORTIFY_SOURCE=2"]
+                   if sys.platform.startswith("linux") else [])
         command = [COMPILER, "-std=c++17", "-O2", "-Wall", "-Wextra", "-Werror",
+                   *fortify,
                    "-I", str(OBSERVER), str(OBSERVER / "nova_htif_exit.cc"),
                    str(DRIVER), *(f"-Wl,--wrap={name}" for name in wrappers),
                    "-o", str(cls.executable)]

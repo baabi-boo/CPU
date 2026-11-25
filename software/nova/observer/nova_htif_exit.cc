@@ -42,7 +42,8 @@ bool same_file(const struct stat &left, const struct stat &right) {
 void discard(Output *output) {
   if (output == nullptr) return;
   if (output->file >= 0) {
-    (void)::ftruncate(output->file, 0);
+    const int truncated = ::ftruncate(output->file, 0);
+    (void)truncated;  // Cleanup failure must not override the pending status 125.
   }
   if (output->parent >= 0 && output->identified) {
     struct stat current {};
